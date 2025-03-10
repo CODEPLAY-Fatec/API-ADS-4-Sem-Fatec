@@ -1,0 +1,1 @@
+//controle de dados de entrada e de volta da autenticaçao
