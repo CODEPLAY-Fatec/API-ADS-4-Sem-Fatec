@@ -1,9 +1,9 @@
-import ProjectForm from "@/componentes/ProjectForm";
+import RegisterForm from "@/componentes/registerForm";
 export default function Home() {
   return (
     <div>
       <h1>Home</h1>
-      <ProjectForm />
+      < RegisterForm/>
     </div>
   );
 }

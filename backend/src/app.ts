@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import projectRoutes from "./routes/projectRoutes";
+import userRoute from "./routes/userRoute"
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 
@@ -15,6 +16,7 @@ app.use(
 // Usando as rotas
 // app.use('/api', ) //modo para usar rota q atualmente nao existe
 app.use("/api", projectRoutes);
+app.use("/api",userRoute)
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor rodando na porta ${PORT}`);

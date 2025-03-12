@@ -2,6 +2,9 @@ type User = {
   name: string;
   email: string;
   phoneNumber?: string;
+  password: string;
 };
 
-export default User;
+
+export type {User};
+
