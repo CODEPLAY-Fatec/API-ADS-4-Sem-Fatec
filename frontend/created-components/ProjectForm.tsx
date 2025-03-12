@@ -8,11 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SelectNative } from "@/components/ui/select-native";
-
+import Institution from "@shared/Institution";
 
 type state = {
   currentProject: Partial<Project>;
   projectSubjects: ProjectSubject[];
+  institutions: Institution[];
 };
 
 export default class ProjectForm extends React.Component<{}, state> {
@@ -21,12 +22,16 @@ export default class ProjectForm extends React.Component<{}, state> {
     this.state = {
       currentProject: {},
       projectSubjects: [],
+      institutions: [],
     };
   }
 
   componentDidMount() {
     axios.get("/api/projects/subjects").then((response) => {
       this.setState({ projectSubjects: response.data });
+    });
+    axios.get("/api/projects/institutions").then((response) => {
+      this.setState({ institutions: response.data });
     });
   }
 
@@ -56,7 +61,10 @@ export default class ProjectForm extends React.Component<{}, state> {
 
   render() {
     return (
-      <form onSubmit={this.submitForm} className="space-y-4 max-w-md mx-auto border border-black p-4 rounded-md">
+      <form
+        onSubmit={this.submitForm}
+        className="space-y-4 max-w-md mx-auto border border-black p-4 rounded-md"
+      >
         <div>
           <Label htmlFor="name">Nome</Label>
           <Input
@@ -67,17 +75,19 @@ export default class ProjectForm extends React.Component<{}, state> {
             className="w-full"
           />
         </div>
-        
+
         <div>
           <Label htmlFor="description">Descrição</Label>
           <Textarea
             id="description"
             value={this.state.currentProject.description || ""}
-            onChange={(e) => this.updateProjectData("description", e.target.value)}
+            onChange={(e) =>
+              this.updateProjectData("description", e.target.value)
+            }
             className="w-full"
           />
         </div>
-        
+
         <div>
           <Label htmlFor="subject">Área de atuação</Label>
           <SelectNative
@@ -96,7 +106,28 @@ export default class ProjectForm extends React.Component<{}, state> {
             ))}
           </SelectNative>
         </div>
-        
+
+        <div>
+          <Label htmlFor="institution">Instituição</Label>
+          <SelectNative
+            id="institution"
+            value={this.state.currentProject.institution || ""}
+            onChange={(e) =>
+              this.updateProjectData("institution", e.target.value)
+            }
+            className="w-full"
+          >
+            <option value="" disabled>
+              Selecione uma instituição
+            </option>
+            {this.state.institutions.map((subject) => (
+              <option key={subject.name} value={subject.name}>
+                {subject.name}
+              </option>
+            ))}
+          </SelectNative>
+        </div>
+
         <div>
           <Label htmlFor="status">Status</Label>
           <SelectNative
@@ -113,8 +144,11 @@ export default class ProjectForm extends React.Component<{}, state> {
             <option value="Concluído">Concluído</option>
           </SelectNative>
         </div>
-        
-        <Button type="submit" className="rounded-full w-1/2 bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 transition-transform duration-200 mx-auto block">
+
+        <Button
+          type="submit"
+          className="rounded-full w-1/2 bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 transition-transform duration-200 mx-auto block"
+        >
           Submit
         </Button>
       </form>
