@@ -34,6 +34,7 @@ CREATE TABLE `tasks` (
   `taskUser` int,
   `title` text NOT NULL,
   `description` text,
+  `priority` ENUM ('Baixa', 'Média', 'Alta'),
   `start` datetime,
   `finish` datetime,
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído') NOT NULL
@@ -56,6 +57,7 @@ CREATE TABLE `taskRecovery` (
   `taskUser` int,
   `title` text,
   `description` text,
+  `priority` ENUM ('Baixa', 'Média', 'Alta'),
   `start` datetime,
   `finish` datetime,
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído'),
