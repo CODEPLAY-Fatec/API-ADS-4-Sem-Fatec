@@ -3,7 +3,7 @@ type Project = {
   description?: string;
   subject?: string;
   creator: number;
-  status: "Fechado" | "Em andamento" | "Concluído";
+  status?: "Fechado" | "Em andamento" | "Concluído";
 };
 
 export default Project;
