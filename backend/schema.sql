@@ -19,11 +19,17 @@ CREATE TABLE `projects` (
   `name` text NOT NULL,
   `description` text,
   `subject` varchar(255),
+  `institution` varchar(255),
   `creator` int NOT NULL,
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído')
 );
 
 CREATE TABLE `projectSubjects` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE `institutions` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255) UNIQUE NOT NULL
 );
@@ -35,6 +41,7 @@ CREATE TABLE `tasks` (
   `title` text NOT NULL,
   `description` text,
   `priority` ENUM ('Baixa', 'Média', 'Alta'),
+  `timeEstimate` int COMMENT 'em horas',
   `start` datetime,
   `finish` datetime,
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído') NOT NULL
@@ -45,7 +52,8 @@ CREATE TABLE `projectRecovery` (
   `projectId` int NOT NULL,
   `name` text,
   `description` text,
-  `subject` text,
+  `subject` varchar(255),
+  `institution` varchar(255),
   `creator` int,
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído'),
   `created` datetime NOT NULL
@@ -58,6 +66,7 @@ CREATE TABLE `taskRecovery` (
   `title` text,
   `description` text,
   `priority` ENUM ('Baixa', 'Média', 'Alta'),
+  `timeEstimate` int COMMENT 'em horas',
   `start` datetime,
   `finish` datetime,
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído'),
@@ -67,6 +76,8 @@ CREATE TABLE `taskRecovery` (
 ALTER TABLE `userPicture` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
 
 ALTER TABLE `projects` ADD FOREIGN KEY (`subject`) REFERENCES `projectSubjects` (`name`);
+
+ALTER TABLE `projects` ADD FOREIGN KEY (`institution`) REFERENCES `institutions` (`name`);
 
 ALTER TABLE `projects` ADD FOREIGN KEY (`creator`) REFERENCES `users` (`id`);
 

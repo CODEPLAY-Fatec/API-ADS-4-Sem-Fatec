@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Project from "@shared/Project";
 import {
   createProjectService,
+  getInstitutionsService,
   getProjectsService,
   getProjectSubjectsService,
 } from "../services/projectService";
@@ -11,6 +12,10 @@ export const createProjectController = async (req: Request, res: Response) => {
   console.log(ProjectData);
 
   // TODO: pegar o ID do usuário logado, e colocar como project.creator
+  if (!ProjectData.name) {
+    res.status(400).send({ message: "Nome do projeto é obrigatório." });
+    return;
+  }
   try {
     await createProjectService(ProjectData);
     res.status(201).send({ message: "Projeto criado com sucesso!" });
@@ -42,5 +47,17 @@ export const getProjectSubjectsController = async (
     res.status(201).send(result);
   } catch (error) {
     res.status(500).send({ message: "Erro ao buscar projetos." });
+  }
+};
+
+export const getInstitutionsController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const result = await getInstitutionsService();
+    res.status(201).send(result);
+  } catch (error) {
+    res.status(500).send({ message: "Erro ao buscar instituições." });
   }
 };
