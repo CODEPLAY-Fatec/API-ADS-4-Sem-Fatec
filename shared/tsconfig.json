@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "composite": true, // Required for project references
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "include": ["**/*.ts"]
+}
