@@ -1,4 +1,5 @@
 import GradientText from "@/created-components/GradientText";
+import RegisterFrom from "@/created-components/registerForm";
 
 export default function Home() {
   return (
@@ -15,19 +16,15 @@ export default function Home() {
       <div className="flex flex-col gap-6 p-6">
         <div className="text-center text-7xl font-black leading-tight">
           <span>Uma ferramenta que</span> revolucionará seus{" "}
-          <GradientText size="text-7xl" weight="font-black">
-            projetos.
-          </GradientText>
+          <GradientText size="text-7xl" weight="font-black">projetos.</GradientText>
         </div>
 
         <div className="text-center mt-6 mb-4">
           <h3 className="text-xl px-32">
-            Transforme suas ideias em realidade com nossa plataforma intuitiva e
-            poderosa.
+            Transforme suas ideias em realidade com nossa plataforma intuitiva e poderosa.
           </h3>
           <h3 className="text-xl px-32 mt-2">
-            Desenvolva suas criações com facilidade e eficiência, do início ao
-            fim.
+            Desenvolva suas criações com facilidade e eficiência, do início ao fim.
           </h3>
         </div>
 
