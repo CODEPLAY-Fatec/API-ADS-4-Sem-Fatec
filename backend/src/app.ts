@@ -32,6 +32,10 @@ app.use(authenticateToken); // as rotas abaixo desse autenticador estao protegid
 
 app.use("/api", projectRoutes);
 
+
+
+
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
