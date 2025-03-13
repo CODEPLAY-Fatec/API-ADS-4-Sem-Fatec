@@ -114,6 +114,15 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+body {
+  background: linear-gradient(to bottom, #4c6ef5, #ffffff); 
+  background-attachment: fixed; 
+  background-size: 100% 150px; 
+  background-repeat: no-repeat; 
+  margin-top: 0; 
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -121,4 +130,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientAnimation 3s ease infinite;
 }
