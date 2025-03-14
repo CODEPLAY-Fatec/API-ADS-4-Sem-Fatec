@@ -89,6 +89,6 @@ ALTER TABLE `projectRecovery` ADD FOREIGN KEY (`projectId`) REFERENCES `projects
 
 ALTER TABLE `taskRecovery` ADD FOREIGN KEY (`taskId`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
 
-INSERT INTO projectSubjects (name) VALUES ('Exatas')
+INSERT INTO projectSubjects (name) VALUES ('Exatas');
 
-INSERT INTO institutions (name) VALUES ('Fatec')
+INSERT INTO institutions (name) VALUES ('Fatec');
