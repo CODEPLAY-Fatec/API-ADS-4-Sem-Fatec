@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label"; 
 import GradientText from "./GradientText";
 import FadeIn from "./FadeIn";
+import EmergeIn from "./EmergeIn";
 
 ""
 const LoginForm: React.FC = () => {
@@ -37,8 +38,8 @@ const LoginForm: React.FC = () => {
     };
 
     return (
-        <FadeIn>
-        <div className="flex min-h-screen items-center justify-center px-6">
+        <EmergeIn>
+                    <div className="flex min-h-screen items-center justify-center px-6">
             <button
                 type="button"
                 onClick={() => router.push("/")}
@@ -106,7 +107,7 @@ const LoginForm: React.FC = () => {
                 </form>
             </div>
         </div>
-    </FadeIn>
+        </EmergeIn>
     );
 };
 
