@@ -6,6 +6,7 @@ import {
   getProjectsService,
   getProjectSubjectsService,
 } from "../services/projectService";
+import { getUserInfo } from "../services/userService";
 
 export const createProjectController = async (req: Request, res: Response) => {
   const ProjectData: Project = req.body;
@@ -17,7 +18,10 @@ export const createProjectController = async (req: Request, res: Response) => {
     return;
   }
   try {
-    await createProjectService(ProjectData);
+    await createProjectService(
+      ProjectData,
+      await getUserInfo(req.cookies.token),
+    );
     res.status(201).send({ message: "Projeto criado com sucesso!" });
   } catch (error) {
     res.status(500).send({ message: "Erro ao criar projeto." });
@@ -27,11 +31,10 @@ export const createProjectController = async (req: Request, res: Response) => {
 
 export const getProjectsController = async (req: Request, res: Response) => {
   try {
-    // TODO: pegar o id do usuário logado
-    // como?
-    // cu kis
-    // por enquanto só vai pegar todos os projetos mesmo.
-    const result = await getProjectsService(req.body);
+    const result = await getProjectsService(
+      req.body,
+      await getUserInfo(req.cookies.token),
+    );
     res.status(201).send(result);
   } catch (error) {
     res.status(500).send({ message: "Erro ao buscar projetos." });

@@ -1,14 +1,18 @@
 import Project from "@shared/Project";
 import { db } from "../config/database";
+import { User } from "@shared/User";
 
-export const createProjectService = async (projectData: Project) => {
+export const createProjectService = async (
+  projectData: Project,
+  user: User,
+) => {
   const query =
     "INSERT INTO projects (name, description, subject, creator, status, institution) VALUES (?, ?, ?, ?, ?, ?)";
   const values = [
     projectData.name,
     projectData.description || null,
     projectData.subject || null,
-    projectData.creator,
+    user.id,
     projectData.status || null,
     projectData.institution || null,
   ];
@@ -17,8 +21,8 @@ export const createProjectService = async (projectData: Project) => {
   return db.query(query, values);
 };
 
-export const getProjectsService = async (creatorId: number) => {
-  const query = "SELECT * FROM projects"; // WHERE creator = ?";
+export const getProjectsService = async (creatorId: number, user: User) => {
+  const query = "SELECT * FROM projects WHERE creator = ?";
   //const values = [projectData.creator];
   return db.typedQuery<Project>(query);
 };

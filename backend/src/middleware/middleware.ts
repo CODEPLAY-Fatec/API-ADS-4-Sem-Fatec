@@ -7,9 +7,12 @@ if (!SECRET_KEY) {
   process.exit(1);
 }
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+export const authenticateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const token = req.cookies.token;
 
   if (!token) {
     res.status(401).json({ message: "Acesso negado! Token não fornecido." });
@@ -24,3 +27,4 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     console.log("Token inválido!");
   }
 };
+
