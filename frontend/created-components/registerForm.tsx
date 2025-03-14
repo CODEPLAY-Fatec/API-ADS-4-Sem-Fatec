@@ -38,7 +38,7 @@ const RegisterForm: React.FC = () => {
 
         setLoading(true);
         try {
-            await axios.post("/api/users", formData);
+            await axios.post("/api/users", formData, { withCredentials: true });
             toast.success("Cadastro realizado com sucesso!"); 
             router.push("/login"); // Redirecionar para a página de login
         } catch (error) {

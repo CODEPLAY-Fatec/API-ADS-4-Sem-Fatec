@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import GradientText from "./GradientText";
 import FadeIn from "./FadeIn";
 import toast from "react-hot-toast"; // Importe o toast
+import EmergeIn from "./EmergeIn";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
@@ -46,7 +47,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <FadeIn>
+    <EmergeIn>
       <div className="flex min-h-screen items-center justify-center px-6">
         <button
           type="button"
@@ -122,7 +123,7 @@ const LoginForm: React.FC = () => {
           </form>
         </div>
       </div>
-    </FadeIn>
+    </EmergeIn>
   );
 };
 
