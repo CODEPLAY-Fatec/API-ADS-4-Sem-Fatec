@@ -39,7 +39,7 @@ const LoginForm: React.FC = () => {
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-200 to-white px-6">
             <button
                 type="button"
-                onClick={() => console.log("Botão clicado")}
+                onClick={() => router.push("/")}
                 className="absolute left-4 top-4 p-2"
             >
                 <svg
