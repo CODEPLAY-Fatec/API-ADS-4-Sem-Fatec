@@ -43,6 +43,7 @@ export const meController = (req: Request, res: Response): void => { //funcao pa
         const token = req.cookies?.token;
         if (!token) {
             res.status(401).json({ message: "Usuário não autenticado." });
+            console.log("Usuário não autenticado.");
             return;
         }
         if (!SECRET_KEY) {
@@ -58,10 +59,11 @@ export const meController = (req: Request, res: Response): void => { //funcao pa
             email: decoded.email,
             phone: decoded.phone,
         });
-        res.status(200).json({ message: "Usuário autenticado." });
+        console.log("Usuário autenticado.");
         return;
     } catch (error) {
         res.status(403).json({ message: "Token inválido!" });
+        console.log("Token inválido!");
         return;
     }
 };

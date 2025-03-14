@@ -1,34 +1,33 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import axios from "axios";
 
-const protectedRoutes = [
-  "/projetos",
-];
+const protectedRoutes = ["/projetos"];
 
 export async function middleware(request: NextRequest) {
   if (protectedRoutes.includes(request.nextUrl.pathname)) {
     try {
-      const response = await axios.get("/me", {
-        withCredentials: true, 
-      });
+      await new Promise((resolve) => setTimeout(resolve, 500)); //  delay pq tava dando erro quando o middleware ia direto
+      
+      const res = await fetch(`${request.nextUrl.origin}/api/me`, {//tem q ser fetch aqui pq o axios nao funciona no middleware
+        method: "GET",
+        credentials: "include",
+        headers: { Cookie: request.headers.get("cookie") || "" }, 
+      });//withcredentials true nao funcionada aqui, por isso foi feito dessa forma
 
-
-      // Se a resposta não for 200, redireciona para a home
-      if (response.status !== 200) {
-        return NextResponse.redirect(new URL("/", request.url));
+      if (!res.ok) {
+        throw new Error("Usuário não autenticado.");
       }
+
+      console.log("Usuário autenticado!");
     } catch (error) {
-        console.log(error)
-      return NextResponse.redirect(new URL("/", request.url));// se der erro tb redireciona pra home
+      console.error("Usuário não autenticado!", error);
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
   return NextResponse.next();
 }
 
-// Define para quais rotas o middleware será aplicado
 export const config = {
-    matcher: ["/projetos/:path*"], // Aplica o middleware para qualquer sub-rota de /projetos
-  };
-  
+  matcher: ["/projetos/:path*"],//para aplicar na rota projeto e os filhos dela
+};
