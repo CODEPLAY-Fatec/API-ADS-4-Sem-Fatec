@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import FadeIn from "@/created-components/FadeIn";
-
+import { Toaster } from 'react-hot-toast';
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "800"] });
 
 export const metadata: Metadata = {
@@ -20,6 +20,7 @@ export default function RootLayout({
       <body className={poppins.className}>
         <FadeIn>
         {children}
+        <Toaster />
         </FadeIn>
         </body>
     </html>
