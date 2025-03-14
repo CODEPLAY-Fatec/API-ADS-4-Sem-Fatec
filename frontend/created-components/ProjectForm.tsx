@@ -27,12 +27,16 @@ export default class ProjectForm extends React.Component<{}, state> {
   }
 
   componentDidMount() {
-    axios.get("/api/projects/subjects").then((response) => {
-      this.setState({ projectSubjects: response.data });
-    });
-    axios.get("/api/projects/institutions").then((response) => {
-      this.setState({ institutions: response.data });
-    });
+    axios
+      .get("/api/projects/subjects", { withCredentials: true })
+      .then((response) => {
+        this.setState({ projectSubjects: response.data });
+      });
+    axios
+      .get("/api/projects/institutions", { withCredentials: true })
+      .then((response) => {
+        this.setState({ institutions: response.data });
+      });
   }
 
   submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
