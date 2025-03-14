@@ -4,8 +4,9 @@ import { User } from "@shared/User";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label"; // Certifique-se de que o caminho está correto
+import { Label } from "@/components/ui/label"; 
 import GradientText from "./GradientText";
+import FadeIn from "./FadeIn";
 
 ""
 const LoginForm: React.FC = () => {
@@ -36,7 +37,8 @@ const LoginForm: React.FC = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-200 to-white px-6">
+        <FadeIn>
+        <div className="flex min-h-screen items-center justify-center px-6">
             <button
                 type="button"
                 onClick={() => router.push("/")}
@@ -59,7 +61,7 @@ const LoginForm: React.FC = () => {
                 </svg>
             </button>
 
-            <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+            <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-[0px_4px_10px_rgba(0,0,0,0.1),_0px_-4px_10px_rgba(0,0,0,0.1)]">
                 <GradientText>É um prazer te ver novamente</GradientText>
                 <form onSubmit={handleSubmit} className="mt-6 space-y-6">
                     <div>
@@ -104,6 +106,7 @@ const LoginForm: React.FC = () => {
                 </form>
             </div>
         </div>
+    </FadeIn>
     );
 };
 

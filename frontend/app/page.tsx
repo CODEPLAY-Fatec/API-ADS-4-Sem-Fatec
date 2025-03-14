@@ -41,7 +41,7 @@ export default function Home() {
         <div className="mt-6">
           <Link
             href="/cadastro"
-            className="py-3 px-6 rounded-full bg-[#1C3373] text-white text-lg hover:bg-[#162b5e] hover:scale-105 transition-transform duration-200 mx-auto block"
+            className="py-3 px-4 rounded-full bg-[#1C3373] text-white text-lg hover:bg-[#162b5e] hover:scale-105 transition-transform duration-200 mx-auto block w-fit"
           >
             Comece sua jornada conosco
           </Link>
