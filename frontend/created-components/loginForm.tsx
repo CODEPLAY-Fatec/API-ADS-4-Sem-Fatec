@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label"; // Certifique-se de que o caminho está correto
 import GradientText from "./GradientText";
 
+""
 const LoginForm: React.FC = () => {
     const router = useRouter();
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -38,24 +39,28 @@ const LoginForm: React.FC = () => {
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-200 to-white px-6">
             <button
                 type="button"
-                onClick={() => router.push("/")}
+                onClick={() => console.log("Botão clicado")}
                 className="absolute left-4 top-4 p-2"
             >
-                <button>
-                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="..." />
-                    </svg>
-                </button>
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15 19l-7-7 7-7"
-                />
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        d="M15 19l-7-7 7-7"
+                    />
+                </svg>
             </button>
 
             <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-                <GradientText>É um prazer te ver novamente</GradientText>                
+                <GradientText>É um prazer te ver novamente</GradientText>
                 <form onSubmit={handleSubmit} className="mt-6 space-y-6">
                     <div>
                         <Label htmlFor="email" className="text-gray-700">E-mail</Label>
@@ -92,7 +97,7 @@ const LoginForm: React.FC = () => {
                     <Button
                         type="submit"
                         disabled={loading}
-                        className="w-3/4 bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 mx-auto block rounded-full transition-transform" 
+                        className="w-3/4 bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 mx-auto block rounded-full transition-transform"
                     >
                         {loading ? "Entrando..." : "Entrar"}
                     </Button>
