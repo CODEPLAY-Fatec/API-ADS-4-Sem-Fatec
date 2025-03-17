@@ -1,10 +1,8 @@
-//tabela para listagem de projetos 
+"use client"
 
-"use client";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import {
@@ -42,57 +40,96 @@ import {
 } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
+const customData = [
+  {
+    id: "1",
+    name: "Projeto A",
+    email: "projetoA@example.com",
+    location: "Desenvolvimento",
+    flag: "BR",
+    status: "Active",
+    balance: 1000,
+  },
+  {
+    id: "2",
+    name: "Projeto B",
+    email: "projetoB@example.com",
+    location: "Design",
+    flag: "US",
+    status: "Inactive",
+    balance: 1500,
+  },
+  {
+    id: "3",
+    name: "Projeto C",
+    email: "projetoC@example.com",
+    location: "Gestão",
+    flag: "FR",
+    status: "Active",
+    balance: 800,
+  },
+  {
+    id: "4",
+    name: "Projeto D",
+    email: "projetoD@example.com",
+    location: "Marketing",
+    flag: "DE",
+    status: "Inactive",
+    balance: 1200,
+  },
+  {
+    id: "5",
+    name: "Projeto E",
+    email: "projetoE@example.com",
+    location: "Pesquisa",
+    flag: "JP",
+    status: "Fechado",
+    balance: 500,
+  },
+  {
+    id: "6",
+    name: "Projeto F",
+    email: "projetoF@example.com",
+    location: "Consultoria",
+    flag: "IN",
+    status: "Fechado",
+    balance: 2000,
+  },
+  {
+    id: "7",
+    name: "Projeto G",
+    email: "projetoG@example.com",
+    location: "Desenvolvimento",
+    flag: "CN",
+    status: "Active",
+    balance: 1300,
+  },
+  {
+    id: "8",
+    name: "Projeto H",
+    email: "projetoH@example.com",
+    location: "Design",
+    flag: "IT",
+    status: "Fechado",
+    balance: 750,
+  },
+];
+
 type Item = {
   id: string;
   name: string;
   email: string;
   location: string;
   flag: string;
-  status: "Active" | "Inactive" | "Pending";
+  status: "Active" | "Inactive" | "Fechado";
   balance: number;
 };
 
 const columns: ColumnDef<Item>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    size: 28,
-    enableSorting: false,
-  },
-  {
-    header: "Name",
+    header: "Nome",
     accessorKey: "name",
     cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
-    size: 180,
-  },
-  {
-    header: "Email",
-    accessorKey: "email",
-    size: 200,
-  },
-  {
-    header: "Location",
-    accessorKey: "location",
-    cell: ({ row }) => (
-      <div>
-        <span className="text-lg leading-none">{row.original.flag}</span> {row.getValue("location")}
-      </div>
-    ),
     size: 180,
   },
   {
@@ -101,16 +138,34 @@ const columns: ColumnDef<Item>[] = [
     cell: ({ row }) => (
       <Badge
         className={cn(
-          row.getValue("status") === "Inactive" && "bg-muted-foreground/60 text-primary-foreground",
+          row.getValue("status") === "Active" ? "bg-blue-500 text-white" : "",
+          row.getValue("status") === "Inactive" ? "bg-green-500 text-white" : "",
+          row.getValue("status") === "Fechado" ? "bg-red-500 text-white" : ""
         )}
       >
-        {row.getValue("status")}
+        {row.getValue("status") === "Active"
+          ? "Iniciado"
+          : row.getValue("status") === "Inactive"
+          ? "Concluído"
+          : row.getValue("status") === "Fechado"
+          ? "Fechado"
+          : ""}
       </Badge>
     ),
     size: 120,
   },
   {
-    header: "Balance",
+    header: "Área de Atuação",
+    accessorKey: "location",
+    cell: ({ row }) => (
+      <Badge className="bg-white text-black border border-black">
+        {row.getValue("location")}
+      </Badge>
+    ),
+    size: 180,
+  },
+  {
+    header: "Responsável",
     accessorKey: "balance",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("balance"));
@@ -138,17 +193,7 @@ export default function Component() {
     },
   ]);
 
-  const [data, setData] = useState<Item[]>([]);
-  useEffect(() => {
-    async function fetchPosts() {
-      const res = await fetch(
-        "https://res.cloudinary.com/dlzlfasou/raw/upload/users-01_fertyx.json",
-      );
-      const data = await res.json();
-      setData([...data, ...data]);
-    }
-    fetchPosts();
-  }, []);
+  const [data, setData] = useState<Item[]>(customData);
 
   const table = useReactTable({
     data,
@@ -179,45 +224,10 @@ export default function Component() {
                       style={{ width: `${header.getSize()}px` }}
                       className="h-11"
                     >
-                      {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                        <div
-                          className={cn(
-                            header.column.getCanSort() &&
-                              "flex h-full cursor-pointer items-center justify-between gap-2 select-none",
-                          )}
-                          onClick={header.column.getToggleSortingHandler()}
-                          onKeyDown={(e) => {
-                            // Enhanced keyboard handling for sorting
-                            if (
-                              header.column.getCanSort() &&
-                              (e.key === "Enter" || e.key === " ")
-                            ) {
-                              e.preventDefault();
-                              header.column.getToggleSortingHandler()?.(e);
-                            }
-                          }}
-                          tabIndex={header.column.getCanSort() ? 0 : undefined}
-                        >
+                      {header.isPlaceholder ? null : (
+                        <div className="bg-blue-900 text-white px-3 py-1 rounded-full text-sm w-fit mx-auto">
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          {{
-                            asc: (
-                              <ChevronUpIcon
-                                className="shrink-0 opacity-60"
-                                size={16}
-                                aria-hidden="true"
-                              />
-                            ),
-                            desc: (
-                              <ChevronDownIcon
-                                className="shrink-0 opacity-60"
-                                size={16}
-                                aria-hidden="true"
-                              />
-                            ),
-                          }[header.column.getIsSorted() as string] ?? null}
                         </div>
-                      ) : (
-                        flexRender(header.column.columnDef.header, header.getContext())
                       )}
                     </TableHead>
                   );
@@ -349,17 +359,6 @@ export default function Component() {
           </Pagination>
         </div>
       </div>
-      <p className="text-muted-foreground mt-4 text-center text-sm">
-        Paginated table made with{" "}
-        <a
-          className="hover:text-foreground underline"
-          href="https://tanstack.com/table"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          TanStack Table
-        </a>
-      </p>
     </div>
   );
 }

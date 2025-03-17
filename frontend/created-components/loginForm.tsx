@@ -28,7 +28,7 @@ const LoginForm: React.FC = () => {
     setLoading(true);
     try {
       await axios.post("/api/login", formData, { withCredentials: true });
-      router.push("/Projetos");
+      router.push("/projetos");
     } catch (error) {
       console.error("Erro no login:", error);
     } finally {
@@ -40,7 +40,7 @@ const LoginForm: React.FC = () => {
   return (
     <EmergeIn>
       <div className="flex min-h-screen items-center justify-center px-6">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg drop-shadow-[0_-5px_10px_rgba(0,0,0,0.1)]">
           <GradientText>É um prazer te ver novamente</GradientText>
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
             <div>

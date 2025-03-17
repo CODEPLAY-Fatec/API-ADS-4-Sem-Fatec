@@ -1,7 +1,17 @@
-import ProjectForm from "@/created-components/ProjectForm";
+import Component from "@/components/comp-483"; // Tabela
+import Component2 from "@/components/comp-97"; // Botão p/ form
 
-//pagina para projetos q usaremos componentes para alternar entre tudo
 export default function Projetos() {
-  return <ProjectForm />;
-}
+  return (
+    <div className="flex justify-center items-center min-h-screen px-4 py-8 relative">
+      <div className="w-full max-w-7xl">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-semibold">Projetos</h1>
+          <Component2 />
+        </div>
 
+        <Component />
+      </div>
+    </div>
+  );
+}
