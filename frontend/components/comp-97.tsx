@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, XIcon } from "lucide-react"; 
 import ProjectForm from "@/created-components/ProjectForm"; 
+import GradientText from "@/created-components/GradientText";
 
 export default function Component2() {
   const [showForm, setShowForm] = useState(false); 
@@ -36,6 +37,11 @@ export default function Component2() {
             >
               <XIcon size={20} />
             </Button>
+            <div className="flex justify-center mb-4 items-center">
+              <GradientText className="text-2xl font-semibold mb-4">
+                Criar Novo Projeto
+              </GradientText>
+            </div>
             <ProjectForm />
           </div>
         </div>
