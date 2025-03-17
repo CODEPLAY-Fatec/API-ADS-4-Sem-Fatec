@@ -162,3 +162,12 @@ As seguintes ferramentas, linguagens, bibliotecas e tecnologias foram usadas na 
 |   Dev Team    | Ana Clara Tolomelli |                                                  [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](https://www.linkedin.com/in/anaclaratolomelli/) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](https://github.com/ninabtolo)                                                  |
 
 → [Voltar ao topo](#topo)
+
+## Como Rodar o Projeto
+
+Para rodar o projeto, você pode usar os seguintes comandos:
+
+-   `npm run start:dev`: Inicia o projeto em modo de desenvolvimento.
+-   `npm run start:prod`: Inicia o projeto em modo de produção.
+
+→ [Voltar ao topo](#topo)
