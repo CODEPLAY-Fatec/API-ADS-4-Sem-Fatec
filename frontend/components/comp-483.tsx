@@ -2,87 +2,21 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
+import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useId, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import ProjectDetails from "@/created-components/ProjectDetails";
 import { cn } from "@/lib/utils";
-import { PaginationState, SortingState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
-import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useId, useState } from "react";
 
 const customData = [
-    {
-        id: "1",
-        name: "Projeto A",
-        email: "projetoA@example.com",
-        location: "Desenvolvimento",
-        flag: "BR",
-        status: "Active",
-        balance: 1000,
-    },
-    {
-        id: "2",
-        name: "Projeto B",
-        email: "projetoB@example.com",
-        location: "Design",
-        flag: "US",
-        status: "Inactive",
-        balance: 1500,
-    },
-    {
-        id: "3",
-        name: "Projeto C",
-        email: "projetoC@example.com",
-        location: "Gestão",
-        flag: "FR",
-        status: "Active",
-        balance: 800,
-    },
-    {
-        id: "4",
-        name: "Projeto D",
-        email: "projetoD@example.com",
-        location: "Marketing",
-        flag: "DE",
-        status: "Inactive",
-        balance: 1200,
-    },
-    {
-        id: "5",
-        name: "Projeto E",
-        email: "projetoE@example.com",
-        location: "Pesquisa",
-        flag: "JP",
-        status: "Fechado",
-        balance: 500,
-    },
-    {
-        id: "6",
-        name: "Projeto F",
-        email: "projetoF@example.com",
-        location: "Consultoria",
-        flag: "IN",
-        status: "Fechado",
-        balance: 2000,
-    },
-    {
-        id: "7",
-        name: "Projeto G",
-        email: "projetoG@example.com",
-        location: "Desenvolvimento",
-        flag: "CN",
-        status: "Active",
-        balance: 1300,
-    },
-    {
-        id: "8",
-        name: "Projeto H",
-        email: "projetoH@example.com",
-        location: "Design",
-        flag: "IT",
-        status: "Fechado",
-        balance: 750,
-    },
+    { id: "1", name: "Projeto A", email: "projetoA@example.com", location: "Desenvolvimento", status: "Active", responsavel: "Ana Silva" },
+    { id: "2", name: "Projeto B", email: "projetoB@example.com", location: "Design", status: "Inactive", responsavel: "Carlos Souza" },
+    { id: "3", name: "Projeto C", email: "projetoC@example.com", location: "Gestão", status: "Active", responsavel: "Beatriz Lima" },
+    { id: "4", name: "Projeto D", email: "projetoD@example.com", location: "Marketing", status: "Inactive", responsavel: "Diego Martins" },
+    { id: "5", name: "Projeto E", email: "projetoE@example.com", location: "Pesquisa", status: "Fechado", responsavel: "Fernanda Rocha" },
+    { id: "6", name: "Projeto F", email: "projetoF@example.com", location: "Consultoria", status: "Fechado", responsavel: "Lucas Alves" },
+    { id: "7", name: "Projeto G", email: "projetoG@example.com", location: "Desenvolvimento", status: "Active", responsavel: "Mariana Duarte" },
+    { id: "8", name: "Projeto H", email: "projetoH@example.com", location: "Design", status: "Fechado", responsavel: "Roberto Nunes" },
 ];
 
 type Item = {
@@ -90,102 +24,42 @@ type Item = {
     name: string;
     email: string;
     location: string;
-    flag: string;
     status: "Active" | "Inactive" | "Fechado";
-    balance: number;
+    responsavel: string;
 };
 
 export default function Component() {
     const id = useId();
-    const [pagination, setPagination] = useState<PaginationState>({
-        pageIndex: 0,
-        pageSize: 5,
-    });
-
-    const [sorting, setSorting] = useState<SortingState>([
-        {
-            id: "name",
-            desc: false,
-        },
-    ]);
-
+    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
     const [data, setData] = useState<Item[]>(customData);
     const [selectedProject, setSelectedProject] = useState<Item | null>(null);
 
-    const handleProjectClick = (project: Item) => {
-        setSelectedProject(project);
+    const handleProjectClick = (project: Item) => setSelectedProject(project);
+    const handleCloseProjectDetails = () => setSelectedProject(null);
+
+    const currentPageData = data.slice(pagination.pageIndex * pagination.pageSize, (pagination.pageIndex + 1) * pagination.pageSize);
+
+    const totalPages = Math.ceil(data.length / pagination.pageSize);
+
+    const handleNextPage = () => {
+        if (pagination.pageIndex < totalPages - 1) {
+            setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex + 1 }));
+        }
     };
 
-    const handleCloseProjectDetails = () => {
-        setSelectedProject(null);
+    const handlePreviousPage = () => {
+        if (pagination.pageIndex > 0) {
+            setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex - 1 }));
+        }
     };
 
-    const table = useReactTable({
-        data,
-        columns: [
-            {
-                header: "Nome",
-                accessorKey: "name",
-                cell: ({ row }) => (
-                    <div className="font-medium cursor-pointer text-blue-500" onClick={() => handleProjectClick(row.original)}>
-                        {row.getValue("name")}
-                    </div>
-                ),
-                size: 180,
-            },
-            {
-                header: "Status",
-                accessorKey: "status",
-                cell: ({ row }) => (
-                    <Badge
-                        className={cn(
-                            row.getValue("status") === "Active" ? "bg-blue-500 text-white" : "",
-                            row.getValue("status") === "Inactive" ? "bg-green-500 text-white" : "",
-                            row.getValue("status") === "Fechado" ? "bg-red-500 text-white" : ""
-                        )}
-                    >
-                        {row.getValue("status") === "Active"
-                            ? "Iniciado"
-                            : row.getValue("status") === "Inactive"
-                            ? "Concluído"
-                            : row.getValue("status") === "Fechado"
-                            ? "Fechado"
-                            : ""}
-                    </Badge>
-                ),
-                size: 120,
-            },
-            {
-                header: "Área de Atuação",
-                accessorKey: "location",
-                cell: ({ row }) => <Badge className="bg-white text-black border border-black">{row.getValue("location")}</Badge>,
-                size: 180,
-            },
-            {
-                header: "Responsável",
-                accessorKey: "balance",
-                cell: ({ row }) => {
-                    const amount = parseFloat(row.getValue("balance"));
-                    const formatted = new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                    }).format(amount);
-                    return formatted;
-                },
-                size: 120,
-            },
-        ],
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        onSortingChange: setSorting,
-        enableSortingRemoval: false,
-        getPaginationRowModel: getPaginationRowModel(),
-        onPaginationChange: setPagination,
-        state: {
-            sorting,
-            pagination,
-        },
-    });
+    const handleFirstPage = () => {
+        setPagination({ ...pagination, pageIndex: 0 });
+    };
+
+    const handleLastPage = () => {
+        setPagination({ ...pagination, pageIndex: totalPages - 1 });
+    };
 
     return (
         <div className="space-y-4">
@@ -193,121 +67,72 @@ export default function Component() {
             <div className="bg-background overflow-hidden rounded-md border">
                 <Table className="table-fixed">
                     <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className="hover:bg-transparent">
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id} style={{ width: `${header.getSize()}px` }} className="h-11 text-center">
-                                            {header.isPlaceholder ? null : (
-                                                <div className="bg-blue-900 text-white px-3 py-1 rounded-full text-sm w-fit mx-auto">
-                                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                                </div>
-                                            )}
-                                        </TableHead>
-                                    );
-                                })}
-                            </TableRow>
-                        ))}
+                        <TableRow>
+                            <TableHead className="h-11 text-center">
+                                <span className="bg-blue-900 text-white px-3 py-1 rounded-full text-sm">Nome</span>
+                            </TableHead>
+                            <TableHead className="h-11 text-center">
+                                <span className="bg-blue-900 text-white px-3 py-1 rounded-full text-sm">Status</span>
+                            </TableHead>
+                            <TableHead className="h-11 text-center">
+                                <span className="bg-blue-900 text-white px-3 py-1 rounded-full text-sm">Área de Atuação</span>
+                            </TableHead>
+                            <TableHead className="h-11 text-center">
+                                <span className="bg-blue-900 text-white px-3 py-1 rounded-full text-sm">Responsável</span>
+                            </TableHead>
+                        </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                        {currentPageData.length ? (
+                            currentPageData.map((row) => (
                                 <TableRow key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className="text-center">
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
+                                    <TableCell className="text-center">
+                                        <div className="font-medium cursor-pointer text-blue-500" onClick={() => handleProjectClick(row)}>{row.name}</div>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge className={cn(row.status === "Active" ? "bg-blue-500 text-white" : row.status === "Inactive" ? "bg-green-500 text-white" : "bg-red-500 text-white")}>{row.status}</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge className="bg-white text-black border border-black">{row.location}</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-center">{row.responsavel}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
+                                <TableCell colSpan={4} className="h-24 text-center">No results.</TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
 
-            {/* Pagination */}
             <div className="flex items-center justify-between gap-8">
-                {/* Page number information */}
                 <div className="text-muted-foreground flex grow justify-end text-sm whitespace-nowrap">
                     <p className="text-muted-foreground text-sm whitespace-nowrap" aria-live="polite">
                         <span className="text-foreground">
-                            {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
-                            {Math.min(
-                                Math.max(
-                                    table.getState().pagination.pageIndex * table.getState().pagination.pageSize + table.getState().pagination.pageSize,
-                                    0
-                                ),
-                                table.getRowCount()
-                            )}
+                            {pagination.pageIndex * pagination.pageSize + 1}-
+                            {Math.min((pagination.pageIndex + 1) * pagination.pageSize, data.length)}
                         </span>{" "}
-                        of <span className="text-foreground">{table.getRowCount().toString()}</span>
+                        of <span className="text-foreground">{data.length}</span>
                     </p>
                 </div>
 
-                {/* Pagination buttons */}
                 <div>
-                    <Pagination>
-                        <PaginationContent>
-                            {/* First page button */}
-                            <PaginationItem>
-                                <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="disabled:pointer-events-none disabled:opacity-50"
-                                    onClick={() => table.firstPage()}
-                                    disabled={!table.getCanPreviousPage()}
-                                    aria-label="Go to first page"
-                                >
-                                    <ChevronFirstIcon size={16} aria-hidden="true" />
-                                </Button>
-                            </PaginationItem>
-                            {/* Previous page button */}
-                            <PaginationItem>
-                                <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="disabled:pointer-events-none disabled:opacity-50"
-                                    onClick={() => table.previousPage()}
-                                    disabled={!table.getCanPreviousPage()}
-                                    aria-label="Go to previous page"
-                                >
-                                    <ChevronLeftIcon size={16} aria-hidden="true" />
-                                </Button>
-                            </PaginationItem>
-                            {/* Next page button */}
-                            <PaginationItem>
-                                <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="disabled:pointer-events-none disabled:opacity-50"
-                                    onClick={() => table.nextPage()}
-                                    disabled={!table.getCanNextPage()}
-                                    aria-label="Go to next page"
-                                >
-                                    <ChevronRightIcon size={16} aria-hidden="true" />
-                                </Button>
-                            </PaginationItem>
-                            {/* Last page button */}
-                            <PaginationItem>
-                                <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="disabled:pointer-events-none disabled:opacity-50"
-                                    onClick={() => table.lastPage()}
-                                    disabled={!table.getCanNextPage()}
-                                    aria-label="Go to last page"
-                                >
-                                    <ChevronLastIcon size={16} aria-hidden="true" />
-                                </Button>
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
+                    <div className="flex gap-4">
+                        <Button size="icon" variant="outline" onClick={handleFirstPage} disabled={pagination.pageIndex === 0}>
+                            <ChevronFirstIcon size={16} />
+                        </Button>
+                        <Button size="icon" variant="outline" onClick={handlePreviousPage} disabled={pagination.pageIndex === 0}>
+                            <ChevronLeftIcon size={16} />
+                        </Button>
+                        <Button size="icon" variant="outline" onClick={handleNextPage} disabled={pagination.pageIndex === totalPages - 1}>
+                            <ChevronRightIcon size={16} />
+                        </Button>
+                        <Button size="icon" variant="outline" onClick={handleLastPage} disabled={pagination.pageIndex === totalPages - 1}>
+                            <ChevronLastIcon size={16} />
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

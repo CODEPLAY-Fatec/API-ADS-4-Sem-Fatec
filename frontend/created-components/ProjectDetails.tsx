@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { XIcon } from "lucide-react"; // Substitua pelo ícone da biblioteca que você está usando
 import React from "react";
+import GradientText from "./GradientText";
 
 type ProjectDetailsProps = {
     project: {
@@ -32,7 +33,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => 
                     <XIcon size={20} />
                 </Button>
                 <div className="flex justify-center mb-4 items-center">
-                    <h2 className="text-2xl font-semibold mb-4">Detalhes do Projeto</h2>
+                    <GradientText className="text-2xl font-semibold mb-4">Detalhes do Projeto</GradientText>
                 </div>
                 <form className="space-y-4">
                     <div>
@@ -53,7 +54,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => 
                     </div>
                     <div>
                         <Label htmlFor="balance">Responsável</Label>
-                        <Input id="balance" type="text" value={project.balance.toString()} readOnly className="w-full" />
+                        <Input id="balance" type="text" value={project.responsavel.toString()} readOnly className="w-full" />
                     </div>
                 </form>
             </div>
