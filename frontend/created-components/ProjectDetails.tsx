@@ -17,9 +17,15 @@ type ProjectDetailsProps = {
         status: "Fechado" | "Em andamento" | "Concluído";
     };
     onClose: () => void;
+    users: { id: number; name: string }[];
 };
 
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => {
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users }) => {
+    const getResponsavelName = (creatorId: number) => {
+        const user = users.find((user) => user.id === creatorId);
+        return user ? user.name : "Desconhecido";
+    };
+
     return (
         <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
             <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg">
@@ -55,6 +61,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => 
                     <div>
                         <Label htmlFor="status">Status</Label>
                         <Input id="status" type="text" value={project.status} readOnly className="w-full" />
+                    </div>
+                    <div>
+                        <Label htmlFor="responsavel">Responsável</Label>
+                        <Input id="responsavel" type="text" value={getResponsavelName(project.creator)} readOnly className="w-full" />
                     </div>
                 </form>
             </div>

@@ -21,9 +21,15 @@ type Item = {
     responsavel: string;
 };
 
+type User = {
+    id: number;
+    name: string;
+};
+
 export default function Tabela() {
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
     const [data, setData] = useState<Item[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [selectedProject, setSelectedProject] = useState<Item | null>(null);
 
     useEffect(() => {
@@ -36,7 +42,18 @@ export default function Tabela() {
             }
         };
 
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get("/api/users");
+                setUsers(response.data);
+                console.log("Usuários carregados:", response.data);
+            } catch (error) {
+                console.error("Erro ao buscar usuários:", error);
+            }
+        };
+
         fetchProjects();
+        fetchUsers();
     }, []);
 
     const handleProjectClick = (project: Item) => setSelectedProject(project);
@@ -66,9 +83,14 @@ export default function Tabela() {
         setPagination({ ...pagination, pageIndex: totalPages - 1 });
     };
 
+    const getResponsavelName = (creatorId: number) => {
+        const user = users.find((user) => user.id === creatorId);
+        return user ? user.name : "Desconhecido";
+    };
+
     return (
         <div className="space-y-4">
-            {selectedProject && <ProjectDetails project={selectedProject} onClose={handleCloseProjectDetails} />}
+            {selectedProject && <ProjectDetails project={selectedProject} onClose={handleCloseProjectDetails} users={users} />}
             <div className="bg-background overflow-hidden rounded-md border">
                 <Table className="table-fixed">
                     <TableHeader>
@@ -111,9 +133,9 @@ export default function Tabela() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Badge className="bg-white text-black border border-black">{row.location}</Badge>
+                                        <Badge className="bg-white text-black border border-black">{row.subject}</Badge>
                                     </TableCell>
-                                    <TableCell className="text-center">{row.responsavel}</TableCell>
+                                    <TableCell className="text-center">{getResponsavelName(row.creator)}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
