@@ -46,14 +46,16 @@ export default class ProjectForm extends React.Component<{}, state> {
     if (!this.state.currentProject.name) {
       return;
     }
+  
     const projectData: Project = {
       name: this.state.currentProject.name,
       description: this.state.currentProject.description,
       subject: this.state.currentProject.subject,
       status: this.state.currentProject.status,
+      institution: this.state.currentProject.institution, 
       creator: 1,
     };
-
+  
     try {
       await axios.post("/api/projects", projectData);
       this.setState({ 
@@ -64,7 +66,7 @@ export default class ProjectForm extends React.Component<{}, state> {
     } catch (error) {
       console.error("Erro ao criar projeto:", error);
     }
-  };
+  };  
 
   closeSuccessModal = () => {
     this.setState({ showSuccessModal: false }, () => {
