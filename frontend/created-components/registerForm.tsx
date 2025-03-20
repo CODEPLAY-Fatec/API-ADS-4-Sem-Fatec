@@ -57,7 +57,13 @@ const RegisterForm: React.FC = () => {
 
     return (
         <EmergeIn>
-            <div className="flex min-h-screen items-center justify-center px-6">
+            <div className="relative flex min-h-screen items-center justify-center px-6">
+                <button
+                    onClick={() => router.push("/")}
+                    className="absolute top-8 left-8 text-3xl text-gray-700 hover:text-gray-900"
+                >
+                    &#60;
+                </button>
                 <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
                     <GradientText>Crie sua conta</GradientText>
                     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
