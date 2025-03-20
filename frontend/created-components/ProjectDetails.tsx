@@ -21,7 +21,7 @@ type ProjectDetailsProps = {
 
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => {
     return (
-        <div className="absolute inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
             <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg">
                 <Button
                     variant="ghost"

@@ -28,7 +28,7 @@ type Item = {
     responsavel: string;
 };
 
-export default function Component() {
+export default function Tabela() {
     const id = useId();
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
     const [data, setData] = useState<Item[]>(customData);

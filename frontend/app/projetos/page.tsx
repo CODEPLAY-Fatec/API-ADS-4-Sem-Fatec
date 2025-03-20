@@ -1,4 +1,4 @@
-import Component from "@/components/comp-483"; // Tabela
+import Tabela from "@/components/comp-483"; 
 import Component2 from "@/components/comp-97"; // Botão p/ form
 
 export default function Projetos() {
@@ -10,7 +10,7 @@ export default function Projetos() {
                     <Component2 />
                 </div>
 
-                <Component />
+                <Tabela />
             </div>
         </div>
     );
