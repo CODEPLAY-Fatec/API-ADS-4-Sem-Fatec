@@ -2,37 +2,42 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useId, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import ProjectDetails from "@/created-components/ProjectDetails";
 import { cn } from "@/lib/utils";
-
-const customData = [
-    { id: "1", name: "Projeto A", email: "projetoA@example.com", location: "Desenvolvimento", status: "Active", responsavel: "Ana Silva" },
-    { id: "2", name: "Projeto B", email: "projetoB@example.com", location: "Design", status: "Inactive", responsavel: "Carlos Souza" },
-    { id: "3", name: "Projeto C", email: "projetoC@example.com", location: "Gestão", status: "Active", responsavel: "Beatriz Lima" },
-    { id: "4", name: "Projeto D", email: "projetoD@example.com", location: "Marketing", status: "Inactive", responsavel: "Diego Martins" },
-    { id: "5", name: "Projeto E", email: "projetoE@example.com", location: "Pesquisa", status: "Fechado", responsavel: "Fernanda Rocha" },
-    { id: "6", name: "Projeto F", email: "projetoF@example.com", location: "Consultoria", status: "Fechado", responsavel: "Lucas Alves" },
-    { id: "7", name: "Projeto G", email: "projetoG@example.com", location: "Desenvolvimento", status: "Active", responsavel: "Mariana Duarte" },
-    { id: "8", name: "Projeto H", email: "projetoH@example.com", location: "Design", status: "Fechado", responsavel: "Roberto Nunes" },
-];
+import axios from "axios";
+import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Item = {
-    id: string;
+    id: number;
     name: string;
-    email: string;
+    description: string;
+    subject: string;
+    institution: string;
+    creator: number;
+    status: "Fechado" | "Em andamento" | "Concluído";
     location: string;
-    status: "Active" | "Inactive" | "Fechado";
     responsavel: string;
 };
 
 export default function Tabela() {
-    const id = useId();
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
-    const [data, setData] = useState<Item[]>(customData);
+    const [data, setData] = useState<Item[]>([]);
     const [selectedProject, setSelectedProject] = useState<Item | null>(null);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await axios.get("/api/projects");
+                setData(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar projetos:", error);
+            }
+        };
+
+        fetchProjects();
+    }, []);
 
     const handleProjectClick = (project: Item) => setSelectedProject(project);
     const handleCloseProjectDetails = () => setSelectedProject(null);
@@ -87,10 +92,23 @@ export default function Tabela() {
                             currentPageData.map((row) => (
                                 <TableRow key={row.id}>
                                     <TableCell className="text-center">
-                                        <div className="font-medium cursor-pointer text-blue-500" onClick={() => handleProjectClick(row)}>{row.name}</div>
+                                        <div className="font-medium cursor-pointer text-blue-500" onClick={() => handleProjectClick(row)}>
+                                            {row.name}
+                                        </div>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Badge className={cn(row.status === "Active" ? "bg-blue-500 text-white" : row.status === "Inactive" ? "bg-green-500 text-white" : "bg-red-500 text-white")}>{row.status}</Badge>
+                                        {/* Fechado, Em andamento, Concluído */}
+                                        <Badge
+                                            className={cn(
+                                                row.status === "Em andamento"
+                                                    ? "bg-blue-500 text-white"
+                                                    : row.status === "Concluído"
+                                                    ? "bg-green-500 text-white"
+                                                    : "bg-red-500 text-white"
+                                            )}
+                                        >
+                                            {row.status}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Badge className="bg-white text-black border border-black">{row.location}</Badge>
@@ -100,7 +118,9 @@ export default function Tabela() {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={4} className="h-24 text-center">No results.</TableCell>
+                                <TableCell colSpan={4} className="h-24 text-center">
+                                    No results.
+                                </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
@@ -111,8 +131,7 @@ export default function Tabela() {
                 <div className="text-muted-foreground flex grow justify-end text-sm whitespace-nowrap">
                     <p className="text-muted-foreground text-sm whitespace-nowrap" aria-live="polite">
                         <span className="text-foreground">
-                            {pagination.pageIndex * pagination.pageSize + 1}-
-                            {Math.min((pagination.pageIndex + 1) * pagination.pageSize, data.length)}
+                            {pagination.pageIndex * pagination.pageSize + 1}-{Math.min((pagination.pageIndex + 1) * pagination.pageSize, data.length)}
                         </span>{" "}
                         of <span className="text-foreground">{data.length}</span>
                     </p>

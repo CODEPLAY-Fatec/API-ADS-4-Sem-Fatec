@@ -2,19 +2,19 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { XIcon } from "lucide-react"; // Substitua pelo ícone da biblioteca que você está usando
+import { XIcon } from "lucide-react";
 import React from "react";
 import GradientText from "./GradientText";
 
 type ProjectDetailsProps = {
     project: {
-        id: string;
+        id: number;
         name: string;
-        email: string;
-        location: string;
-        flag: string;
-        status: string;
-        balance: number;
+        description: string;
+        subject: string;
+        institution: string;
+        creator: number;
+        status: "Fechado" | "Em andamento" | "Concluído";
     };
     onClose: () => void;
 };
@@ -33,7 +33,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => 
                     <XIcon size={20} />
                 </Button>
                 <div className="flex justify-center mb-4 items-center">
-                    <GradientText className="text-2xl font-semibold mb-4">Detalhes do Projeto</GradientText>
+                    <GradientText>Detalhes do Projeto</GradientText>
                 </div>
                 <form className="space-y-4">
                     <div>
@@ -41,20 +41,20 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose }) => 
                         <Input id="name" type="text" value={project.name} readOnly className="w-full" />
                     </div>
                     <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" value={project.email} readOnly className="w-full" />
+                        <Label htmlFor="description">Descrição</Label>
+                        <Input id="description" type="text" value={project.description} readOnly className="w-full" />
                     </div>
                     <div>
-                        <Label htmlFor="location">Área de Atuação</Label>
-                        <Input id="location" type="text" value={project.location} readOnly className="w-full" />
+                        <Label htmlFor="subject">Área de Atuação</Label>
+                        <Input id="subject" type="text" value={project.subject} readOnly className="w-full" />
+                    </div>
+                    <div>
+                        <Label htmlFor="institution">Instituição</Label>
+                        <Input id="institution" type="text" value={project.institution} readOnly className="w-full" />
                     </div>
                     <div>
                         <Label htmlFor="status">Status</Label>
                         <Input id="status" type="text" value={project.status} readOnly className="w-full" />
-                    </div>
-                    <div>
-                        <Label htmlFor="balance">Responsável</Label>
-                        <Input id="balance" type="text" value={project.responsavel.toString()} readOnly className="w-full" />
                     </div>
                 </form>
             </div>

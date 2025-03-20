@@ -21,10 +21,10 @@ export const createProjectService = async (
   return db.query(query, values);
 };
 
-export const getProjectsService = async (creatorId: number, user: User) => {
+export const getProjectsService = async (creatorId: number) => {
   const query = "SELECT * FROM projects WHERE creator = ?";
-  //const values = [projectData.creator];
-  return db.typedQuery<Project>(query);
+  const values = [creatorId];
+  return db.typedQuery<Project>(query, values); // Certifique-se de passar os valores corretamente
 };
 
 export const getProjectSubjectsService = async (creatorId: number) => {
