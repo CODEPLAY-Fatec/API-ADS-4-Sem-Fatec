@@ -28,10 +28,10 @@ export const createUserController = async (req: Request, res: Response) => {
   }
 
   try {
-    const newUser = await createUser({ name, email, password, phoneNumber });
-    res.status(201).json({ message: "Conta criada com sucesso!" });
+    await createUser({ name, email, password, phoneNumber });
+    res.status(201).send({ message: "Conta criada com sucesso!" });
   } catch (error: any) {
-    res.status(500).json({ error });
+    res.status(500).send({ message: error.message });
     console.warn(error);
   }
 };
@@ -77,4 +77,3 @@ export const logoutController = (req: Request, res: Response) => {
   });
   res.json({ message: "Logout realizado com sucesso" });
 };
-

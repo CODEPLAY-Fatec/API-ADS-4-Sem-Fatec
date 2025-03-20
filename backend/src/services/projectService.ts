@@ -21,13 +21,37 @@ export const createProjectService = async (
   return db.query(query, values);
 };
 
-export const getProjectsService = async (creatorId: number) => {
+export const updateProjectService = async (
+  projectData: Project,
+  user: User,
+) => {
+  const hasAccess = await db.typedQuery<{ id: number }>(
+    "SELECT id FROM projects WHERE id = ? AND creator = ?",
+    [projectData.id, user.id],
+  );
+  if (!hasAccess.length) {
+    throw new Error("Usuário não tem permissão para editar este projeto.");
+  }
+  const query =
+    "UPDATE projects SET name = ?, description = ?, subject = ?, status = ?, institution = ? WHERE id = ?";
+  const values = [
+    projectData.name || null,
+    projectData.description || null,
+    projectData.subject || null,
+    projectData.status || null,
+    projectData.institution || null,
+    projectData.id,
+  ];
+  return db.query(query, values);
+};
+
+export const getProjectsService = async (user: User) => {
   const query = "SELECT * FROM projects WHERE creator = ?";
-  const values = [creatorId];
+  const values = [user.id];
   return db.typedQuery<Project>(query, values); // Certifique-se de passar os valores corretamente
 };
 
-export const getProjectSubjectsService = async (creatorId: number) => {
+export const getProjectSubjectsService = async () => {
   const query = "SELECT name from projectSubjects";
   return db.typedQuery<string>(query);
 };

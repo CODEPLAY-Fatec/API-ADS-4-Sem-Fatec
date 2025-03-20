@@ -1,6 +1,12 @@
-import Project from "@shared/Project";
 import { Request, Response } from "express";
-import { createProjectService, getInstitutionsService, getProjectsService, getProjectSubjectsService } from "../services/projectService";
+import Project from "@shared/Project";
+import {
+  createProjectService,
+  getInstitutionsService,
+  getProjectsService,
+  getProjectSubjectsService,
+  updateProjectService,
+} from "../services/projectService";
 import { getUserInfo } from "../services/userService";
 
 export const createProjectController = async (req: Request, res: Response) => {
@@ -21,6 +27,22 @@ export const createProjectController = async (req: Request, res: Response) => {
     }
 };
 
+export const updateProjectController = async (req: Request, res: Response) => {
+  const ProjectData: Project = req.body; // recebe um projeto com propriedades opcionais. eu poderia trasnformar em Partial, mas...
+  console.log(ProjectData);
+
+  try {
+    await updateProjectService(
+      ProjectData,
+      await getUserInfo(req.cookies.token),
+    );
+    res.status(201).send({ message: "Projeto atualizado com sucesso!" });
+  } catch (error) {
+    res.status(500).send({ message: "Erro ao atualizar projeto." });
+    console.warn(error);
+  }
+};
+
 export const getProjectsController = async (req: Request, res: Response) => {
     try {
         const userInfo = await getUserInfo(req.cookies.token);
@@ -28,7 +50,7 @@ export const getProjectsController = async (req: Request, res: Response) => {
             res.status(400).send({ message: "User ID is missing." });
             return;
         }
-        const result = await getProjectsService(userInfo.id);
+        const result = await getProjectsService(userInfo);
         res.status(200).send(result);
     } catch (error) {
         console.error("Erro ao buscar projetos:", error);
@@ -38,7 +60,7 @@ export const getProjectsController = async (req: Request, res: Response) => {
 
 export const getProjectSubjectsController = async (req: Request, res: Response) => {
     try {
-        const result = await getProjectSubjectsService(req.body);
+        const result = await getProjectSubjectsService();
         res.status(201).send(result);
     } catch (error) {
         res.status(500).send({ message: "Erro ao buscar projetos." });
