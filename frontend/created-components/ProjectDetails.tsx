@@ -41,35 +41,45 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
                 <div className="flex justify-center mb-4 items-center">
                     <GradientText>Detalhes do Projeto</GradientText>
                 </div>
-                <form className="space-y-4">
-                    <div>
-                        <Label htmlFor="name">Nome</Label>
-                        <Input id="name" type="text" value={project.name} readOnly className="w-full" />
-                    </div>
-                    <div>
-                        <Label htmlFor="description">Descrição</Label>
-                        <Input id="description" type="text" value={project.description} readOnly className="w-full" />
-                    </div>
-                    <div>
-                        <Label htmlFor="subject">Área de Atuação</Label>
-                        <Input id="subject" type="text" value={project.subject} readOnly className="w-full" />
-                    </div>
-                    <div>
-                        <Label htmlFor="institution">Instituição</Label>
-                        <Input id="institution" type="text" value={project.institution} readOnly className="w-full" />
-                    </div>
-                    <div>
-                        <Label htmlFor="status">Status</Label>
-                        <Input id="status" type="text" value={project.status} readOnly className="w-full" />
-                    </div>
-                    <div>
-                        <Label htmlFor="responsavel">Responsável</Label>
-                        <Input id="responsavel" type="text" value={getResponsavelName(project.creator)} readOnly className="w-full" />
-                    </div>
-                </form>
+                <div className="border-2 border-gray-300 rounded-xl p-6">
+                    <form className="space-y-4">
+                        <div>
+                            <Label htmlFor="name">Nome</Label>
+                            <Input id="name" type="text" value={project.name} readOnly className="w-full" />
+                        </div>
+                        <div>
+                            <Label htmlFor="description">Descrição</Label>
+                            <Input id="description" type="text" value={project.description} readOnly className="w-full" />
+                        </div>
+                        <div>
+                            <Label htmlFor="subject">Área de Atuação</Label>
+                            <Input id="subject" type="text" value={project.subject} readOnly className="w-full" />
+                        </div>
+                        <div>
+                            <Label htmlFor="institution">Instituição</Label>
+                            <Input id="institution" type="text" value={project.institution} readOnly className="w-full" />
+                        </div>
+                        <div>
+                            <Label htmlFor="status">Status</Label>
+                            <Input id="status" type="text" value={project.status} readOnly className="w-full" />
+                        </div>
+                        <div>
+                            <Label htmlFor="responsavel">Responsável</Label>
+                            <Input id="responsavel" type="text" value={getResponsavelName(project.creator)} readOnly className="w-full" />
+                        </div>
+                        <div className="flex justify-center space-x-4 mt-6">
+                            <Button className="bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 px-6 py-3 rounded-full">
+                                Salvar Edição
+                            </Button>
+                            <Button className="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-3 rounded-full hover:bg-red-700">
+                                Excluir Projeto
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );
-};
+}    
 
 export default ProjectDetails;
