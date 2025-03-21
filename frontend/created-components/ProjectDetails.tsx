@@ -25,6 +25,7 @@ type ProjectDetailsProps = {
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users }) => {
     const [isEditable] = useState(true);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false); // New state for delete success modal
     const [editableProject, setEditableProject] = useState({ ...project });
     const [projectSubjects, setProjectSubjects] = useState<string[]>([]);
     const [institutions, setInstitutions] = useState<string[]>([]);
@@ -63,6 +64,15 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
             setShowSuccessModal(true);
         } catch (error) {
             console.error("Erro ao atualizar projeto:", error);
+        }
+    };
+
+    const handleDeleteClick = async () => {
+        try {
+            await axios.delete(`/api/projects/${project.id}`);
+            setShowDeleteSuccessModal(true); // Show delete success modal
+        } catch (error) {
+            console.error("Erro ao deletar projeto:", error);
         }
     };
 
@@ -155,7 +165,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
                             <Button className="bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 px-6 py-3 rounded-full" onClick={handleSaveClick}>
                                 Salvar Edição
                             </Button>
-                            <Button className="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-3 rounded-full hover:bg-red-700">
+                            <Button className="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-3 rounded-full" onClick={handleDeleteClick}>
                                 Excluir Projeto
                             </Button>
                         </div>
@@ -168,6 +178,22 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
                         <p className="text-lg font-semibold text-black">Projeto atualizado com sucesso!</p>
                         <Button
                             onClick={() => setShowSuccessModal(false)}
+                            className="mt-4 bg-[#162b5e] text-white px-6 py-2 rounded-full hover:bg-[#0f224b] transition-transform duration-200"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                </div>
+            )}
+            {showDeleteSuccessModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50">
+                        <p className="text-lg font-semibold text-black">Projeto deletado com sucesso!</p>
+                        <Button
+                            onClick={() => {
+                                setShowDeleteSuccessModal(false);
+                                onClose();
+                            }}
                             className="mt-4 bg-[#162b5e] text-white px-6 py-2 rounded-full hover:bg-[#0f224b] transition-transform duration-200"
                         >
                             OK
