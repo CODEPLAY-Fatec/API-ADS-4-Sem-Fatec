@@ -24,6 +24,11 @@ CREATE TABLE `projects` (
   `status` ENUM ('Fechado', 'Em andamento', 'Concluído') DEFAULT 'Fechado'
 );
 
+ create table projectMember (
+	projectId int NOT NULL,
+	userId int NOT NULL
+);
+
 CREATE TABLE `projectSubjects` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255) UNIQUE NOT NULL
@@ -88,6 +93,10 @@ ALTER TABLE `tasks` ADD FOREIGN KEY (`taskUser`) REFERENCES `users` (`id`) ON DE
 ALTER TABLE `projectRecovery` ADD FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `taskRecovery` ADD FOREIGN KEY (`taskId`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `projectMember` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `projectMember` ADD FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 INSERT INTO projectSubjects (name) VALUES ('Exatas');
 
