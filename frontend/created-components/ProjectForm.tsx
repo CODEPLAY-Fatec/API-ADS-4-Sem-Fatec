@@ -78,11 +78,7 @@ export default class ProjectForm extends React.Component<{}, state> {
   
     try {
       await axios.post("/api/projects", projectData);
-      this.setState({ 
-        showSuccessModal: true,
-        currentProject: {} 
-      });
-      document.body.style.overflow = "hidden"; 
+        toast.success("Projeto criado com sucesso!"); 
     } catch (error) {
       toast.error("Erro ao criar Projeto",{duration: 1500});
     }
