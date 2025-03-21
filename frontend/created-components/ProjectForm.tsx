@@ -84,7 +84,7 @@ export default class ProjectForm extends React.Component<{}, state> {
       });
       document.body.style.overflow = "hidden"; 
     } catch (error) {
-      console.error("Erro ao criar projeto:", error);
+      toast.error("Erro ao criar Projeto",{duration: 1500});
     }
   };  
 

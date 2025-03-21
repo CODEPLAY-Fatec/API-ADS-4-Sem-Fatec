@@ -7,6 +7,7 @@ import axios from "axios";
 import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import GradientText from "./GradientText";
+import toast from "react-hot-toast"; 
 
 type ProjectDetailsProps = {
     project: {
@@ -36,7 +37,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
                 const response = await axios.get("/api/projects/subjects");
                 setProjectSubjects(response.data.map((subject: { name: string }) => subject.name));
             } catch (error) {
-                console.error("Erro ao buscar áreas de atuação:", error);
+                toast.error("Erro ao buscaráreas de atuação",{duration: 1500});
             }
         };
 
@@ -45,7 +46,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
                 const response = await axios.get("/api/projects/institutions");
                 setInstitutions(response.data.map((institution: { name: string }) => institution.name));
             } catch (error) {
-                console.error("Erro ao buscar instituições:", error);
+                toast.error("Erro ao buscar instituições",{duration: 1500});
             }
         };
 
@@ -61,18 +62,18 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
     const handleSaveClick = async () => {
         try {
             await axios.patch("/api/projects", editableProject);
-            setShowSuccessModal(true);
+            toast.success("Aualizado com sucesso!"), {duration: 1500}; 
         } catch (error) {
-            console.error("Erro ao atualizar projeto:", error);
+            toast.error("Erro ao atualizar projeto",{duration: 1500});
         }
     };
 
     const handleDeleteClick = async () => {
         try {
             await axios.delete(`/api/projects/${project.id}`);
-            setShowDeleteSuccessModal(true); // Show delete success modal
+            toast.success("Deletado com sucesso!"); 
         } catch (error) {
-            console.error("Erro ao deletar projeto:", error);
+            toast.error("Erro ao deletar projeto", {duration: 1500}); 
         }
     };
 

@@ -1,5 +1,6 @@
 import Tabela from "@/components/comp-483"; 
 import Component2 from "@/components/comp-97"; // Botão p/ form
+import { toast } from 'react-hot-toast';// Notificaçao feedback
 
 export default function Projetos() {
     return (
@@ -15,3 +16,9 @@ export default function Projetos() {
         </div>
     );
 }
+
+export const useToast = () => ({
+  success: (message: string) => toast.success(message),
+  error: (message: string) => toast.error(message),
+  loading: (message: string) => toast.loading(message),
+});
