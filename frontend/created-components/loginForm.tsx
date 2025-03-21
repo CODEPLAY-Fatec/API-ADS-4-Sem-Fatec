@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import GradientText from "./GradientText";
 import EmergeIn from "./EmergeIn";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
@@ -29,11 +30,17 @@ const LoginForm: React.FC = () => {
     try {
       await axios.post("/api/login", formData, { withCredentials: true });
       router.push("/projetos");
+
     } catch (error) {
-      console.error("Erro no login:", error);
+      console.log("Erro no login:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Erro inesperado.");
+      }
     } finally {
       setLoading(false);
-      setFormData({ email: "", password: "" });
+      
     }
   };
 

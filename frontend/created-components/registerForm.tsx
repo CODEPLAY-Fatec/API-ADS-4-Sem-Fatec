@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import GradientText from "./GradientText";
 import EmergeIn from "./EmergeIn";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast"; 
 
 const RegisterForm: React.FC = () => {
     const router = useRouter();
@@ -32,26 +33,31 @@ const RegisterForm: React.FC = () => {
         e.preventDefault();
 
         if (!formData.name || !formData.email || !formData.phoneNumber || !formData.password) {
-            alert("Por favor, preencha todos os campos.");
+            toast.error("Por favor, preencha todos os campos.",{duration: 1500});
             return;
         }
 
         setLoading(true);
         try {
             await axios.post("/api/users", formData, { withCredentials: true });
-            alert("Cadastro realizado com sucesso!");
+            toast.success("Cadastro realizado com sucesso!"); 
             router.push("/login");
-        } catch (error) {
-            console.error("Erro ao cadastrar o usuário", error);
-            alert("Erro ao realizar o cadastro. Tente novamente.");
-        } finally {
-            setLoading(false);
-            setFormData({
+            setFormData({       
                 name: "",
                 email: "",
                 phoneNumber: "",
                 password: "",
             });
+        } catch (error) {
+           
+            if (axios.isAxiosError(error) && error.response) {
+                toast.error(error.response.data.message,{duration: 1500});
+            } else {
+                toast.error("Ocorreu um erro desconhecido.");
+            }
+        } finally {
+            setLoading(false);
+            
         }
     };
 

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SelectNative } from "@/components/ui/select-native";
 import Institution from "@shared/Institution";
+import toast from "react-hot-toast";
 
 type state = {
   currentProject: Partial<Project>;
@@ -44,8 +45,27 @@ export default class ProjectForm extends React.Component<{}, state> {
   submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!this.state.currentProject.name) {
+      toast.error("Por favor, preencha o nome do projeto.",{duration: 1500});
       return;
     }
+    if(!this.state.currentProject.subject){
+      toast.error("Por favor, selecione uma área de atuação.",{duration: 1500});
+      return;
+    }
+    if(!this.state.currentProject.institution){
+      toast.error("Por favor, selecione uma instituição.",{duration: 1500});
+      return;
+    }
+    if(!this.state.currentProject.status){
+      toast.error("Por favor, selecione um status.",{duration: 1500});
+      return;
+    }
+    if(!this.state.currentProject.description){
+      toast.error("Por favor, preencha a descrição do projeto.",{duration: 1500});
+      return;
+    }
+
+    
   
     const projectData: Project = {
       name: this.state.currentProject.name,

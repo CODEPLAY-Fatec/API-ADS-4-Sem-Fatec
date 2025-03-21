@@ -35,6 +35,6 @@ export const login = async (email: string, password: string): Promise<{ token: s
       return { token }; 
 
     } else {
-      throw new Error('Senha incorreta.');
+      throw new Error('Usuario ou senha incorretos.');
     }
   };

@@ -18,8 +18,8 @@ export const createUserController = async (req: Request, res: Response) => {
         res.status(400).send({ message: "Email é obrigatório." });
         return;
     }
-    if (!password) {
-        res.status(400).send({ message: "Senha é obrigatório." });
+    if (!password || password.length < 8) {
+        res.status(400).send({ message: "A senha deve ter pelo menos 8 caracteres." });
         return;
     }
     if (!phoneNumber) {
