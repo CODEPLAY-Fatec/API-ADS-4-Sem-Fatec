@@ -34,10 +34,30 @@ export const updateProjectService = async (projectData: Project, user: User) => 
     return db.query(query, values);
 };
 
+export const addUserToProjectService = async (projectId: number, userId: number, user: User) => {
+    const hasAccess = await db.typedQuery<{ id: number }>("SELECT id FROM projects WHERE id = ? AND creator = ?", [projectId, user.id]);
+    if (!hasAccess.length) {
+        throw new Error("Usuário não tem permissão para adicionar usuários a este projeto.");
+    }
+    const query = "INSERT INTO projectMember (projectId, userId) VALUES (?, ?)";
+    return db.query(query, [projectId, userId]);
+}
+
+export const removeUserFromProjectService = async (projectId: number, userId: number, user: User) => {
+    const hasAccess = await db.typedQuery<{ id: number }>("SELECT id FROM projects WHERE id = ? AND creator = ?", [projectId, user.id]);
+    if (!hasAccess.length) {
+        throw new Error("Usuário não tem permissão para remover usuários deste projeto.");
+    }
+    const query = "DELETE FROM projectMember WHERE projectId = ? AND userId = ?";
+    return db.query(query, [projectId, userId]);
+}
+
 export const getProjectsService = async (user: User) => {
-    const query = "SELECT * FROM projects WHERE creator = ?";
-    const values = [user.id];
-    return db.typedQuery<Project>(query, values); // Certifique-se de passar os valores corretamente
+    console.log(user);
+    const query = "SELECT * FROM projects WHERE creator = ? OR id IN (SELECT projectId FROM projectMember WHERE userId = ?)";
+    const values = [user.id, user.id];
+
+    return db.typedQuery<Project>(query, values);
 };
 
 export const getProjectSubjectsService = async () => {

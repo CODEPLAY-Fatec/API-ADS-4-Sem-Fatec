@@ -1,11 +1,13 @@
 import Project from "@shared/Project";
 import { Request, Response } from "express";
 import {
+    addUserToProjectService,
     createProjectService,
     deleteProjectService,
     getInstitutionsService,
     getProjectsService,
     getProjectSubjectsService,
+    removeUserFromProjectService,
     updateProjectService,
 } from "../services/projectService";
 import { getUserInfo } from "../services/userService";
@@ -40,6 +42,42 @@ export const updateProjectController = async (req: Request, res: Response) => {
         console.warn(error);
     }
 };
+
+export const addUserToProjectController = async (req: Request, res: Response) => {
+    const projectId = parseInt(req.params.id, 10);
+    const userId = parseInt(req.params.user, 10);
+
+    if (isNaN(projectId) || isNaN(userId)) {
+        res.status(400).send({ message: "ID do projeto ou usuário inválido." });
+        return;
+    }
+
+    try {
+        await addUserToProjectService(projectId, userId, await getUserInfo(req.cookies.token));
+        res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!" });
+    } catch (error) {
+        res.status(500).send({ message: "Erro ao adicionar usuário ao projeto." });
+        console.warn(error);
+    }
+}
+
+export const removeUserFromProjectController = async (req: Request, res: Response) => {
+    const projectId = parseInt(req.params.id, 10);
+    const userId = parseInt(req.params.user, 10);
+    
+    if (isNaN(projectId) || isNaN(userId)) {
+        res.status(400).send({ message: "ID do projeto ou usuário inválido." });
+        return;
+    }
+
+    try {
+        await removeUserFromProjectService(projectId, userId, await getUserInfo(req.cookies.token));
+        res.status(201).send({ message: "Usuário removido do projeto com sucesso!" });
+    } catch(error) {
+        res.status(500).send({ message: "Erro ao remover usuário do projeto." });
+        console.warn(error);
+    }
+}
 
 export const getProjectsController = async (req: Request, res: Response) => {
     try {
