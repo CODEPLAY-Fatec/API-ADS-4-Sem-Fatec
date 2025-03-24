@@ -36,24 +36,15 @@ export default function Tabela() {
         const fetchProjects = async () => {
             try {
                 const response = await axios.get("/api/projects");
-                setData(response.data);
+                setData(response.data.result);
+                setUsers(response.data.users);
+                console.log(response.data)
             } catch (error) {
                 console.error("Erro ao buscar projetos:", error);
             }
         };
 
-        const fetchUsers = async () => {
-            try {
-                const response = await axios.get("/api/users");
-                setUsers(response.data);
-                console.log("Usuários carregados:", response.data);
-            } catch (error) {
-                console.error("Erro ao buscar usuários:", error);
-            }
-        };
-
         fetchProjects();
-        fetchUsers();
     }, []);
 
     const handleProjectClick = (project: Item) => setSelectedProject(project);

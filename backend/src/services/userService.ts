@@ -32,7 +32,7 @@ export const getUserInfo = async (token: any) => {
 
 // Adicionando a função para buscar todos os usuários
 export const getAllUsers = async () => {
-    const query = "SELECT id, name FROM users";
-    const [users]: any = await db.query(query);
+    const query = "SELECT * FROM users";
+    const users = await db.typedQuery<User>(query);
     return users;
 };
