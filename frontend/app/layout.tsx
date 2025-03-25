@@ -12,17 +12,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favico.png" type="image/png" />
+      </head>
       <body className={poppins.className}>
         <FadeIn>
-        {children}
-        <Toaster />
+          {children}
+          <Toaster />
         </FadeIn>
-        </body>
+      </body>
     </html>
   );
 }
