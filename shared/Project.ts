@@ -5,7 +5,7 @@ type Project = {
   subject?: string;
   institution?: string;
   creator: number;
-  status?: "Fechado" | "Em andamento" | "Concluído";
+  status: "Fechado" | "Em_andamento"|"Concluído"
 };
 
 export default Project;

@@ -1,28 +1,34 @@
 import { User } from "@shared/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { db } from "../config/database";
+import { PrismaClient}from "@prisma/client";
+
+const prisma = new PrismaClient();
 const SECRET_KEY = process.env.SECRET_KEY as string;
+const saltRounds = 10;
 
 export const createUser = async ({ name, email, password, phoneNumber }: User) => {
-    const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
-    const [existingUser]: any = await db.query(checkEmailQuery, [email]);
+    const existingUser = await prisma.user.findFirst({
+        where: { email: email},
+    });
 
-    if (existingUser.length > 0) throw new Error("Este email já está em uso.");
+    if (existingUser) throw new Error("Este email já está em uso.");
 
     if (password.length < 8) throw new Error("A senha deve ter pelo menos 8 caracteres.");
 
-    const saltRounds = 10;
+   
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const insertQuery = `
-    INSERT INTO users (name, email, password, phoneNumber) 
-    VALUES (?, ?, ?, ?)
-  `;
-    console.log(name, email, hashedPassword, phoneNumber);
-    const [result]: any = await db.query(insertQuery, [name, email, hashedPassword, phoneNumber]);
+    const result = await prisma.user.create({
+        data :{
+            name,
+            email,
+            password: hashedPassword,
+            phoneNumber,
+        }
+    })
 
-    return { id: result.insertId, name, email, phoneNumber, password: "" };
+    return {result};
 };
 
 export const getUserInfo = async (token: any) => {
@@ -32,7 +38,6 @@ export const getUserInfo = async (token: any) => {
 
 // Adicionando a função para buscar todos os usuários
 export const getAllUsers = async () => {
-    const query = "SELECT * FROM users";
-    const users = await db.typedQuery<User>(query);
+    const users = await prisma.user.findMany();
     return users;
 };

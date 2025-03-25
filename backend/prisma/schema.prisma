@@ -1,0 +1,101 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  name        String
+  email       String
+  phoneNumber String?
+  password    String
+  picture     UserPicture?
+  projects    Project[]  @relation("ProjectCreator")
+  projectMembers ProjectMember[]
+  tasks        Task[]      // Relacionamento reverso para Task (taskUser)
+}
+
+model UserPicture {
+  userId Int    @id
+  file   Bytes  @db.Blob
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?
+  subject      String?
+  institution  String?
+  creatorId    Int
+  status       ProjectStatus @default(Fechado)
+  creator      User          @relation("ProjectCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  subjectRel   ProjectSubject? @relation(fields: [subject], references: [name], onDelete: SetNull)
+  institutionRel ProjectInstitution? @relation(fields: [institution], references: [name], onDelete: SetNull)
+  tasks        Task[]
+  members      ProjectMember[]
+}
+
+model Task {
+  id           Int           @id @default(autoincrement())
+  projectId    Int
+  taskUserId   Int?
+  title        String
+  description  String?
+  priority     TaskPriority
+  timeEstimate Int?
+  start        DateTime?
+  finish       DateTime?
+  status       TaskStatus    @default(Fechado)
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  taskUser     User?         @relation(fields: [taskUserId], references: [id], onDelete: SetNull)
+  
+}
+
+
+
+
+
+model ProjectMember {
+  projectId Int
+  userId    Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
+
+model ProjectSubject {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  projects Project[]
+}
+
+model ProjectInstitution {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  projects Project[]
+}
+
+enum ProjectStatus {
+  Fechado
+  Em_andamento
+  Concluído
+}
+
+enum TaskPriority {
+  Baixa
+  Média
+  Alta
+}
+
+enum TaskStatus {
+  Fechado
+  Em_andamento
+  Concluído
+}

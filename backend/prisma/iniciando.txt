@@ -1,0 +1,5 @@
+depois de configurar o schema.prisma dar o comando 
+comando:npx prisma migrate dev --name init   no caso o init é o nome da migraçao se quiser outro nome coloque outro, isso cria o banco de dados mesmo/ migraçao
+para quaisquers outras mudanças q venha a ter no schema apena de o mesmo comando para acima coloca no lugar do init o nome q vc der para migraçao ex:adicione_tabela_x
+e depois da mudança de o comando abaixo  generate dnv
+comando:npx prisma generate    isso é para gerar o prisma cliente para importar no codigo e interagir com o banco de dados

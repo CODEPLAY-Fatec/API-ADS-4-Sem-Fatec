@@ -1,20 +1,24 @@
 import Project from "@shared/Project";
 import { User } from "@shared/User";
 import { db } from "../config/database";
+import { PrismaClient } from "@prisma/client";
+
+
+const prisma = new PrismaClient();
 
 export const createProjectService = async (projectData: Project, user: User) => {
     const query = "INSERT INTO projects (name, description, subject, creator, status, institution) VALUES (?, ?, ?, ?, ?, ?)";
-    const values = [
-        projectData.name,
-        projectData.description || null,
-        projectData.subject || null,
-        user.id,
-        projectData.status || null,
-        projectData.institution || null,
-    ];
-    console.log(values);
-
-    return db.query(query, values);
+    
+    return prisma.project.create({
+        data:{
+            name: projectData.name,
+            description: projectData.description || null,
+            subject: projectData.subject || null,
+            status: projectData.status || "Em_Andamento",
+            institution: projectData.institution || null,
+            creatorId: user.id
+        }
+    })
 };
 
 export const updateProjectService = async (projectData: Project, user: User) => {
