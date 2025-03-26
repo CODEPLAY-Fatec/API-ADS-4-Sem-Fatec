@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 export default function Navbar() {
   const router = useRouter();
@@ -22,6 +23,18 @@ export default function Navbar() {
     };
   }, []);
 
+  function handleLogout(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    event.preventDefault();
+    axios.post("/api/logout", {}, { withCredentials: true })
+      .then(() => {
+        toast.success("Logout realizado!", { duration: 2000 });
+        router.push("/");
+      })
+      .catch((error) => {
+        toast.error("Erro ao realizar logout");
+        console.error(error);
+      });
+  }
   return (
     <nav className="absolute top-4 left-0 right-0 flex justify-between items-center px-6">
       {/*Logo*/}
@@ -53,10 +66,7 @@ export default function Navbar() {
                 Informações
               </button>
               <button
-                onClick={() => {
-                  toast.success("Logout realizado!");
-                  router.push("/login");
-                }}
+                onClick={handleLogout}
                 className="block w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 flex items-center gap-2"
               >
                 <LogOut size={16} />
