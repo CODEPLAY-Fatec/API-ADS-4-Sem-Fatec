@@ -1,4 +1,3 @@
-// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,94 +7,154 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int        @id @default(autoincrement())
-  name        String
-  email       String
-  phoneNumber String?
-  password    String
-  picture     UserPicture?
-  projects    Project[]  @relation("ProjectCreator")
-  projectMembers ProjectMember[]
-  tasks        Task[]      // Relacionamento reverso para Task (taskUser)
+model userpicture {
+  userId Int   @id
+  file   Bytes @db.Blob
+  users  users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "userpicture_ibfk_1")
 }
 
-model UserPicture {
-  userId Int    @id
-  file   Bytes  @db.Blob
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Project {
-  id           Int           @id @default(autoincrement())
-  name         String
-  description  String?
-  subject      String?
-  institution  String?
-  creatorId    Int
-  status       ProjectStatus @default(Fechado)
-  creator      User          @relation("ProjectCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-  subjectRel   ProjectSubject? @relation(fields: [subject], references: [name], onDelete: SetNull)
-  institutionRel ProjectInstitution? @relation(fields: [institution], references: [name], onDelete: SetNull)
-  tasks        Task[]
-  members      ProjectMember[]
-}
-
-model Task {
-  id           Int           @id @default(autoincrement())
-  projectId    Int
-  taskUserId   Int?
-  title        String
-  description  String?
-  priority     TaskPriority
-  timeEstimate Int?
-  start        DateTime?
-  finish       DateTime?
-  status       TaskStatus    @default(Fechado)
-  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  taskUser     User?         @relation(fields: [taskUserId], references: [id], onDelete: SetNull)
-  
-}
-
-
-
-
-
-model ProjectMember {
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model projectmember {
   projectId Int
   userId    Int
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "ProjectMember_userId_fkey")
+  project   projects @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "ProjectMember_projectId_fkey")
 
-  @@id([projectId, userId])
+  @@id([projectId, userId]) // Define uma chave primária composta
+  @@index([projectId], map: "projectId")
+  @@index([userId], map: "userId")
 }
 
-model ProjectSubject {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  projects Project[]
+
+model institutions {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique(map: "name") @db.VarChar(255)
+  projects projects[]
 }
 
-model ProjectInstitution {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  projects Project[]
+model projectrecovery {
+  instanceId  Int                     @id @default(autoincrement())
+  projectId   Int
+  name        String?                 @db.Text
+  description String?                 @db.Text
+  subject     String?                 @db.VarChar(255)
+  institution String?                 @db.VarChar(255)
+  creator     Int?
+  status      projectrecovery_status?
+  created     DateTime                @db.DateTime(0)
+  projects    projects                @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectrecovery_ibfk_1")
+
+  @@index([projectId], map: "projectId")
 }
 
-enum ProjectStatus {
-  Fechado
-  Em_andamento
-  Concluído
+model projects {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.Text
+  description     String?           @db.Text
+  subject         String?           @db.VarChar(255)
+  institution     String?           @db.VarChar(255)
+  creator         Int
+  status          projects_status?  @default(Fechado)
+  projectmember   projectmember[]   
+  projectrecovery projectrecovery[]
+  projectsubjects projectsubjects?  @relation(fields: [subject], references: [name], onUpdate: NoAction, map: "projects_ibfk_1")
+  institutions    institutions?     @relation(fields: [institution], references: [name], onUpdate: NoAction, map: "projects_ibfk_2")
+  users           users             @relation(fields: [creator], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projects_ibfk_3")
+  tasks           tasks[]
+
+  @@index([creator], map: "creator")
+  @@index([institution], map: "institution")
+  @@index([subject], map: "subject")
 }
 
-enum TaskPriority {
+model projectsubjects {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique(map: "name") @db.VarChar(255)
+  projects projects[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model taskrecovery {
+  instanceId   Int                    @id @default(autoincrement())
+  taskId       Int
+  taskUser     Int?
+  title        String?                @db.Text
+  description  String?                @db.Text
+  priority     taskrecovery_priority?
+  timeEstimate Int?
+  start        DateTime?              @db.DateTime(0)
+  finish       DateTime?              @db.DateTime(0)
+  status       taskrecovery_status?
+  created      DateTime               @db.DateTime(0)
+  tasks        tasks                  @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "taskrecovery_ibfk_1")
+
+  @@index([taskId], map: "taskId")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tasks {
+  id           Int             @id @default(autoincrement())
+  projectId    Int
+  taskUser     Int?
+  title        String          @db.Text
+  description  String?         @db.Text
+  priority     tasks_priority?
+  timeEstimate Int?
+  start        DateTime?       @db.DateTime(0)
+  finish       DateTime?       @db.DateTime(0)
+  status       tasks_status    @default(Fechado)
+  taskrecovery taskrecovery[]
+  projects     projects        @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tasks_ibfk_1")
+  users        users?          @relation(fields: [taskUser], references: [id], onUpdate: NoAction, map: "tasks_ibfk_2")
+
+  @@index([projectId], map: "projectId")
+  @@index([taskUser], map: "taskUser")
+}
+
+model users {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.Text
+  email         String          @db.Text
+  phoneNumber   String?         @db.Text
+  password      String          @db.Text
+  projectmember projectmember[] 
+  projects      projects[]
+  tasks         tasks[]
+  userpicture   userpicture?
+}
+
+enum tasks_priority {
   Baixa
-  Média
+  Mesdia @map("Média")
   Alta
 }
 
-enum TaskStatus {
+enum taskrecovery_priority {
+  Baixa
+  Media @map("Média")
+  Alta
+}
+
+enum projects_status {
   Fechado
-  Em_andamento
-  Concluído
+  Em_andamento @map("Em andamento")
+  Concluido    @map("Concluído")
+}
+
+enum projectrecovery_status {
+  Fechado
+  Em_andamento @map("Em andamento")
+  Concluido    @map("Concluído")
+}
+
+enum tasks_status {
+  Fechado
+  Em_andamento @map("Em andamento")
+  Concluido    @map("Concluído")
+}
+
+enum taskrecovery_status {
+  Fechado
+  Em_andamento @map("Em andamento")
+  Concluido    @map("Concluído")
 }

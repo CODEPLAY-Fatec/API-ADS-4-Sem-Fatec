@@ -13,12 +13,11 @@ if (!SECRET_KEY) {
 
 export const login = async (email: string, password: string): Promise<{ token: string }> => {
   // Usando Prisma para buscar o usuário pelo email
-  const user = await prisma.user.findFirst({
-    where: {email : email}
+  const user = await prisma.users.findFirst({
+    where: {email}
   })
 
   if (!user) {
-    console.log('Usuário não encontrado.');
     throw new Error('Usuário não encontrado.');
   }
 

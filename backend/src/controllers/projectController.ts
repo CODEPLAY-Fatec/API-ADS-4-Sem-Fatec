@@ -89,7 +89,7 @@ export const getProjectsController = async (req: Request, res: Response) => {
         }
         const result = await getProjectsService(userInfo);
         const users = (await getAllUsers())
-        .filter((user => result.find(project => project.creator === user.id))).map(user => {
+        .filter((user => result.find(project => project.creator === user.id))).map(user => {//tem como melhorar isso usando a consulta do prisma
             return {id: user.id, name: user.name, email: user.email}
         });
         // considerar usar Set para filtrar mais rápido, não sei se vai ser necessário.

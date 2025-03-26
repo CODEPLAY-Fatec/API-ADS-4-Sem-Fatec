@@ -195,8 +195,8 @@ export default class ProjectForm extends React.Component<{}, state> {
                 Selecione um status
               </option>
               <option value="Fechado">Fechado</option>
-              <option value="Em andamento">Em andamento</option>
-              <option value="Concluído">Concluído</option>
+              <option value="Em_andamento">Em andamento</option>
+              <option value="Concluido">Concluído</option>
             </SelectNative>
           </div>
 

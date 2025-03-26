@@ -8,9 +8,11 @@ const SECRET_KEY = process.env.SECRET_KEY as string;
 const saltRounds = 10;
 
 export const createUser = async ({ name, email, password, phoneNumber }: User) => {
-    const existingUser = await prisma.user.findFirst({
-        where: { email: email},
-    });
+    const existingUser = await prisma.users.findFirst({
+        where: {
+            email:email
+        }
+    })
 
     if (existingUser) throw new Error("Este email já está em uso.");
 
@@ -19,7 +21,7 @@ export const createUser = async ({ name, email, password, phoneNumber }: User) =
    
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const result = await prisma.user.create({
+    const result = await prisma.users.create({
         data :{
             name,
             email,
@@ -38,6 +40,6 @@ export const getUserInfo = async (token: any) => {
 
 // Adicionando a função para buscar todos os usuários
 export const getAllUsers = async () => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.users.findMany();
     return users;
 };
