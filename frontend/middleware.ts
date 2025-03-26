@@ -2,25 +2,35 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const protectedRoutes = ["/projetos"];
+const authCheckRoutes = ["/"]; 
 
 export async function middleware(request: NextRequest) {
-  if (protectedRoutes.includes(request.nextUrl.pathname)) {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); //  delay pq tava dando erro quando o middleware ia direto
-      
-      const res = await fetch(`${request.nextUrl.origin}/api/me`, {//tem q ser fetch aqui pq o axios nao funciona no middleware
-        method: "GET",
-        credentials: "include",
-        headers: { Cookie: request.headers.get("cookie") || "" }, 
-      });//withcredentials true nao funcionada aqui, por isso foi feito dessa forma
+  const pathname = request.nextUrl.pathname;
 
-      if (!res.ok) {
-        throw new Error("Usuário não autenticado.");
-      }
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 500)); 
 
-      console.log("Usuário autenticado!");
-    } catch (error) {
-      console.error("Usuário não autenticado!", error);
+    const res = await fetch(`${request.nextUrl.origin}/api/me`, {
+      method: "GET",
+      credentials: "include",
+      headers: { Cookie: request.headers.get("cookie") || "" },//pega desse jeito diferente pq aqui roda no servidor
+    });
+
+    if (!res.ok) {
+      throw new Error("Usuário não autenticado.");
+    }
+
+    console.log("Usuário autenticado!");
+
+    
+    if (authCheckRoutes.includes(pathname)) {//redirecionamentos do login/home/cadastro
+      return NextResponse.redirect(new URL("/projetos", request.url));
+    }
+  } catch (error) {
+    console.error("Usuário não autenticado!", error);
+
+    
+    if (protectedRoutes.includes(pathname)) {//proteçao para projetos
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
@@ -29,5 +39,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/projetos/:path*"],//para aplicar na rota projeto e os filhos dela
+  matcher: ["/", "/projetos/:path*"], // rotas em q o arquivo esta aplicado
 };
