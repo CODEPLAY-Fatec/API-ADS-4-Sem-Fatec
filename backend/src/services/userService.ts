@@ -36,3 +36,15 @@ export const getAllUsers = async () => {
     const users = await db.typedQuery<User>(query);
     return users;
 };
+
+export const getUserById = async (id: number) => {
+    const query = "SELECT * FROM users WHERE id = ?";
+    const users = await db.typedQuery<User>(query, [id]);
+    return users[0];
+}
+
+export const getUserByEmail = async (email: string) => {
+    const query = "SELECT * FROM users WHERE email = ?";
+    const users = await db.typedQuery<User>(query, [email]);
+    return users[0];
+}

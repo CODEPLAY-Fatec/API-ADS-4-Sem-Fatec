@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ id: 0, email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 

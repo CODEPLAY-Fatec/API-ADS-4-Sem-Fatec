@@ -8,47 +8,42 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-
-type Item = {
-    id: number;
-    name: string;
-    description: string;
-    subject: string;
-    institution: string;
-    creator: number;
-    status: "Fechado" | "Em andamento" | "Concluído";
-    location: string;
-    responsavel: string;
-};
+import ProjectType from "@shared/Project"; // jesus cristo.
 
 type User = {
     id: number;
     name: string;
 };
 
+type Project = ProjectType & { member_ids: number[], member_names: string[], member_emails: string[] }
+
+
 export default function Tabela() {
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
-    const [data, setData] = useState<Item[]>([]);
+    const [data, setData] = useState<Project[]>([]);
     const [users, setUsers] = useState<User[]>([]);
-    const [selectedProject, setSelectedProject] = useState<Item | null>(null);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+    const fetchProjects = async () => {
+        try {
+            const response = await axios.get("/api/projects");
+            setData(response.data.result);
+            setUsers(response.data.users);
+            console.log(response.data)
+        } catch (error) {
+            console.error("Erro ao buscar projetos:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const response = await axios.get("/api/projects");
-                setData(response.data.result);
-                setUsers(response.data.users);
-                console.log(response.data)
-            } catch (error) {
-                console.error("Erro ao buscar projetos:", error);
-            }
-        };
-
         fetchProjects();
     }, []);
 
-    const handleProjectClick = (project: Item) => setSelectedProject(project);
-    const handleCloseProjectDetails = () => setSelectedProject(null);
+    const handleProjectClick = (project: Project) => setSelectedProject(project);
+    const handleCloseProjectDetails = () => { 
+        setSelectedProject(null);
+        fetchProjects();
+    };
 
     const currentPageData = data.slice(pagination.pageIndex * pagination.pageSize, (pagination.pageIndex + 1) * pagination.pageSize);
 

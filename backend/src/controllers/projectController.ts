@@ -5,17 +5,17 @@ import {
     createProjectService,
     deleteProjectService,
     getInstitutionsService,
+    getProjectByIdService,
     getProjectsService,
     getProjectSubjectsService,
     removeUserFromProjectService,
     updateProjectService,
 } from "../services/projectService";
-import { getAllUsers, getUserInfo } from "../services/userService";
+import { getAllUsers, getUserByEmail, getUserInfo } from "../services/userService";
 import { User } from "@shared/User";
 
 export const createProjectController = async (req: Request, res: Response) => {
     const ProjectData: Project = req.body;
-    console.log(ProjectData);
 
     // TODO: pegar o ID do usuário logado, e colocar como project.creator
     if (!ProjectData.name) {
@@ -33,7 +33,6 @@ export const createProjectController = async (req: Request, res: Response) => {
 
 export const updateProjectController = async (req: Request, res: Response) => {
     const ProjectData: Project = req.body; // recebe um projeto com propriedades opcionais. eu poderia trasnformar em Partial, mas...
-    console.log(ProjectData);
 
     try {
         await updateProjectService(ProjectData, await getUserInfo(req.cookies.token));
@@ -46,15 +45,15 @@ export const updateProjectController = async (req: Request, res: Response) => {
 
 export const addUserToProjectController = async (req: Request, res: Response) => {
     const projectId = parseInt(req.params.id, 10);
-    const userId = parseInt(req.params.user, 10);
-
-    if (isNaN(projectId) || isNaN(userId)) {
+    const userEmail = req.body.user
+    const user = await getUserByEmail(userEmail);
+    if (isNaN(projectId) || !user) {
         res.status(400).send({ message: "ID do projeto ou usuário inválido." });
         return;
     }
 
     try {
-        await addUserToProjectService(projectId, userId, await getUserInfo(req.cookies.token));
+        await addUserToProjectService(projectId, user.id, await getUserInfo(req.cookies.token));
         res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!" });
     } catch (error) {
         res.status(500).send({ message: "Erro ao adicionar usuário ao projeto." });
@@ -93,14 +92,27 @@ export const getProjectsController = async (req: Request, res: Response) => {
             return {id: user.id, name: user.name, email: user.email}
         });
         // considerar usar Set para filtrar mais rápido, não sei se vai ser necessário.
-        console.log(result);
-        console.log(users);
         res.status(200).send({result, users});
     } catch (error) {
         console.error("Erro ao buscar projetos:", error);
         res.status(500).send({ message: "Erro ao buscar projetos." });
     }
 };
+
+export const getProjectByIdController = async (req: Request, res: Response) => {
+    const projectId = parseInt(req.params.id, 10);
+    if (isNaN(projectId)) {
+        res.status(400).send({ message: "ID do projeto inválido." });
+        return;
+    }
+
+    try {
+        const project = await getProjectByIdService(projectId, await getUserInfo(req.cookies.token));
+        res.status(200).send(project);
+    } catch (error) {
+        res.status(500).send({ message: "Erro ao buscar projeto." });
+    }
+}
 
 export const getProjectSubjectsController = async (req: Request, res: Response) => {
     try {

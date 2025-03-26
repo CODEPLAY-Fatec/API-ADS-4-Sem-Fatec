@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 const RegisterForm: React.FC = () => {
     const router = useRouter();
     const [formData, setFormData] = useState<User>({
+        id: 0,
         name: "",
         email: "",
         phoneNumber: "",
@@ -43,6 +44,7 @@ const RegisterForm: React.FC = () => {
             toast.success("Cadastro realizado com sucesso!"); 
             router.push("/login");
             setFormData({       
+                id: 0,
                 name: "",
                 email: "",
                 phoneNumber: "",
