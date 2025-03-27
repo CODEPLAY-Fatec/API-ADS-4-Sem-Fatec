@@ -99,5 +99,8 @@ ALTER TABLE `projectMember` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
 ALTER TABLE `projectMember` ADD FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 INSERT INTO projectSubjects (name) VALUES ('Exatas');
+INSERT INTO projectSubjects (name) VALUES ('Humanas');
 
 INSERT INTO institutions (name) VALUES ('Fatec');
+INSERT INTO institutions (name) VALUES ('USP');
+

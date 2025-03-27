@@ -6,7 +6,7 @@ import ProjectForm from "@/created-components/ProjectForm";
 import { PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
-export default function Component2() {
+export default function BotaoNovoProjeto() {
     const [showForm, setShowForm] = useState(false);
 
     const toggleForm = () => {
