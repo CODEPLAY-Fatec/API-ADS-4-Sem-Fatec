@@ -160,46 +160,56 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project, onClose, users
                                 className="w-full"
                             />
                         </div>
-                        <div>
-                            <Label htmlFor="subject">Área de Atuação</Label>
-                            <SelectNative id="subject" value={editableProject.subject || ""} onChange={handleInputChange} className="w-full">
-                                <option value="" disabled>
-                                    Selecione uma área
-                                </option>
-                                {projectSubjects.map((subject) => (
-                                    <option key={subject} value={subject}>
-                                        {subject}
+                        <div className="flex space-x-4">
+                            <div className="w-1/2">
+                                <Label htmlFor="subject">Área de Atuação</Label>
+                                <SelectNative id="subject" value={editableProject.subject || ""} onChange={handleInputChange} className="w-full">
+                                    <option value="" disabled>
+                                        Selecione uma área
                                     </option>
-                                ))}
-                            </SelectNative>
-                        </div>
-                        <div>
-                            <Label htmlFor="institution">Instituição</Label>
-                            <SelectNative id="institution" value={editableProject.institution || ""} onChange={handleInputChange} className="w-full">
-                                <option value="" disabled>
-                                    Selecione uma instituição
-                                </option>
-                                {institutions.map((institution) => (
-                                    <option key={institution} value={institution}>
-                                        {institution}
+                                    {projectSubjects.map((subject) => (
+                                        <option key={subject} value={subject}>
+                                            {subject}
+                                        </option>
+                                    ))}
+                                </SelectNative>
+                            </div>
+                            <div className="w-1/2">
+                                <Label htmlFor="institution">Instituição</Label>
+                                <SelectNative id="institution" value={editableProject.institution || ""} onChange={handleInputChange} className="w-full">
+                                    <option value="" disabled>
+                                        Selecione uma instituição
                                     </option>
-                                ))}
-                            </SelectNative>
+                                    {institutions.map((institution) => (
+                                        <option key={institution} value={institution}>
+                                            {institution}
+                                        </option>
+                                    ))}
+                                </SelectNative>
+                            </div>
                         </div>
-                        <div>
-                            <Label htmlFor="status">Status</Label>
-                            <SelectNative id="status" value={editableProject.status || ""} onChange={handleInputChange} className="w-full">
-                                <option value="" disabled>
-                                    Selecione um status
-                                </option>
-                                <option value="Fechado">Fechado</option>
-                                <option value="Em andamento">Em andamento</option>
-                                <option value="Concluído">Concluído</option>
-                            </SelectNative>
-                        </div>
-                        <div>
-                            <Label htmlFor="responsavel">Responsável</Label>
-                            <Input id="responsavel" type="text" value={getResponsavelName(editableProject.creator)} readOnly className="w-full" />
+                        <div className="flex space-x-4">
+                            <div className="w-1/2">
+                                <Label htmlFor="status">Status</Label>
+                                <SelectNative id="status" value={editableProject.status || ""} onChange={handleInputChange} className="w-full">
+                                    <option value="" disabled>
+                                        Selecione um status
+                                    </option>
+                                    <option value="Fechado">Fechado</option>
+                                    <option value="Em andamento">Em andamento</option>
+                                    <option value="Concluído">Concluído</option>
+                                </SelectNative>
+                            </div>
+                            <div className="w-1/2">
+                                <Label htmlFor="responsavel">Responsável</Label>
+                                <Input 
+                                    id="responsavel" 
+                                    type="text" 
+                                    value={getResponsavelName(editableProject.creator)} 
+                                    readOnly 
+                                    className="w-full" 
+                                />
+                            </div>
                         </div>
                         <div>
                           <Label htmlFor="addMember">Adicionar Membro por Email</Label>
