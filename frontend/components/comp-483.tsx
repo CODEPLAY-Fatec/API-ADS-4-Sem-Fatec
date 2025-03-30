@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import ProjectDetails from "@/created-components/ProjectDetails";
 import { cn } from "@/lib/utils";
 import axios from "axios";
+import { useRouter } from 'next/navigation';
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProjectType from "@shared/Project";
@@ -18,6 +19,7 @@ type User = {
 type Project = ProjectType & { member_ids: number[], member_names: string[], member_emails: string[] }
 
 export default function Tabela() {
+    const router = useRouter();
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
     const [data, setData] = useState<Project[]>([]);
     const [users, setUsers] = useState<User[]>([]);
@@ -26,7 +28,7 @@ export default function Tabela() {
     const fetchProjects = async () => {
         try {
             const response = await axios.get("/api/projects");
-            const sortedProjects = response.data.result.sort((a: Project, b: Project) => b.id - a.id);
+            const sortedProjects = response.data.result.sort((a: Project, b: Project) => a.id - b.id);
             setData(sortedProjects);
             setUsers(response.data.users);
         } catch (error) {
@@ -43,11 +45,17 @@ export default function Tabela() {
         return () => clearInterval(interval);
     }, []);
 
-    const handleProjectClick = (project: Project) => setSelectedProject(project);
+    //const handleProjectClick = (project: Project) => setSelectedProject(project);
+    
     const handleCloseProjectDetails = () => { 
         setSelectedProject(null);
         fetchProjects();
     };
+
+    const handleProjectClick = (project: Project) => {
+        router.push(`projetos/descricao/${project.id}`);
+      };
+    
 
     const currentPageData = data.slice(pagination.pageIndex * pagination.pageSize, (pagination.pageIndex + 1) * pagination.pageSize);
     const totalPages = Math.ceil(data.length / pagination.pageSize);
