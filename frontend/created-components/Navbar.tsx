@@ -58,7 +58,7 @@ export default function Navbar() {
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2">
+            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 !z-[9999]">
               <button 
                 onClick={() => router.push("/perfil")}
                 className="block w-full px-4 py-2 text-left hover:bg-gray-100"
