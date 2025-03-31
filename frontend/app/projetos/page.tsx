@@ -7,7 +7,6 @@ import Navbar from "@/created-components/Navbar";
 import ProjectForm from "@/created-components/ProjectForm";
 import { PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-hot-toast"; // Notificação feedback
 
 export default function Projetos() {
     const [showForm, setShowForm] = useState(false);
@@ -52,9 +51,3 @@ export default function Projetos() {
         </div>
     );
 }
-
-export const useToast = () => ({
-    success: (message: string) => toast.success(message),
-    error: (message: string) => toast.error(message),
-    loading: (message: string) => toast.loading(message),
-});

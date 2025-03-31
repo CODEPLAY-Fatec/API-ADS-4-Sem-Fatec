@@ -11,7 +11,7 @@ import {
     removeUserFromProjectService,
     updateProjectService,
 } from "../services/projectService";
-import { getAllUsers, getUserByEmail, getUserInfo } from "../services/userService";
+import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
 import { User } from "@shared/User";
 
 export const createProjectController = async (req: Request, res: Response) => {
@@ -108,7 +108,8 @@ export const getProjectByIdController = async (req: Request, res: Response) => {
 
     try {
         const project = await getProjectByIdService(projectId, await getUserInfo(req.cookies.token));
-        res.status(200).send(project);
+        const creator = await getUserById(project.creator);
+        res.status(200).send({ project, 'name': creator.name });
     } catch (error) {
         res.status(500).send({ message: "Erro ao buscar projeto." });
     }

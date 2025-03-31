@@ -98,8 +98,8 @@ export const getProjectsService = async (user: User) => {
     LEFT JOIN projectMember pm ON p.id = pm.projectId
     LEFT JOIN users u ON pm.userId = u.id
     WHERE 
-      p.creator = 1 
-      OR p.id IN (SELECT projectId FROM projectMember WHERE userId = 1)
+      p.creator = ? 
+      OR p.id IN (SELECT projectId FROM projectMember WHERE userId = ?)
     GROUP BY p.id;`; // jesus que query horrorosa.
   const values = [user.id, user.id];
   const projects = (
