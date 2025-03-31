@@ -21,12 +21,15 @@ CREATE TABLE `projects` (
   `subject` varchar(255),
   `institution` varchar(255),
   `creator` int NOT NULL,
-  `status` ENUM ('Fechado', 'Em andamento', 'Concluído') DEFAULT 'Fechado'
+  `status` ENUM ('Fechado', 'Em andamento', 'Concluído'),
+  `start` datetime,
+  `finish` datetime
 );
 
- create table projectMember (
-	projectId int NOT NULL,
-	userId int NOT NULL
+CREATE TABLE `projectMember` (
+  `projectId` int NOT NULL,
+  `userId` int NOT NULL,
+  PRIMARY KEY (`projectId`, `userId`)
 );
 
 CREATE TABLE `projectSubjects` (
@@ -49,33 +52,7 @@ CREATE TABLE `tasks` (
   `timeEstimate` int COMMENT 'em horas',
   `start` datetime,
   `finish` datetime,
-  `status` ENUM ('Fechado', 'Em andamento', 'Concluído') NOT NULL DEFAULT 'Fechado'
-);
-
-CREATE TABLE `projectRecovery` (
-  `instanceId` int PRIMARY KEY AUTO_INCREMENT,
-  `projectId` int NOT NULL,
-  `name` text,
-  `description` text,
-  `subject` varchar(255),
-  `institution` varchar(255),
-  `creator` int,
-  `status` ENUM ('Fechado', 'Em andamento', 'Concluído'),
-  `created` datetime NOT NULL
-);
-
-CREATE TABLE `taskRecovery` (
-  `instanceId` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `taskId` int NOT NULL,
-  `taskUser` int,
-  `title` text,
-  `description` text,
-  `priority` ENUM ('Baixa', 'Média', 'Alta'),
-  `timeEstimate` int COMMENT 'em horas',
-  `start` datetime,
-  `finish` datetime,
-  `status` ENUM ('Fechado', 'Em andamento', 'Concluído'),
-  `created` datetime NOT NULL
+  `status` ENUM ('Fechado', 'Em andamento', 'Concluído') NOT NULL
 );
 
 ALTER TABLE `userPicture` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
@@ -89,10 +66,6 @@ ALTER TABLE `projects` ADD FOREIGN KEY (`creator`) REFERENCES `users` (`id`) ON 
 ALTER TABLE `tasks` ADD FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `tasks` ADD FOREIGN KEY (`taskUser`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
-ALTER TABLE `projectRecovery` ADD FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
-
-ALTER TABLE `taskRecovery` ADD FOREIGN KEY (`taskId`) REFERENCES `tasks` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `projectMember` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
