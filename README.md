@@ -5,7 +5,8 @@
 <span id="topo">
 <p align="center">
     <a href="#sobre">Sobre</a>  |  
-    <a href="#backlogs">Backlog do Produto</a>  |  
+    <a href="#backlogs">Backlog do Produto</a>  |
+    <a href="#gif">GIF</a>  |
     <a href="#requisitosfuncionais">Lista de Requisitos Funcionais</a>  | 
     <a href="#requisitosnfuncionais">Lista de Requisitos Não Funcionais</a>  |
     <a href="#tecnologias">Tecnologias</a>  |  
@@ -31,7 +32,7 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 
 | Sprint | Previsão de Entrega |      Status      | Descrição                                           | MVP                                                                     |
 | :----: | :-----------------: | :--------------: | :-------------------------------------------------- | :---------------------------------------------------------------------- |
-|   1    |     30/03/2025      | ❌ Não Concluído | _"Configuração Inicial e Operações Básicas"_        | Cadastro, listagem, edição e exclusão de projetos.                      |
+|   1    |     30/03/2025      | ✅ Concluído | _"Configuração Inicial e Operações Básicas"_        | Cadastro, listagem, edição e exclusão de projetos.                      |
 |   2    |     27/04/2025      | ❌ Não Concluído | _"Gestão de Projetos e Visualizações"_              | Filtros de projetos, dashboard de acompanhamento, gestão de atividades. |
 |   3    |     25/05/2025      | ❌ Não Concluído | _"Implementação Técnica e Inteligência Artificial"_ | Interface conversacional baseada em IA, recuperação de dados.           |
 
@@ -56,6 +57,18 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 |  11  |   Média    | **Como usuário, quero recuperar os dados de projetos de forma intuitiva para facilitar consultas rápidas e embasar análises estratégicas, aumentando a eficiência na tomada de decisões.**                          |     3      |   3    |          RF2          | - Dados dos projetos são recuperados e exibidos de forma clara<br>- Interface permite busca e filtragem intuitivas                                                                                                                                        |
 
 <p align="center">
+
+<span id="gif">
+
+## 📹 GIF
+
+### 1️⃣ Apresentação Figma
+[![Vídeo 1: Apresentação](https://img.youtube.com/vi/N5h7-5bUhcY/0.jpg)](https://www.youtube.com/watch?v=N5h7-5bUhcY)
+
+### 2️⃣ Apresentação Web
+[![Vídeo 2: Funcionalidades](https://img.youtube.com/vi/vbkR7iNMeeM/0.jpg)](https://www.youtube.com/watch?v=vbkR7iNMeeM)
+
+→ [Voltar ao topo](#topo)
 
 <span id="requisitosfuncionais">
 
