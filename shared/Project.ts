@@ -1,11 +1,11 @@
 type Project = {
-  id?: number;
+  id: number;
   name: string;
-  description?: string;
-  subject?: string;
-  institution?: string;
+  description: string;
+  subject: string;
+  institution: string;
   creator: number;
-  status?: "Fechado" | "Em andamento" | "Concluído";
+  status: "Fechado" | "Em andamento" | "Concluído";
 };
 
 export default Project;

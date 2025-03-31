@@ -28,7 +28,7 @@ export const createUserController = async (req: Request, res: Response) => {
     }
 
     try {
-        await createUser({ name, email, password, phoneNumber });
+        await createUser({id: 0, name, email, password, phoneNumber });
         res.status(201).send({ message: "Conta criada com sucesso!" });
     } catch (error: any) {
         res.status(500).send({ message: error.message });

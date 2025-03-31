@@ -68,6 +68,7 @@ export default class ProjectForm extends React.Component<{}, state> {
     
   
     const projectData: Project = {
+      id: 0,
       name: this.state.currentProject.name,
       description: this.state.currentProject.description,
       subject: this.state.currentProject.subject,
