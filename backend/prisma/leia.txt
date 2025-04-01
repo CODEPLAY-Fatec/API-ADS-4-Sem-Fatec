@@ -1,0 +1,4 @@
+npm install
+configura o env
+npx prisma db push
+npx prisma generate

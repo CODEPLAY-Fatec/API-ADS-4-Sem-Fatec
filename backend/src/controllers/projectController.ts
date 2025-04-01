@@ -12,7 +12,6 @@ import {
     updateProjectService,
 } from "../services/projectService";
 import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
-import { User } from "@shared/User";
 
 export const createProjectController = async (req: Request, res: Response) => {
     const ProjectData: Project = req.body;
@@ -87,12 +86,8 @@ export const getProjectsController = async (req: Request, res: Response) => {
             return;
         }
         const result = await getProjectsService(userInfo);
-        const users = (await getAllUsers())
-        .filter((user => result.find(project => project.creator === user.id))).map(user => {
-            return {id: user.id, name: user.name, email: user.email}
-        });
         // considerar usar Set para filtrar mais rápido, não sei se vai ser necessário.
-        res.status(200).send({result, users});
+        res.status(200).send({ result }); 
     } catch (error) {
         console.error("Erro ao buscar projetos:", error);
         res.status(500).send({ message: "Erro ao buscar projetos." });
@@ -108,8 +103,8 @@ export const getProjectByIdController = async (req: Request, res: Response) => {
 
     try {
         const project = await getProjectByIdService(projectId, await getUserInfo(req.cookies.token));
-        const creator = await getUserById(project.creator);
-        res.status(200).send({ project, 'name': creator.name });
+        const creator = await getUserById(project!.creator);
+        res.status(200).send({ project, 'name': creator!.name });
     } catch (error) {
         res.status(500).send({ message: "Erro ao buscar projeto." });
     }

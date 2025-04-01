@@ -1,4 +1,3 @@
-import {db} from "../config/database";
 import { Router } from "express";
 import { loginController } from "../controllers/authController";
 

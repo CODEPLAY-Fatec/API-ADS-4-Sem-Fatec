@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import ProjectDetails from "@/created-components/ProjectDetails";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
@@ -14,23 +13,21 @@ import ProjectType from "@shared/Project";
 type User = {
     id: number;
     name: string;
+    email: string;
 };
 
-type Project = ProjectType & { member_ids: number[], member_names: string[], member_emails: string[] }
+type Project = ProjectType & { users: User }; // Agora `users` é apenas um objeto, não um array.
 
 export default function Tabela() {
     const router = useRouter();
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
     const [data, setData] = useState<Project[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
     const fetchProjects = async () => {
         try {
             const response = await axios.get("/api/projects");
             const sortedProjects = response.data.result.sort((a: Project, b: Project) => a.id - b.id);
             setData(sortedProjects);
-            setUsers(response.data.users);
         } catch (error) {
             console.error("Erro ao buscar projetos:", error);
         }
@@ -45,24 +42,15 @@ export default function Tabela() {
         return () => clearInterval(interval);
     }, []);
 
-    //const handleProjectClick = (project: Project) => setSelectedProject(project);
-    
-    const handleCloseProjectDetails = () => { 
-        setSelectedProject(null);
-        fetchProjects();
-    };
-
     const handleProjectClick = (project: Project) => {
         router.push(`projetos/descricao/${project.id}`);
-      };
-    
+    };
 
     const currentPageData = data.slice(pagination.pageIndex * pagination.pageSize, (pagination.pageIndex + 1) * pagination.pageSize);
     const totalPages = Math.ceil(data.length / pagination.pageSize);
 
     return (
         <div className="space-y-4">
-            {selectedProject && <ProjectDetails project={selectedProject} onClose={handleCloseProjectDetails} users={users} />}
             <div className="bg-background overflow-hidden rounded-md border">
                 <Table className="table-fixed">
                     <TableHeader>
@@ -82,22 +70,22 @@ export default function Tabela() {
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Badge className={cn(
-                                            row.status === "Em andamento" ? "bg-blue-500 text-white"
-                                            : row.status === "Concluído" ? "bg-green-500 text-white"
+                                            row.status === "Em_andamento" ? "bg-blue-500 text-white"
+                                            : row.status === "Concluido" ? "bg-green-500 text-white"
                                             : "bg-red-500 text-white"
                                         )}>
-                                            {row.status}
+                                            {row.status.replace("_", " ")}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Badge className="bg-white text-black border border-black">{row.subject}</Badge>
                                     </TableCell>
-                                    <TableCell className="text-center">{users.find(u => u.id === row.creator)?.name || "Desconhecido"}</TableCell>
+                                    <TableCell className="text-center">{row.users?.name || "Desconhecido"}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={4} className="h-24 text-center">No results.</TableCell>
+                                <TableCell colSpan={4} className="h-24 text-center">Nenhum resultado encontrado.</TableCell>
                             </TableRow>
                         )}
                     </TableBody>
