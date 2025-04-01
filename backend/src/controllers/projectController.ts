@@ -10,6 +10,10 @@ import {
     getProjectSubjectsService,
     removeUserFromProjectService,
     updateProjectService,
+    createTaskService,
+    addUserToTaskService,
+    getTasksService,
+    updateTaskService,
 } from "../services/projectService";
 import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
 
@@ -143,3 +147,71 @@ export const deleteProjectController = async (req: Request, res: Response) => {
         console.warn(error);
     }
 };
+
+export const createTaskController = async (req: Request, res: Response) => {// id do projeto no params e task no body
+    const projectId = parseInt(req.params.id);
+    const { task} = req.body;
+
+    if (!task || !projectId) {
+        res.status(400).send({ message: "Dados da tarefa invalidos" });
+        return;
+    }
+
+    try {
+        await createTaskService(task, projectId);
+        res.status(201).send({ message: "Tarefa criada com sucesso!" });
+    } catch (error) {
+        res.status(500).send({ message: "Erro ao criar tarefa." });
+        console.warn(error);
+    }
+}
+
+export const addUserTaskController = async (req: Request, res: Response) => {//so o id da task e id do usuario
+    const taskId = req.body.taskId;
+    const taskUser = req.body.taskUser;
+    if (!taskId || !taskUser) {
+        res.status(400).send({ message: "Dados da tarefa invalidos" });
+        return;
+    }
+    try{
+        await addUserToTaskService(taskId, taskUser);
+        res.status(201).send({ message: "Usuario adicionado a tarefa." });
+    }catch(error){
+        res.status(500).send({ message: "Erro ao adicionar usuario na tarefa." });
+        console.warn(error);
+    }
+}
+
+export const getTasksController= async (req: Request, res: Response) => {//apenas o id do projeto no params
+    const projectId = parseInt(req.params.id);
+    if (isNaN(projectId)) {
+        res.status(400).send({ message: "ID do projeto inválido." });
+        return;
+    }
+    try {
+        const tasks = await getTasksService(projectId);
+        res.status(200).send(tasks);
+    }catch (error) {
+        res.status(500).send({ message: "Erro ao buscar tarefas." });
+        console.warn(error);
+    }
+}
+
+export const updateTaskController = async (req: Request, res: Response) => {//id do projeto no params e task no body
+    const task = req.body.task;
+    const projectId = parseInt(req.params.projectId);
+    if (!task) {
+        res.status(400).send({ message: "Dados da tarefa invalidos" });
+        return;
+    }
+    try {
+        await updateTaskService(task, await getUserInfo(req.cookies.token),projectId);
+        res.status(201).send({ message: "Tarefa atualizada com sucesso!" });
+    }
+    catch (error) {
+        res.status(500).send({ message: "Erro ao atualizar tarefa." });
+        console.warn(error);
+    }
+}
+
+//export const deleteTaskController  

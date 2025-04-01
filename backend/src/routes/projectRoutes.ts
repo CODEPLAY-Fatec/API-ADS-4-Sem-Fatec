@@ -8,7 +8,11 @@ import {
     getProjectSubjectsController,
     removeUserFromProjectController,
     updateProjectController,
-    getProjectByIdController
+    getProjectByIdController,
+    createTaskController,
+    getTasksController,
+    updateTaskController,
+    addUserTaskController
 } from "../controllers/projectController";
 const router: Router = Router();
 
@@ -19,7 +23,11 @@ router.get("/projects/institutions", getInstitutionsController);
 router.get("/projects/:id", getProjectByIdController);
 router.patch("/projects", updateProjectController);
 router.delete("/projects/:id", deleteProjectController); // Add delete route
-router.post("/projects/:id/user", addUserToProjectController)
-router.delete("/projects/:id/:user", removeUserFromProjectController)
+router.post("/projects/:id/user", addUserToProjectController);
+router.delete("/projects/:id/:user", removeUserFromProjectController);
+router.post("/projects/:id/task", createTaskController);
+router.patch("/projects/tasks", addUserTaskController );
+router.get("/projects/:id/tasks", getTasksController);
+router.patch("/projects/tasks/:id", updateTaskController);
 
 export default router;

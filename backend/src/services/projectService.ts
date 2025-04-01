@@ -1,6 +1,7 @@
 import Project from "@shared/Project";
 import { User } from "@shared/User";
 import { PrismaClient } from "@prisma/client";
+import Task from "@shared/Task"
 
 const prisma = new PrismaClient();
 
@@ -173,3 +174,65 @@ export const deleteProjectService = async (projectId: number, user: User) => {
     }
   });
 };
+
+export const createTaskService = async (task: Task, projectId: number) => {
+  const createTask = prisma.tasks.create({
+    data: {
+      title: task.title,
+      description: task.description || null,
+      start: task.start,
+      finish: task.finish,
+      priority: task.priority,
+      status: task.status,
+      projectId: projectId,
+      timeEstimate: task.timeEstimate || null,
+      taskUser: task.taskUser || null
+    }
+  })
+  return createTask;
+
+}
+
+export const addUserToTaskService = async (taskId: number, userId: number) => {
+  const addUserTask = await prisma.tasks.update({
+    where: {
+      id: taskId
+    },
+    data: {
+      taskUser: userId || null
+    }
+  });
+  return addUserTask;
+}
+
+export const getTasksService = async (projectId: number) => {//talvez fazer uma verificaçao de acessso aqui
+  const tasks = await prisma.tasks.findMany({
+    where: {
+      projectId: projectId
+    }
+  });
+  return tasks;
+}
+
+export const updateTaskService = async (task: Task,user:User,projectId:number) => {
+  const HasAccess = await hasAccess(projectId, user.id!);
+  if (!HasAccess) {
+    throw new Error("Usuário não tem permissão para editar esta tarefa.");
+  }
+  const updatedTask = await prisma.tasks.update({
+    where: {
+      id: task.id
+    },
+    data: {
+      title: task.title,
+      description: task.description,
+      start: task.start,
+      finish: task.finish,
+      priority: task.priority,
+      status: task.status,
+      timeEstimate: task.timeEstimate || null
+    }
+  });
+}
+
+

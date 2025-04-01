@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { createUser, getAllUsers } from "../services/userService";
+import { createUser, getAllUsers,AttPasswordService } from "../services/userService";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 if (!SECRET_KEY) {
@@ -87,3 +87,21 @@ export const getAllUsersController = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Erro ao buscar usuários." });
     }
 };
+
+export const AttPasswordController = async (req: Request, res: Response) => {
+    const { password,newpassword } = req.body;
+    const token = req.cookies?.token;
+    if (!token || !password) {
+        res.status(401).json({ message: "Preencha todos os campos para alterar senha." });
+        console.log("Usuário não autenticado.");
+        return;
+    }
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY) as jwt.JwtPayload;
+        await AttPasswordService(decoded.id, password,newpassword);
+        res.status(201).send({ message: "Senha alterada com sucesso!" });
+    } catch (error) {
+        res.status(500).send({ message: error });
+        console.warn(error);
+    }
+}

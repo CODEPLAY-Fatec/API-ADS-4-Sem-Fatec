@@ -83,3 +83,19 @@ export const getUserByEmail = async (email: string) => {
     })
     return user;
 }
+
+export const AttPasswordService = async (id: number, password: string,newpassword:string) => {
+    const newHashedPassword = await bcrypt.hash(newpassword, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const changedPassword = await prisma.users.update({
+        where:{
+            id: id,
+            password : hashedPassword
+        },
+        data:{
+            password : newHashedPassword,
+        }
+    })
+
+    return changedPassword;
+}
