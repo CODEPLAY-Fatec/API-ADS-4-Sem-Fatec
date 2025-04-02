@@ -13,16 +13,6 @@ model institutions {
   projects projects[]
 }
 
-model projectmember {
-  projectId Int
-  userId    Int
-  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectmember_ibfk_1")
-  projects  projects @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectmember_ibfk_2")
-
-  @@id([projectId, userId])
-  @@index([userId], map: "userId")
-}
-
 model projects {
   id              Int              @id @default(autoincrement())
   name            String           @db.Text
@@ -33,8 +23,8 @@ model projects {
   status          projects_status?
   start           DateTime?        @db.DateTime(0)
   finish          DateTime?        @db.DateTime(0)
-  projectmember   projectmember[]
-  projectsubjects projectsubjects? @relation(fields: [subject], references: [name], onUpdate: NoAction, map: "projects_ibfk_1")
+  projectMember   projectMember[]
+  projectsubjects projectSubjects? @relation(fields: [subject], references: [name], onUpdate: NoAction, map: "projects_ibfk_1")
   institutions    institutions?    @relation(fields: [institution], references: [name], onUpdate: NoAction, map: "projects_ibfk_2")
   users           users            @relation(fields: [creator], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projects_ibfk_3")
   tasks           tasks[]
@@ -42,12 +32,6 @@ model projects {
   @@index([creator], map: "creator")
   @@index([institution], map: "institution")
   @@index([subject], map: "subject")
-}
-
-model projectsubjects {
-  id       Int        @id @default(autoincrement())
-  name     String     @unique(map: "name") @db.VarChar(255)
-  projects projects[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -69,22 +53,38 @@ model tasks {
   @@index([taskUser], map: "taskUser")
 }
 
-model userpicture {
-  userId Int   @id
-  file   Bytes @db.Blob
-  users  users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "userpicture_ibfk_1")
-}
-
 model users {
   id            Int             @id @default(autoincrement())
   name          String          @db.Text
   email         String          @db.Text
   phoneNumber   String?         @db.Text
   password      String          @db.Text
-  projectmember projectmember[]
+  projectMember projectMember[]
   projects      projects[]
   tasks         tasks[]
-  userpicture   userpicture?
+  userPicture   userPicture?
+}
+
+model projectMember {
+  projectId Int
+  userId    Int
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectMember_ibfk_1")
+  projects  projects @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectMember_ibfk_2")
+
+  @@id([projectId, userId])
+  @@index([userId], map: "userId")
+}
+
+model projectSubjects {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique(map: "name") @db.VarChar(255)
+  projects projects[]
+}
+
+model userPicture {
+  userId Int   @id
+  file   Bytes @db.Blob
+  users  users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "userPicture_ibfk_1")
 }
 
 enum tasks_priority {
