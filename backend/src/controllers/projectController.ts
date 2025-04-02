@@ -152,6 +152,7 @@ export const deleteProjectController = async (req: Request, res: Response) => {
 export const createTaskController = async (req: Request, res: Response) => {// id do projeto no params e task no body
     const projectId = parseInt(req.params.id);
     const { task} = req.body;
+    const user = await getUserInfo(req.cookies.token);
 
     if (!task || !projectId) {
         res.status(400).send({ message: "Dados da tarefa invalidos" });
@@ -159,7 +160,7 @@ export const createTaskController = async (req: Request, res: Response) => {// i
     }
 
     try {
-        await createTaskService(task, projectId);
+        await createTaskService(task, projectId,user.id);
         res.status(201).send({ message: "Tarefa criada com sucesso!" });
     } catch (error) {
         res.status(500).send({ message: "Erro ao criar tarefa." });
@@ -185,12 +186,13 @@ export const addUserTaskController = async (req: Request, res: Response) => {//s
 
 export const getTasksController= async (req: Request, res: Response) => {//apenas o id do projeto no params
     const projectId = parseInt(req.params.id);
+    const User = await getUserInfo(req.cookies.token);
     if (isNaN(projectId)) {
         res.status(400).send({ message: "ID do projeto inválido." });
         return;
     }
     try {
-        const tasks = await getTasksService(projectId);
+        const tasks = await getTasksService(projectId,User.id);
         res.status(200).send(tasks);
     }catch (error) {
         res.status(500).send({ message: "Erro ao buscar tarefas." });
@@ -217,13 +219,14 @@ export const updateTaskController = async (req: Request, res: Response) => {//id
 
 export const deleteTaskController   = async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.taskId);
+    const user = await getUserInfo(req.cookies.token);
     if(!taskId){
         res.status(400).send({ message: "Dados da tarefa invalidos" });
         return;
     }
 
     try {
-        await deleteTaskService(taskId)
+        await deleteTaskService(taskId, user.id);
         res.status(201).send({ message : "Tarefa deletada com sucesso!"});
     }catch (error){
         res.status(500).send({ message: "Erro ao deletar tarefa." });

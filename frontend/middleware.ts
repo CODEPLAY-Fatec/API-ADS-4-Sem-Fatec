@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = ["/projetos"];
-const authCheckRoutes = ["/"]; 
+const protectedRoutes = ["/projetos"];//rotas que precisam de autenticação
+const authCheckRoutes = ["/","/cadastro", "/login"];//rotas que não precisam de autenticação
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
     console.error("Usuário não autenticado!", error);
 
     
-    if (protectedRoutes.includes(pathname)) {//proteçao para projetos
+    if (protectedRoutes.some(route => pathname.startsWith(route))) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

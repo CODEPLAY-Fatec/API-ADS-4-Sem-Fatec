@@ -5,6 +5,23 @@ import Task from "@shared/Task";
 
 const prisma = new PrismaClient();
 
+export const inTheProject = async (
+  projectId: number, userId: number) => {
+  const inProject = await prisma.projectMember.findFirst({
+    where: {
+      projectId: projectId,
+      userId: userId!
+    }
+  });
+  const IsCreator = await prisma.projects.findFirst({
+    where: {
+      creator: userId!,
+      id: projectId
+    }
+  })
+  return {inProject,IsCreator};
+}
+
 export const hasAccess = async (projectId: number, userId: number) => {
   return prisma.projects.findFirst({
     select: { id: true },
@@ -189,7 +206,11 @@ export const deleteProjectService = async (projectId: number, user: User) => {
   });
 };
 
-export const createTaskService = async (task: Task, projectId: number) => {
+export const createTaskService = async (task: Task, projectId: number,userId:number) => {
+  const IsMember = inTheProject(projectId, userId);
+  if(!IsMember) {
+    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  }
   const createTask = prisma.tasks.create({
     data: {
       title: task.title,
@@ -207,6 +228,18 @@ export const createTaskService = async (task: Task, projectId: number) => {
 };
 
 export const addUserToTaskService = async (taskId: number, userId: number) => {
+  const task = await prisma.tasks.findFirst({
+    where: {
+      id: taskId,
+    },
+  });
+  if (!task) {
+    throw new Error("Problema ao encontrar id do projeto relacionado a task.");
+  }
+  const IsMember = inTheProject(task!.id, userId);
+  if(!IsMember) {
+    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  }
   const addUserTask = await prisma.tasks.update({
     where: {
       id: taskId,
@@ -218,8 +251,12 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
   return addUserTask;
 };
 
-export const getTasksService = async (projectId: number) => {
+export const getTasksService = async (projectId: number,userId:number) => {
   //talvez fazer uma verificaçao de acessso aqui
+  const IsMember = inTheProject(projectId, userId);
+  if(!IsMember) {
+    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  }
   const tasks = await prisma.tasks.findMany({
     where: {
       projectId: projectId,
@@ -233,6 +270,10 @@ export const updateTaskService = async (
   user: User,
   projectId: number,
 ) => {
+  const IsMember = inTheProject(projectId, user.id!);
+  if(!IsMember) {
+    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  }
   const HasAccess = await hasAccess(projectId, user.id!);
   if (!HasAccess) {
     throw new Error("Usuário não tem permissão para editar esta tarefa.");
@@ -253,8 +294,22 @@ export const updateTaskService = async (
   });
 };
 
-export const deleteTaskService = async (taskId: number) => {
+export const deleteTaskService = async (taskId: number,userId:number) => {
   //delete de task nao precisa ser o criador para deletar
+  const task = await prisma.tasks.findFirst({
+    where: {
+      id: taskId,
+    },
+  });
+  if (!task) {
+    throw new Error("Problema ao encontrar id do projeto relacionado a task.");
+  }
+  
+  const IsMember = inTheProject(task!.id, userId);
+  if(!IsMember) {
+    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  }
+  
   const deleteTask = await prisma.tasks.delete({
     where: {
       id: taskId,
