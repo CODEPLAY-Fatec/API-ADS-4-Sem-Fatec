@@ -99,3 +99,18 @@ export const AttPasswordService = async (id: number, password: string,newpasswor
 
     return changedPassword;
 }
+
+export const updateUserService = async (user:User,userId : number) => {
+    const updatedUser = await prisma.users.update({
+        where: {
+            id: userId,
+        },
+        data: {
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+        }
+    })
+
+
+}

@@ -29,5 +29,6 @@ router.post("/projects/:id/task", createTaskController);
 router.patch("/projects/tasks", addUserTaskController );
 router.get("/projects/:id/tasks", getTasksController);
 router.patch("/projects/tasks/:id", updateTaskController);
+router.delete("/projects/tasks/:id", deleteProjectController);
 
 export default router;

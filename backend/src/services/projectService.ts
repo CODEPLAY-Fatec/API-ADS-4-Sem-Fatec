@@ -235,4 +235,13 @@ export const updateTaskService = async (task: Task,user:User,projectId:number) =
   });
 }
 
+export const deleteTaskService = async (taskId:number) => {//delete de task nao precisa ser o criador para deletar
+  const deleteTask = await prisma.tasks.delete({
+    where: {
+      id: taskId
+    }
+  })
+  return deleteTask;
+}
+
 

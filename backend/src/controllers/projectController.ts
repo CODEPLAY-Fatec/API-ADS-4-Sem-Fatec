@@ -14,6 +14,7 @@ import {
     addUserToTaskService,
     getTasksService,
     updateTaskService,
+    deleteTaskService,
 } from "../services/projectService";
 import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
 
@@ -214,4 +215,18 @@ export const updateTaskController = async (req: Request, res: Response) => {//id
     }
 }
 
-//export const deleteTaskController  
+export const deleteTaskController   = async (req: Request, res: Response) => {
+    const taskId = parseInt(req.params.taskId);
+    if(!taskId){
+        res.status(400).send({ message: "Dados da tarefa invalidos" });
+        return;
+    }
+
+    try {
+        await deleteTaskService(taskId)
+        res.status(201).send({ message : "Tarefa deletada com sucesso!"});
+    }catch (error){
+        res.status(500).send({ message: "Erro ao deletar tarefa." });
+        console.warn(error);
+    }
+}

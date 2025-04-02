@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { createUser, getAllUsers,AttPasswordService } from "../services/userService";
+import { createUser, getAllUsers,AttPasswordService, updateUserService } from "../services/userService";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 if (!SECRET_KEY) {
@@ -102,6 +102,24 @@ export const AttPasswordController = async (req: Request, res: Response) => {
         res.status(201).send({ message: "Senha alterada com sucesso!" });
     } catch (error) {
         res.status(500).send({ message: error });
+        console.warn(error);
+    }
+}
+
+export const upadateUserController = async (req : Request, res : Response) => {
+    const {user:User} = req.body;
+    const token = req.cookies?.token;
+    if (!token) {
+        res.status(401).json({ message: "Não foi encontrado o cookie" });//retorno de erro pro frontend caso eles esqueçam de enviar
+        console.log("Cookie faltando");
+        return;
+    }
+    const decoded = jwt.verify(token, SECRET_KEY) as jwt.JwtPayload;
+    try {
+        await updateUserService(User,decoded.id);
+        res.status(201).send({ message: "Usuário atualizado com sucesso!" });
+    }catch(error){
+        res.status(500).send({ message: "Erro ao atualizar usuário." });
         console.warn(error);
     }
 }
