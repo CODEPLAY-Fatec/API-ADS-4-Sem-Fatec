@@ -18,8 +18,8 @@ type state = {
   showSuccessModal: boolean;
 };
 
-export default class ProjectForm extends React.Component<{}, state> {
-  constructor(props: {}) {
+export default class ProjectForm extends React.Component<{toggleForm: () => void}, state> {
+  constructor(props: {toggleForm: ()=> void}) {
     super(props);
     this.state = {
       currentProject: {},
@@ -80,6 +80,7 @@ export default class ProjectForm extends React.Component<{}, state> {
     try {
       await axios.post("/api/projects", projectData);
         toast.success("Projeto criado com sucesso!"); 
+        this.props.toggleForm();
     } catch (error) {
       toast.error("Erro ao criar Projeto",{duration: 1500});
     }
