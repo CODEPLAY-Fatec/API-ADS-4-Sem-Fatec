@@ -124,8 +124,10 @@ export const removeUserFromProjectService = async (
   return removeMember;
 };
 
-export const getProjectsService = async (user: User, searchName?: string, searchCreator?: string, searhInst?: string, searchSubj?: string, dateStart?: Date, dateFinish?: Date) => {
-  let creatorIds : {id:number}[] =[]
+export const getProjectsService = async (user: User, searchName?: string, searchCreator?: string, searchInst?: string, searchSubj?: string, dateStart?: Date, dateFinish?: Date) => {
+
+  //essa parte toma conta de filtrar a parte do criador pois é um trabalho
+  let creatorIds : {id:number}[] = []//inicializa a array de ids para nao ficar preso dentro do escopo do if
   if(searchCreator){
       creatorIds = await prisma.users.findMany({//pegando a lista de possiveis usuarios com o nome 
       where :{
@@ -136,6 +138,9 @@ export const getProjectsService = async (user: User, searchName?: string, search
       }
     })
   }
+  const idList = creatorIds.map(user => user.id);//pegando a lista de ids de possiveis criadores e transformando em uma lista de ids
+
+  //pegando os projetos e aplicandos os possiveis filtros
   const projects = await prisma.projects.findMany({
     where: {
       AND: [
@@ -151,9 +156,11 @@ export const getProjectsService = async (user: User, searchName?: string, search
       ],
     },
     ...(searchName ? [{ name: { contains: searchName} }] : []),//fora do OR dentro do AND
-    ...(searchCreator ?[{creator: {in: []}}] : [])
-
-    
+    ...(searchCreator ?[{creator: {in: idList}}] : []),//filtrar por criador
+    ...(searchInst ? [{ institution : { contains : searchInst} }] : []),//filtrar por instuiçao
+    ...(searchSubj ? [{ subject : { contains : searchSubj} }] : []),//filtrar por area de atuaçao
+    ...(dateStart ? [{ start : {gt : dateStart} }] : []),//para buscar registros depois da data
+    ...(dateFinish ?[{finish : {lt : dateFinish}}] : []),//para buscar registros antes da data
 
   ]
     },
@@ -172,8 +179,6 @@ export const getProjectsService = async (user: User, searchName?: string, search
     ...rest,
     creatorInfo: users, // users agora se chama Creator
   }));
-  
-
   
   return formattedProjects;
 };
