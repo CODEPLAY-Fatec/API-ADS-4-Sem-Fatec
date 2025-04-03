@@ -109,7 +109,7 @@ export const getProjectByIdController = async (req: Request, res: Response) => {
     try {
         const project = await getProjectByIdService(projectId, await getUserInfo(req.cookies.token));
         const creator = await getUserById(project!.creator);
-        res.status(200).send({ project, 'name': creator!.name });
+        res.status(200).send({ project, 'creator': creator });
     } catch (error) {
         res.status(500).send({ message: "Erro ao buscar projeto." });
     }

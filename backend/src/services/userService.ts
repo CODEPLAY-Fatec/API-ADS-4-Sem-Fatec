@@ -111,6 +111,7 @@ export const updateUserService = async (user:User,userId : number) => {
             phoneNumber: user.phoneNumber,
         }
     })
+    return updatedUser
 
 
 }

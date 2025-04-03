@@ -124,10 +124,22 @@ export const removeUserFromProjectService = async (
   return removeMember;
 };
 
-export const getProjectsService = async (user: User) => {
+export const getProjectsService = async (user: User, searchName?: string, searchCreator?: string, searhInst?: string, searchSubj?: string, dateStart?: Date, dateFinish?: Date) => {
+  let creatorIds : {id:number}[] =[]
+  if(searchCreator){
+      creatorIds = await prisma.users.findMany({//pegando a lista de possiveis usuarios com o nome 
+      where :{
+        name: {contains:searchCreator}
+      },
+      select:{
+        id:true
+      }
+    })
+  }
   const projects = await prisma.projects.findMany({
     where: {
-      OR: [
+      AND: [
+      {OR: [
         { creator: user.id },
         {
           projectMember: {
@@ -135,8 +147,15 @@ export const getProjectsService = async (user: User) => {
               userId: user.id,
             },
           },
-        },
+        }, 
       ],
+    },
+    ...(searchName ? [{ name: { contains: searchName} }] : []),//fora do OR dentro do AND
+    ...(searchCreator ?[{creator: {in: []}}] : [])
+
+    
+
+  ]
     },
     include: {
       users: {
@@ -148,7 +167,15 @@ export const getProjectsService = async (user: User) => {
       },
     },
   });
-  return projects;
+
+  const formattedProjects = projects.map(({ users, ...rest }) => ({//um map somente para alternar os users retornados como creator
+    ...rest,
+    creatorInfo: users, // users agora se chama Creator
+  }));
+  
+
+  
+  return formattedProjects;
 };
 
 export const getProjectByIdService = async (projectId: number, user: User) => {
@@ -252,7 +279,7 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
 };
 
 export const getTasksService = async (projectId: number,userId:number) => {
-  //talvez fazer uma verificaçao de acessso aqui
+  //futu
   const IsMember = inTheProject(projectId, userId);
   if(!IsMember) {
     throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
