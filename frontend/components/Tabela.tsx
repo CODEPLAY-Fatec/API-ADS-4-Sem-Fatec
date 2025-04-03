@@ -7,8 +7,13 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import ProjectType from "@shared/Project";
+
+type FetchedProject = ProjectType & {
+    creatorInfo: User;
+    users: User[];
+}
 
 type User = {
     id: number;
@@ -16,17 +21,19 @@ type User = {
     email: string;
 };
 
-type Project = ProjectType & { users: User }; // Agora `users` é apenas um objeto, não um array.
+type TabelaProps = {
+    setSelectedProject: any; 
+}
 
-export default function Tabela() {
+export default function Tabela(props: TabelaProps) {
     const router = useRouter();
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
-    const [data, setData] = useState<Project[]>([]);
+    const [data, setData] = useState<FetchedProject[]>([]);
 
     const fetchProjects = async () => {
         try {
             const response = await axios.get("/api/projects");
-            const sortedProjects = response.data.result.sort((a: Project, b: Project) => a.id - b.id);
+            const sortedProjects = response.data.result.sort((a: FetchedProject, b: FetchedProject) => a.id - b.id);
             setData(sortedProjects);
         } catch (error) {
             console.error("Erro ao buscar projetos:", error);
@@ -42,8 +49,9 @@ export default function Tabela() {
         return () => clearInterval(interval);
     }, []);
 
-    const handleProjectClick = (project: Project) => {
-        router.push(`projetos/descricao/${project.id}`);
+    const handleProjectClick = (project: FetchedProject) => {
+        props.setSelectedProject(project) 
+        //router.push(`projetos/descricao/${project.id}`);
     };
 
     const currentPageData = data.slice(pagination.pageIndex * pagination.pageSize, (pagination.pageIndex + 1) * pagination.pageSize);
@@ -80,7 +88,7 @@ export default function Tabela() {
                                     <TableCell className="text-center">
                                         <Badge className="bg-white text-black border border-black">{row.subject}</Badge>
                                     </TableCell>
-                                    <TableCell className="text-center">{row.users?.name || "Desconhecido"}</TableCell>
+                                    <TableCell className="text-center">{row.creatorInfo?.name || "Desconhecido"}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
