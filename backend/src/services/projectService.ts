@@ -3,6 +3,7 @@ import { User } from "@shared/User";
 import { PrismaClient } from "@prisma/client";
 import Task from "@shared/Task";
 
+
 const prisma = new PrismaClient();
 
 export const inTheProject = async (
@@ -124,7 +125,7 @@ export const removeUserFromProjectService = async (
   return removeMember;
 };
 
-export const getProjectsService = async (user: User, searchName?: string, searchCreator?: string, searchInst?: string, searchSubj?: string, dateStart?: Date, dateFinish?: Date) => {
+export const getProjectsService = async (user: User, searchName?: string, searchCreator?: string, searchInst?: string, searchSubj?: string, dateStart?: Date, dateFinish?: Date,searchStatus?: Project['status']) => {
 
   //essa parte toma conta de filtrar a parte do criador pois é um trabalho
   let creatorIds : {id:number}[] = []//inicializa a array de ids para nao ficar preso dentro do escopo do if
@@ -161,6 +162,7 @@ export const getProjectsService = async (user: User, searchName?: string, search
     ...(searchSubj ? [{ subject : { contains : searchSubj} }] : []),//filtrar por area de atuaçao
     ...(dateStart ? [{ start : {gt : dateStart} }] : []),//para buscar registros depois da data
     ...(dateFinish ?[{finish : {lt : dateFinish}}] : []),//para buscar registros antes da data
+    ...(searchStatus ? [{ status: searchStatus }] : []),//para buscar por status
 
   ]
     },
@@ -205,7 +207,13 @@ export const getProjectByIdService = async (projectId: number, user: User) => {
       },
     },
   });
-  return project;
+
+  return {
+    ...project,
+    projectMember: project!.projectMember.map(member => ({
+      ...member.users,
+    })),
+  };
 };
 
 export const getProjectSubjectsService = async () => {
@@ -283,15 +291,30 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
   return addUserTask;
 };
 
-export const getTasksService = async (projectId: number,userId:number) => {
-  //futu
+export const getTasksService = async (projectId: number,userId:number,searchStatus?:Task['status'],searchTaskUser?:number[],searchPriority?:Task['priority'],searchTitle?:string,dateStart?:Date,dateFinish?:Date) => {
+
+  //verificaçao para ver se percente ao projeto
   const IsMember = inTheProject(projectId, userId);
   if(!IsMember) {
     throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
   }
+
+  
+  //task vai pode ser filtrado por status,qm esta fazendo,prioridade,data fim e data inicio ,titulo
+
+
   const tasks = await prisma.tasks.findMany({
     where: {
-      projectId: projectId,
+      AND: [
+      {projectId: projectId},
+      ],
+      ...(searchStatus ? [{ status: searchStatus }] : []),//para buscar por status
+      ...(searchPriority ? [{ priority: searchPriority }] : []),//para buscar por prioridade
+      ...(searchTitle ? [{ title: { contains: searchTitle } }] : []),//para buscar por titulo
+      ...(dateStart ? [{ start: { gt: dateStart } }] : []),//para buscar por data de inicio
+      ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []),//para buscar por data de fim
+      ...(searchTaskUser ? [{ taskUser: { in: searchTaskUser } }] : []),//para buscar por usuario
+      
     },
   });
   return tasks;

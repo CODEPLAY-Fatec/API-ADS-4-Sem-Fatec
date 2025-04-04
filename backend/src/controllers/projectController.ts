@@ -84,13 +84,14 @@ export const removeUserFromProjectController = async (req: Request, res: Respons
 }
 
 export const getProjectsController = async (req: Request, res: Response) => {
+    const {searchName,searchCreator,searchInst,searchSubj,dateStart,dateFinish,searchStatus} = req.body;
     try {
         const userInfo = await getUserInfo(req.cookies.token);
         if (userInfo.id === undefined) {
             res.status(400).send({ message: "User ID is missing." });
             return;
         }
-        const result = await getProjectsService(userInfo);
+        const result = await getProjectsService(userInfo,searchName,searchCreator,searchInst,searchSubj,dateStart,dateFinish,searchStatus);
         // considerar usar Set para filtrar mais rápido, não sei se vai ser necessário.
         res.status(200).send({ result }); 
     } catch (error) {
@@ -108,7 +109,7 @@ export const getProjectByIdController = async (req: Request, res: Response) => {
 
     try {
         const project = await getProjectByIdService(projectId, await getUserInfo(req.cookies.token));
-        const creator = await getUserById(project!.creator);
+        const creator = await getUserById(project!.creator!);
         res.status(200).send({ project, 'creator': creator });
     } catch (error) {
         res.status(500).send({ message: "Erro ao buscar projeto." });
@@ -186,13 +187,14 @@ export const addUserTaskController = async (req: Request, res: Response) => {//s
 
 export const getTasksController= async (req: Request, res: Response) => {//apenas o id do projeto no params
     const projectId = parseInt(req.params.id);
+    const {searchStatus,searchTaskUser,searchPriority,searchTitle,dateStart,dateFinish} = req.body;
     const User = await getUserInfo(req.cookies.token);
     if (isNaN(projectId)) {
         res.status(400).send({ message: "ID do projeto inválido." });
         return;
     }
-    try {
-        const tasks = await getTasksService(projectId,User.id);
+    try {  
+        const tasks = await getTasksService(projectId,User.id,searchStatus,searchTaskUser,searchPriority,searchTitle,dateStart,dateFinish);
         res.status(200).send(tasks);
     }catch (error) {
         res.status(500).send({ message: "Erro ao buscar tarefas." });

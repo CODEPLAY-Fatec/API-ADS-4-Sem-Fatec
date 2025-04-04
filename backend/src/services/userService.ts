@@ -69,7 +69,6 @@ export const getUserById = async (id: number) => {
 }
 
 export const getUserByEmail = async (email: string) => {
-    const query = "SELECT * FROM users WHERE email = ?";
     const user = await prisma.users.findFirst({
         where: {
             email: email
