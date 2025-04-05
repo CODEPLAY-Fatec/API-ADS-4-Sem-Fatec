@@ -1,0 +1,76 @@
+/* Estilo geral do calendário */
+.rbc-calendar {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+  
+  /* nomes dos dias da semana */
+  .rbc-header {
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+    padding: 8px 0;
+    text-transform: capitalize;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+  }
+  
+  /* célula do calendário */
+  .rbc-day-bg {
+    transition: background-color 0.2s ease;
+  }
+  
+  .rbc-day-bg:hover {
+    background-color: #f0f4ff;
+    cursor: pointer;
+  }
+  
+  .rbc-today {
+    background: linear-gradient(145deg, #7FFFD4, #66CDAA); 
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(99, 102, 241, 0.5);
+    font-weight: 600;
+  }
+  
+  
+  /* dias selecionados */
+  .rbc-selected-cell {
+    background-color: #6366f1 !important;
+    color: white !important;
+    border-radius: 6px;
+  }
+  
+  /* dias inativos (de outro mês) */
+  .rbc-off-range {
+    color: #a1a1aa; 
+    opacity: 0.6;
+  }
+  
+  .rbc-month-row {
+    padding: 4px;
+  }
+  
+  .rbc-date-cell {
+    text-align: center;
+    padding: 6px 0;
+  }
+  
+  /* Data do mês (o número) */
+  .rbc-date-cell span {
+    display: inline-block;
+    width: 100%;
+    font-size: 13px;
+  }
+  
+  /* Melhor legibilidade em telas pequenas */
+  @media (max-width: 500px) {
+    .rbc-header {
+      font-size: 12px;
+    }
+  
+    .rbc-date-cell span {
+      font-size: 11px;
+    }
+  }
+  
