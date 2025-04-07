@@ -9,12 +9,19 @@ import GradientText from "./GradientText";
 import EmergeIn from "./EmergeIn";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { Dialog } from "@headlessui/react";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({ id: 0, email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isRecoveryOpen, setRecoveryOpen] = useState(false);
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [recoveryCode, setRecoveryCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [step, setStep] = useState(1);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,6 +48,44 @@ const LoginForm: React.FC = () => {
     } finally {
       setLoading(false);
       
+    }
+  };
+
+  const handleRecoverySubmit = async () => {
+    try {
+      if (step === 1) {
+        if (!recoveryEmail) {
+          toast.error("Por favor, insira um e-mail válido.");
+          return;
+        }
+        await axios.post("/api/password-recovery/request-code", { email: recoveryEmail });
+        setStep(2);
+      } else if (step === 2) {
+        if (!recoveryCode) {
+          toast.error("Por favor, insira o código de recuperação.");
+          return;
+        }
+        const response = await axios.post("/api/password-recovery/verify-code", { email: recoveryEmail, code: recoveryCode });
+        if (response.status === 200) setStep(3);
+      } else if (step === 3) {
+        if (!newPassword || newPassword.length < 8) {
+          toast.error("A nova senha deve ter pelo menos 8 caracteres.");
+          return;
+        }
+        if (newPassword !== confirmNewPassword) {
+          toast.error("As senhas não coincidem.");
+          return;
+        }
+        await axios.post("/api/password-recovery/reset-password", { email: recoveryEmail, newPassword });
+        setRecoveryOpen(false);
+        toast.success("Senha alterada com sucesso!");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "Erro ao processar a solicitação.");
+      } else {
+        toast.error("Erro inesperado.");
+      }
     }
   };
 
@@ -90,7 +135,7 @@ const LoginForm: React.FC = () => {
             </div>
 
             <div className="text-center">
-              <a href="#" className="text-sm text-blue-500 hover:underline">
+              <a onClick={() => setRecoveryOpen(true)} className="text-sm text-blue-500 hover:underline cursor-pointer">
                 Esqueci minha senha
               </a>
             </div>
@@ -105,6 +150,78 @@ const LoginForm: React.FC = () => {
           </form>
         </div>
       </div>
+      <Dialog open={isRecoveryOpen} onClose={() => setRecoveryOpen(false)}>
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
+          <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-semibold text-black mb-4">
+              {step === 1 && "Recuperar Senha"}
+              {step === 2 && "Verificar Código"}
+              {step === 3 && "Alterar Senha"}
+            </h2>
+            {step === 1 && (
+              <>
+                <Label htmlFor="recoveryEmail" className="text-gray-700">Digite seu e-mail:</Label>
+                <input
+                  type="email"
+                  id="recoveryEmail"
+                  value={recoveryEmail}
+                  onChange={(e) => setRecoveryEmail(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 p-2"
+                />
+                <Button
+                  onClick={handleRecoverySubmit}
+                  className="mt-4 w-full bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 rounded-full transition-transform"
+                >
+                  Enviar Código
+                </Button>
+              </>
+            )}
+            {step === 2 && (
+              <>
+                <p className="text-gray-700">Código enviado para {recoveryEmail}. Digite o código abaixo:</p>
+                <input
+                  type="text"
+                  value={recoveryCode}
+                  onChange={(e) => setRecoveryCode(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 p-2"
+                />
+                <Button
+                  onClick={handleRecoverySubmit}
+                  className="mt-4 w-full bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 rounded-full transition-transform"
+                >
+                  Verificar Código
+                </Button>
+              </>
+            )}
+            {step === 3 && (
+              <>
+                <Label htmlFor="newPassword" className="text-gray-700">Nova Senha:</Label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 p-2"
+                />
+                <Label htmlFor="confirmNewPassword" className="mt-4 text-gray-700">Confirme a Nova Senha:</Label>
+                <input
+                  type="password"
+                  id="confirmNewPassword"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 p-2"
+                />
+                <Button
+                  onClick={handleRecoverySubmit}
+                  className="mt-4 w-full bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 rounded-full transition-transform"
+                >
+                  Alterar Senha
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </Dialog>
     </EmergeIn>
   );
 };

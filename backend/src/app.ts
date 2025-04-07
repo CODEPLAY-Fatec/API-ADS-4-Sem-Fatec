@@ -6,6 +6,7 @@ import userRoute from "./routes/userRoute";
 import dotenv from "dotenv";
 import { authenticateToken } from "./middleware/middleware";
 import cookieParser from "cookie-parser";
+import passwordRecoveryRoutes from "./routes/passwordRecoveryRoutes";
 
 dotenv.config();
 
@@ -25,6 +26,8 @@ app.use(
 // app.use('/api', ) //modo para usar rota q atualmente nao existe
 
 app.use("/api", userRoute); //manter aqui emcima somente login/cadastro
+
+app.use("/api/password-recovery", passwordRecoveryRoutes);
 
 app.use(authenticateToken); // as rotas abaixo desse autenticador estao protegidas
 
