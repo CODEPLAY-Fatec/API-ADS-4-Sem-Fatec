@@ -8,43 +8,52 @@ import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import GradientText from "./GradientText";
 import toast from "react-hot-toast";
-import Project from "@shared/Project";
 import { User } from "@shared/User";
+import ProjectSubject from "@shared/ProjectSubject";
+import Institution from "@shared/Institution";
+import FetchedProject from "@/types/FetchedProject";
 
 type ProjectEditorProps = {
-  project: Project & {
-    projectMember: User[];
-  };
+  project: FetchedProject;
+  setCurrentProject: (project: ProjectEditorProps["project"]) => void;
   onClose: () => void;
-  users: { id: number; name: string }[];
+  users: User[];
+  creator: User;
 };
 
 const ProjectEditor: React.FC<ProjectEditorProps> = ({
   project,
+  setCurrentProject,
   onClose,
   users,
+  creator,
 }) => {
   const [isEditable] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false); // New state for delete success modal
   const [editableProject, setEditableProject] = useState(project);
-  const [projectSubjects, setProjectSubjects] = useState<string[]>([]);
-  const [institutions, setInstitutions] = useState<string[]>([]);
+  const [projectMembers, setProjectMembers] = useState<User[]>(users);
+  const [projectSubjects, setProjectSubjects] = useState<
+    ProjectSubject[] | undefined
+  >();
+  const [institutions, setInstitutions] = useState<Institution[] | undefined>();
   const [newMemberEmail, setNewMemberEmail] = useState<string>("");
   // TODO: reimpmlementar a função de adicionar/remover membro
   // reimplementar instituições e áreas de atuação
   useEffect(() => {
+    axios.get("/api/projects/subjects").then((response) => {
+      setProjectSubjects(response.data);
+    });
+    axios.get("/api/projects/institutions").then((response) => {
+      setInstitutions(response.data);
+    });
   }, []);
-
-  const getResponsavelName = (creatorId: number) => {
-    const user = users.find((user) => user.id === creatorId);
-    return user ? user.name : "Desconhecido";
-  };
 
   const handleSaveClick = async () => {
     try {
       await axios.patch("/api/projects", editableProject);
-      toast.success("Aualizado com sucesso!"), { duration: 1500 };
+      toast.success("Atualizado com sucesso!"), { duration: 1500 };
+      setCurrentProject(editableProject);
       onClose();
     } catch (error) {
       console.error(error);
@@ -63,7 +72,37 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
   };
 
   const handleAddMember = async (email: string) => {
+    axios
+      .post(`/api/projects/${editableProject.id}/user`, { user: email })
+      .then((response) => {
+        if (response.status === 201) {
+          setProjectMembers((prev) => [...prev, response.data.user]);
+          setNewMemberEmail("");
+          toast.success("Membro adicionado com sucesso!");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Erro ao adicionar membro: " + error.response.data.message);
+      });
   };
+
+  async function handleRemoveMember(memberId: string) {
+    axios
+      .delete(`/api/projects/${editableProject.id}/user/${memberId}`)
+      .then((response) => {
+        if (response.status === 201) {
+          setProjectMembers((prev) =>
+            prev.filter((member) => member.id !== Number(memberId)),
+          );
+          toast.success("Membro removido com sucesso!");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Erro ao remover membro: " + error.response.data.message);
+      });
+  }
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -71,10 +110,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
     const { id, value } = e.target;
     setEditableProject((prev) => ({ ...prev, [id]: value }));
   };
-
-  async function handleRemoveMember(memberId: string) {
-  }
-
 
   return (
     <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
@@ -127,9 +162,9 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                   <option value="" disabled>
                     Selecione uma área
                   </option>
-                  {projectSubjects.map((subject) => (
-                    <option key={subject} value={subject}>
-                      {subject}
+                  {projectSubjects?.map((subject) => (
+                    <option key={subject.name} value={subject.name}>
+                      {subject.name}
                     </option>
                   ))}
                 </SelectNative>
@@ -145,9 +180,9 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                   <option value="" disabled>
                     Selecione uma instituição
                   </option>
-                  {institutions.map((institution) => (
-                    <option key={institution} value={institution}>
-                      {institution}
+                  {institutions?.map((institution) => (
+                    <option key={institution.name} value={institution.name}>
+                      {institution.name}
                     </option>
                   ))}
                 </SelectNative>
@@ -175,7 +210,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                 <Input
                   id="responsavel"
                   type="text"
-                  value={getResponsavelName(editableProject.creator)}
+                  value={creator.name}
                   readOnly
                   className="w-full"
                 />
@@ -200,16 +235,24 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
               />
 
               <Label htmlFor="members">Membros Atuais</Label>
-              <SelectNative
-                id="members"
-                value=""
-                onChange={(e) => {
-                  const memberId = e.target.value;
-                  if (memberId) handleRemoveMember(memberId);
-                }}
-                className="w-full cursor-pointer"
-              >
-              </SelectNative>
+              <ul className="list-group mb-3">
+                {projectMembers.map((member) => (
+                  <li
+                    key={member.id}
+                    className="flex justify-between items-center bg-gray-100 p-2 rounded-lg mb-2"
+                  >
+                    <span>{member.name}</span>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => handleRemoveMember(`${member.id}`)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <XIcon size={16} />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
               <div className="flex justify-center space-x-4 mt-6">
                 <Button
                   className="bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 px-6 py-3 rounded-full"

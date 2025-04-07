@@ -7,6 +7,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 import "./calendarStyles.css";
+import Task from "@shared/Task";
 
 moment.locale("pt-BR");
 const localizer = momentLocalizer(moment);
@@ -16,7 +17,7 @@ export interface TaskEvent {
   title: string;
   start: Date;
   end: Date;
-  status?: "pending" | "completed" | "overdue";
+  status?: Task["status"]; 
   allDay?: boolean;
 }
 
@@ -32,9 +33,9 @@ export function TaskCalendar({ events, onSelectEvent }: TaskCalendarProps) {
   const eventStyleGetter = (event: TaskEvent) => {
     let backgroundColor = "#3B82F6";
 
-    if (event.status === "completed") backgroundColor = "#10B981";
-    else if (event.status === "overdue") backgroundColor = "#EF4444";
-    else if (event.status === "pending") backgroundColor = "#F59E0B";
+    if (event.status === "Concluido") backgroundColor = "#10B981";
+    else if (event.status === "Fechado") backgroundColor = "#EF4444";
+    else if (event.status === "Em_andamento") backgroundColor = "#F59E0B";
 
     return {
       style: {

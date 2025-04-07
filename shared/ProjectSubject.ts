@@ -1,4 +1,5 @@
 type ProjectSubject = {
+  id: number;
   name: string;
 };
 
