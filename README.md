@@ -32,7 +32,7 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 
 | Sprint | Previsão de Entrega |      Status      | Descrição                                           | MVP                                                                     |
 | :----: | :-----------------: | :--------------: | :-------------------------------------------------- | :---------------------------------------------------------------------- |
-|   1    |     30/03/2025      | ✅ Concluído | _"Configuração Inicial e Operações Básicas"_        | Cadastro, listagem, edição e exclusão de projetos.                      |
+|   1    |     30/03/2025      |   ✅ Concluído   | _"Configuração Inicial e Operações Básicas"_        | Cadastro, listagem, edição e exclusão de projetos.                      |
 |   2    |     27/04/2025      | ❌ Não Concluído | _"Gestão de Projetos e Visualizações"_              | Filtros de projetos, dashboard de acompanhamento, gestão de atividades. |
 |   3    |     25/05/2025      | ❌ Não Concluído | _"Implementação Técnica e Inteligência Artificial"_ | Interface conversacional baseada em IA, recuperação de dados.           |
 
@@ -58,15 +58,23 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 
 <p align="center">
 
+## 📉 Burndown Chart
+
+### 1️⃣ Sprint 1
+
+![Burndown Chart Sprint 1](./assets/images/sprint-1-burndown.jpg)
+
 <span id="gif">
 
 ## 📹 GIF
 
-### 1️⃣ Apresentação Figma
-[![Vídeo 1: Apresentação](https://img.youtube.com/vi/N5h7-5bUhcY/0.jpg)](https://www.youtube.com/watch?v=N5h7-5bUhcY)
+### Apresentação Figma
 
-### 2️⃣ Apresentação Web
-[![Vídeo 2: Funcionalidades](https://img.youtube.com/vi/vbkR7iNMeeM/0.jpg)](https://www.youtube.com/watch?v=vbkR7iNMeeM)
+![Apresentação Figma](./assets/gifs/figma-demo.gif)
+
+### Apresentação Sprint 1
+
+![Funcionalidades Web](./assets/gifs/sprint-1-demo.gif)
 
 → [Voltar ao topo](#topo)
 
