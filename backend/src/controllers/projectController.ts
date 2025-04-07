@@ -60,7 +60,7 @@ export const addUserToProjectController = async (req: Request, res: Response) =>
         await addUserToProjectService(projectId, user.id, await getUserInfo(req.cookies.token));
         res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!" });
     } catch (error) {
-        res.status(500).send({ message: "Erro ao adicionar usuário ao projeto." });
+        res.status(500).send({ message: "Erro ao adicionar usuário ao projeto.", user: user });
         console.warn(error);
     }
 }
