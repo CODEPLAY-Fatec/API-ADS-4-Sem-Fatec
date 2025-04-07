@@ -73,7 +73,7 @@ export const getUserByEmail = async (email: string) => {
         where: {
             email: email
         },
-        select:{
+        select: {
             id: true,
             name: true,
             email: true,
@@ -83,23 +83,23 @@ export const getUserByEmail = async (email: string) => {
     return user;
 }
 
-export const AttPasswordService = async (id: number, password: string,newpassword:string) => {
+export const AttPasswordService = async (id: number, password: string, newpassword: string) => {
     const newHashedPassword = await bcrypt.hash(newpassword, saltRounds);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const changedPassword = await prisma.users.update({
-        where:{
+        where: {
             id: id,
-            password : hashedPassword
+            password: hashedPassword
         },
-        data:{
-            password : newHashedPassword,
+        data: {
+            password: newHashedPassword,
         }
     })
 
     return changedPassword;
 }
 
-export const updateUserService = async (user:User,userId : number) => {
+export const updateUserService = async (user: User, userId: number) => {
     const updatedUser = await prisma.users.update({
         where: {
             id: userId,
@@ -111,6 +111,24 @@ export const updateUserService = async (user:User,userId : number) => {
         }
     })
     return updatedUser
-
-
 }
+
+export const salvarFotoService = async (buffer: Buffer, userId: number) => {
+    await prisma.userPicture.upsert({//criar q se nao tiver e atualiza se exister
+        where: { userId: userId },
+        update: { file: buffer },
+        create: {
+          userId: userId,
+          file: buffer
+        }
+      });
+};
+
+//pegando foto
+export const buscarFotobyId = async (id: number) => {
+    return await prisma.userPicture.findUnique({
+      where: { userId:id },
+    });
+  };
+
+  
