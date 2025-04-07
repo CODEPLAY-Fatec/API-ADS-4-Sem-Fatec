@@ -7,38 +7,43 @@ import ProjectType from "@shared/Project";
 import { User } from "@shared/User";
 import axios from "axios";
 import { TaskCalendar, TaskEvent } from "@/components/TaskCalendar";
+import Task from "@shared/Task";
+import FetchedProject from "@/types/FetchedProject";
+import { Description } from "@headlessui/react";
+import DescriptionComponent from "./DescriptionComponent";
 
-type Project = ProjectType & {
-  projectMember: User[];
-  tasks?: TaskFromAPI[];
-};
-
-type TaskFromAPI = {
-  id: number;
-  name: string;
-  dueDate: string;
-  status: string;
-};
+//type TaskFromAPI = {
+//  id: number;
+//  name: string;
+//  dueDate: string;
+//  status: string;
+//  projectMember: { users: User }[];
+//};
 
 type ProjectDetailsProps = {
   projectId: number;
-  closeSelectedProject: () => void;
+  closeSelectedProjectAction: () => void;
 };
 
-export default function ProjectDetails({ projectId, closeSelectedProject }: ProjectDetailsProps) {
+export default function ProjectDetails({
+  projectId,
+  closeSelectedProjectAction,
+}: ProjectDetailsProps) {
   const [editing, setEditing] = useState(false);
-  const [currentProject, setCurrentProject] = useState<Project | null>(null);
+  const [currentProject, setCurrentProject] = useState<FetchedProject | null>(null);
   const [currentProjectCreator, setCurrentProjectCreator] = useState<User | null>(null);
+  const [currentProjectTasks, setCurrentProjectTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [calendarEvents, setCalendarEvents] = useState<TaskEvent[]>([]);
+  const [currentTab, setCurrentTab] = useState("Descrição");
 
-  function getStatusColor(status: string): string {
+  function getStatusColor(status: ProjectType["status"]): string {
     switch (status) {
-      case "Em andamento":
+      case "Em_andamento":
         return "bg-yellow-500 text-white";
-      case "Concluído":
+      case "Concluido":
         return "bg-green-500 text-white";
-      case "Cancelado":
+      case "Fechado":
         return "bg-red-500 text-white";
       default:
         return "bg-gray-500 text-white";
@@ -48,21 +53,23 @@ export default function ProjectDetails({ projectId, closeSelectedProject }: Proj
   useEffect(() => {
     async function fetchProjectDetails() {
       try {
-        const response = await axios.get(`/api/projects/${projectId}`);
-        console.warn(response.data);
-
-        setCurrentProject(response.data.project);
-        setCurrentProjectCreator(response.data.creator);
+        const projectResponse = await axios.get(`/api/projects/${projectId}`);
+        const projectTasksResponse = await axios.get(`/api/projects/${projectId}/tasks`)
+        console.warn(projectResponse.data);
+        console.warn(projectTasksResponse.data);
+        setCurrentProject(projectResponse.data.project);
+        setCurrentProjectCreator(projectResponse.data.creator);
+        setCurrentProjectTasks(projectTasksResponse.data.tasks);
 
         // Mapeando tarefas para eventos do calendário
-        if (response.data.tasks) {
-          const events = response.data.tasks.map((task: TaskFromAPI) => ({
+        if (projectResponse.data.tasks) {
+          const events = currentProjectTasks.map((task: Task) => ({
             id: task.id,
-            title: task.name,
-            start: new Date(task.dueDate),
-            end: new Date(task.dueDate),
+            title: task.title,
+            start: task.start ? new Date(task.start) : new Date(),
+            end: task.finish ? new Date(task.finish) : new Date(),
             status: task.status.toLowerCase() as TaskEvent["status"],
-          }));
+          })) as TaskEvent[];
           setCalendarEvents(events);
         }
       } catch (error) {
@@ -82,93 +89,48 @@ export default function ProjectDetails({ projectId, closeSelectedProject }: Proj
   }
 
   return (
-    <div className="w-full max-w-7xl pt-50 mx-auto">
+    <>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="flex justify-between items-center text-blue-600 text-2xl font-semibold">
           <div className="flex items-center space-x-2">
             <button
               className="text-blue-600 hover:text-blue-800 transition"
-              onClick={closeSelectedProject}
+              onClick={closeSelectedProjectAction}
             >
               ←
             </button>
             <h1>{currentProject.name}</h1>
           </div>
 
-          <div className="flex items-center space-x-4">
-            {editing && (
-              <ProjectEditor
-                project={currentProject}
-                onClose={() => setEditing(false)}
-                users={currentProject.projectMember}
-              />
-            )}
-            <button
-              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
-              onClick={() => setEditing(true)}
-            >
-              Editar
-            </button>
-          </div>
+          {/* Botão de editar */}
+          {editing && (
+            <ProjectEditor
+              project={currentProject}
+              setCurrentProject={(project) => {
+                setCurrentProject(project);
+              }}
+              onClose={() => setEditing(false)}
+              users={currentProject.projectMember}
+              creator={currentProjectCreator}
+            />
+          )}
+          <button
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
+            onClick={() => setEditing(true)}
+          >
+            Editar
+          </button>
         </div>
       </div>
 
-      <TabNavigation onTabChange={(tab) => console.log("Aba ativa:", tab)} />
+      <TabNavigation onTabChange={(tab) => {
+          setCurrentTab(tab);
+      }} />
 
-      <div className="border p-6 mt rounded-lg shadow-sm">
-        <div className="flex justify-between items-center max-w-5xl mx-auto">
-          <div>
-            <span className="bg-blue-900 text-white px-3 py-1 rounded-lg text-sm">Título</span>
-            <h2 className="text-xl font-bold mt-2">{currentProject.name}</h2>
-          </div>
-          <div className="flex space-x-2">
-            <span className="border px-3 py-1 rounded-lg text-sm">
-              {currentProject.subject || "Sem categoria"}
-            </span>
-            <span className={`px-3 py-1 rounded-lg text-sm ${getStatusColor(currentProject.status)}`}>
-              {currentProject.status}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-8 max-w-5xl mx-auto">
-          <span className="bg-blue-900 text-white px-3 py-1 rounded-lg text-sm">Descrição</span>
-          <p className="mt-2">{currentProject.description || "Sem descrição disponível."}</p>
-        </div>
-
-        <div className="flex justify-between mt-8 max-w-5xl mx-auto">
-          <div>
-            <span className="bg-blue-900 text-white px-3 py-1 rounded-lg text-sm">Responsáveis</span>
-            <ul className="mt-2 list-disc ml-4">
-              <li>{currentProjectCreator.name}</li>
-            </ul>
-          </div>
-          <div>
-            <span className="bg-blue-900 text-white px-3 py-1 rounded-lg text-sm">Colaboradores</span>
-            <ul className="mt-2 list-disc ml-4">
-              {currentProject.projectMember.map((user) => (
-                <li key={user.id}>{user.name}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <div>
-                <span className="bg-blue-900 text-white px-3 py-1 rounded-lg text-sm">Data de início</span>
-                <p className="mt-2">01/01/2025</p>
-              </div>
-              <div className="mt-6">
-                <TaskCalendar
-                  events={calendarEvents}
-                  onSelectEvent={(event) => {
-                    console.log("Tarefa selecionada:", event);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      {/* Renderiza o conteúdo da aba selecionada */}
+      {currentTab === "Descrição" && (
+          <DescriptionComponent currentProject={currentProject} currentProjectCreator={currentProjectCreator} />
+      )}
+    </>
   );
 }

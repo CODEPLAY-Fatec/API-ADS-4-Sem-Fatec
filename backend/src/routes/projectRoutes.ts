@@ -24,7 +24,7 @@ router.get("/projects/:id", getProjectByIdController);
 router.patch("/projects", updateProjectController);
 router.delete("/projects/:id", deleteProjectController); // Add delete route
 router.post("/projects/:id/user", addUserToProjectController);
-router.delete("/projects/:id/:user", removeUserFromProjectController);
+router.delete("/projects/:id/user/:user", removeUserFromProjectController);
 router.post("/projects/:id/task", createTaskController);
 router.patch("/projects/tasks", addUserTaskController );
 router.get("/projects/:id/tasks", getTasksController);
