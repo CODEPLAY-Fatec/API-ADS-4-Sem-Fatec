@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "@/created-components/Navbar"; // Importação da Navbar
 import TabNavigation from "@/created-components/TabNavigation";
 import ProjectEditor from "@/created-components/ProjectEditor";
-import ProjectType from "@shared/Project";
 import { User } from "@shared/User";
 import axios from "axios";
 import { TaskCalendar, TaskEvent } from "@/components/TaskCalendar";
 import Task from "@shared/Task";
 import FetchedProject from "@/types/FetchedProject";
 import DescriptionComponent from "./DescriptionComponent";
-import { useRouter } from "next/navigation";
+import TaskList from "./TaskList";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -22,10 +20,12 @@ export default function ProjectDetails({
   projectId,
   closeSelectedProjectAction,
 }: ProjectDetailsProps) {
-  const router = useRouter();
   const [editing, setEditing] = useState(false);
-  const [currentProject, setCurrentProject] = useState<FetchedProject | null>(null);
-  const [currentProjectCreator, setCurrentProjectCreator] = useState<User | null>(null);
+  const [currentProject, setCurrentProject] = useState<FetchedProject | null>(
+    null,
+  );
+  const [currentProjectCreator, setCurrentProjectCreator] =
+    useState<User | null>(null);
   const [currentProjectTasks, setCurrentProjectTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [calendarEvents, setCalendarEvents] = useState<TaskEvent[]>([]);
@@ -35,11 +35,14 @@ export default function ProjectDetails({
     async function fetchProjectDetails() {
       try {
         const projectResponse = await axios.get(`/api/projects/${projectId}`);
-        const projectTasksResponse = await axios.get(`/api/projects/${projectId}/tasks`);
+        const projectTasksResponse = await axios.get(
+          `/api/projects/${projectId}/tasks`,
+        );
 
         setCurrentProject(projectResponse.data.project);
         setCurrentProjectCreator(projectResponse.data.creator);
-        setCurrentProjectTasks(projectTasksResponse.data.tasks);
+        console.warn(projectTasksResponse.data);
+        setCurrentProjectTasks(projectTasksResponse.data);
 
         // Mapeando tarefas para eventos do calendário
         if (projectTasksResponse.data.tasks) {
@@ -76,7 +79,8 @@ export default function ProjectDetails({
             <button
               onClick={() => {
                 console.log("Redirecionando para /projetos");
-                router.push("/projetos");
+                //router.push("/projetos");
+                closeSelectedProjectAction();
               }}
               className="absolute top-16 left-8 text-3xl text-gray-700 hover:text-gray-900"
             >
@@ -103,8 +107,16 @@ export default function ProjectDetails({
                 currentProjectCreator={currentProjectCreator}
               />
             )}
-            {currentTab === "Tarefas" && (
+            {currentTab === "Relatórios" && (
               <TaskCalendar events={calendarEvents} />
+            )}
+            {currentTab === "Tarefas" && (
+              <TaskList
+                tasks={currentProjectTasks}
+                setTasks={(t: Task[]): void => {
+                  setCurrentProjectTasks(t);
+                }}
+              />
             )}
           </div>
         </div>
@@ -124,3 +136,4 @@ export default function ProjectDetails({
     </div>
   );
 }
+

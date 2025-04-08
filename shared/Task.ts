@@ -1,6 +1,6 @@
 type Task = {
   id?: number;
-  taskUser: number;
+  taskUser?: number;
   title: string;
   description?: string;
   start?: Date;

@@ -30,7 +30,7 @@ export default function Projetos() {
         <div className="w-full max-w-7xl pt-20 mx-auto">
           {selectedProject != null ? (
             <>
-                <ProjectDetails projectId={selectedProject.id} closeSelectedProject={() => setSelectedProject(null)}/>
+                <ProjectDetails projectId={selectedProject.id} closeSelectedProjectAction={() => setSelectedProject(null)}/>
             </>
           ) : (
             <>

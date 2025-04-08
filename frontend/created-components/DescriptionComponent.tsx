@@ -1,4 +1,3 @@
-import { TaskEvent } from "@/components/TaskCalendar";
 import FetchedProject from "@/types/FetchedProject";
 import { User } from "@shared/User";
 
@@ -39,7 +38,7 @@ export default function DescriptionComponent({
           </span>
           <span
             className={`px-3 py-1 rounded-lg text-sm ${getStatusColor(
-              currentProject.status
+              currentProject.status,
             )}`}
           >
             {currentProject.status}
