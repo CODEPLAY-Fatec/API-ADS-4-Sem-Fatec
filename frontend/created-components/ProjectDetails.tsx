@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Navbar from "@/created-components/Navbar"; // Importação da Navbar
 import TabNavigation from "@/created-components/TabNavigation";
 import ProjectEditor from "@/created-components/ProjectEditor";
 import ProjectType from "@shared/Project";
@@ -9,16 +10,8 @@ import axios from "axios";
 import { TaskCalendar, TaskEvent } from "@/components/TaskCalendar";
 import Task from "@shared/Task";
 import FetchedProject from "@/types/FetchedProject";
-import { Description } from "@headlessui/react";
 import DescriptionComponent from "./DescriptionComponent";
-
-//type TaskFromAPI = {
-//  id: number;
-//  name: string;
-//  dueDate: string;
-//  status: string;
-//  projectMember: { users: User }[];
-//};
+import { useRouter } from "next/navigation";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -29,6 +22,7 @@ export default function ProjectDetails({
   projectId,
   closeSelectedProjectAction,
 }: ProjectDetailsProps) {
+  const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [currentProject, setCurrentProject] = useState<FetchedProject | null>(null);
   const [currentProjectCreator, setCurrentProjectCreator] = useState<User | null>(null);
@@ -37,33 +31,19 @@ export default function ProjectDetails({
   const [calendarEvents, setCalendarEvents] = useState<TaskEvent[]>([]);
   const [currentTab, setCurrentTab] = useState("Descrição");
 
-  function getStatusColor(status: ProjectType["status"]): string {
-    switch (status) {
-      case "Em_andamento":
-        return "bg-yellow-500 text-white";
-      case "Concluido":
-        return "bg-green-500 text-white";
-      case "Fechado":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
-  }
-
   useEffect(() => {
     async function fetchProjectDetails() {
       try {
         const projectResponse = await axios.get(`/api/projects/${projectId}`);
-        const projectTasksResponse = await axios.get(`/api/projects/${projectId}/tasks`)
-        console.warn(projectResponse.data);
-        console.warn(projectTasksResponse.data);
+        const projectTasksResponse = await axios.get(`/api/projects/${projectId}/tasks`);
+
         setCurrentProject(projectResponse.data.project);
         setCurrentProjectCreator(projectResponse.data.creator);
         setCurrentProjectTasks(projectTasksResponse.data.tasks);
 
         // Mapeando tarefas para eventos do calendário
-        if (projectResponse.data.tasks) {
-          const events = currentProjectTasks.map((task: Task) => ({
+        if (projectTasksResponse.data.tasks) {
+          const events = projectTasksResponse.data.tasks.map((task: Task) => ({
             id: task.id,
             title: task.title,
             start: task.start ? new Date(task.start) : new Date(),
@@ -89,48 +69,58 @@ export default function ProjectDetails({
   }
 
   return (
-    <>
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="flex justify-between items-center text-blue-600 text-2xl font-semibold">
-          <div className="flex items-center space-x-2">
+    <div className="min-h-screen flex flex-col relative">
+      <div className="flex flex-col flex-grow px-4 py-12">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="p-6 max-w-4xl mx-auto relative">
             <button
-              className="text-blue-600 hover:text-blue-800 transition"
-              onClick={closeSelectedProjectAction}
+              onClick={() => {
+                console.log("Redirecionando para /projetos");
+                router.push("/projetos");
+              }}
+              className="absolute top-16 left-8 text-3xl text-gray-700 hover:text-gray-900"
             >
-              ←
+              &#60;
             </button>
-            <h1>{currentProject.name}</h1>
+            <h1 className="text-blue-600 text-2xl font-semibold text-center mt-8">
+              {currentProject.name}
+            </h1>
+            <button
+              onClick={() => setEditing(true)}
+              className="absolute top-16 right-8 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
+            >
+              Editar
+            </button>
           </div>
 
-          {/* Botão de editar */}
-          {editing && (
-            <ProjectEditor
-              project={currentProject}
-              setCurrentProject={(project) => {
-                setCurrentProject(project);
-              }}
-              onClose={() => setEditing(false)}
-              users={currentProject.projectMember}
-              creator={currentProjectCreator}
-            />
-          )}
-          <button
-            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
-            onClick={() => setEditing(true)}
-          >
-            Editar
-          </button>
+          <TabNavigation onTabChange={(tab) => setCurrentTab(tab)} />
+
+          {/* Conteúdo da aba selecionada */}
+          <div className="mt-8">
+            {currentTab === "Descrição" && (
+              <DescriptionComponent
+                currentProject={currentProject}
+                currentProjectCreator={currentProjectCreator}
+              />
+            )}
+            {currentTab === "Tarefas" && (
+              <TaskCalendar events={calendarEvents} />
+            )}
+          </div>
         </div>
       </div>
 
-      <TabNavigation onTabChange={(tab) => {
-          setCurrentTab(tab);
-      }} />
-
-      {/* Renderiza o conteúdo da aba selecionada */}
-      {currentTab === "Descrição" && (
-          <DescriptionComponent currentProject={currentProject} currentProjectCreator={currentProjectCreator} />
+      {editing && (
+        <ProjectEditor
+          project={currentProject}
+          setCurrentProject={(project) => {
+            setCurrentProject(project);
+          }}
+          onClose={() => setEditing(false)}
+          users={currentProject.projectMember}
+          creator={currentProjectCreator}
+        />
       )}
-    </>
+    </div>
   );
 }
