@@ -11,19 +11,16 @@ export default function UserProfilePage() {
     name: "",
     email: "",
     phone: "",
-    bio: "",
-    location: "",
-    linkedin: "",
-    profilePicture: "https://via.placeholder.com/120", // Imagem padrão
+    profilePicture: "", // Imagem padrão
   });
 
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving] = useState(false);
 
   // Busca os dados do usuário, incluindo a foto de perfil
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/user/profile"); // Endpoint para buscar os dados do usuário
+        const response = await fetch("/api/me"); // Endpoint para buscar os dados do usuário
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
@@ -41,10 +38,10 @@ export default function UserProfilePage() {
   // Função para enviar a foto ao backend
   const handlePhotoUpload = async (file: File) => {
     const formData = new FormData();
-    formData.append("profilePicture", file);
+    formData.append("imagem", file);
 
     try {
-      const response = await fetch("/api/user/foto", {
+      const response = await fetch("/api/foto", {
         method: "POST",
         body: formData,
       });

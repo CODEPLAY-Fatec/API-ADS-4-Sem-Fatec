@@ -52,7 +52,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
   const handleSaveClick = async () => {
     try {
       await axios.patch("/api/projects", editableProject);
-      toast.success("Atualizado com sucesso!"), { duration: 1500 };
+      toast.success("Atualizado com sucesso!", {duration: 1500});
       setCurrentProject(editableProject);
       onClose();
     } catch (error) {
@@ -68,6 +68,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
       onClose();
     } catch (error) {
       toast.error("Erro ao deletar projeto", { duration: 1500 });
+      console.log(error)
     }
   };
 
@@ -201,7 +202,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                     Selecione um status
                   </option>
                   <option value="Fechado">Fechado</option>
-                  <option value="Em andamento">Em andamento</option>
+                  <option value="Em_andamento">Em andamento</option>
                   <option value="Concluído">Concluído</option>
                 </SelectNative>
               </div>

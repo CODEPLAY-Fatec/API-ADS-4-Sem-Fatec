@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 interface ProfileFormProps {
@@ -9,24 +7,11 @@ interface ProfileFormProps {
       name: string;
       email: string;
       phone: string;
-      bio: string;
-      location: string;
-      linkedin: string;
     };
     onChange: (field: string, value: string) => void;
     onSave: () => void;
     isSaving: boolean;
   }
-
-interface UserData {
-  name: string;
-  email: string;
-  phone: string;
-  bio: string;
-  location: string;
-  linkedin: string;
-}
-
 export const ProfileForm: React.FC<ProfileFormProps> = ({
     userData,
     onChange,
@@ -59,30 +44,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
               id="phone"
               value={userData.phone}
               onChange={(e) => onChange("phone", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              value={userData.bio}
-              onChange={(e) => onChange("bio", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="location">Localização</Label>
-            <Input
-              id="location"
-              value={userData.location}
-              onChange={(e) => onChange("location", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="linkedin">LinkedIn</Label>
-            <Input
-              id="linkedin"
-              value={userData.linkedin}
-              onChange={(e) => onChange("linkedin", e.target.value)}
             />
           </div>
         </div>
