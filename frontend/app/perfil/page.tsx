@@ -5,37 +5,47 @@ import Navbar from "@/created-components/Navbar";
 import { ProfilePicture } from "@/created-components/ProfilePicture";
 import { ProfileForm } from "@/created-components/ProfileForm";
 import { Activities } from "@/created-components/Activities";
+import toast from "react-hot-toast";
 
 export default function UserProfilePage() {
   const [userData, setUserData] = useState({
     name: "",
     email: "",
     phone: "",
-    profilePicture: "", // Imagem padrão
+    profilePicture: "",
   });
 
   const [isSaving] = useState(false);
 
-  // Busca os dados do usuário, incluindo a foto de perfil
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/me"); // Endpoint para buscar os dados do usuário
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data);
-        } else {
-          console.error("Erro ao buscar os dados do usuário.");
+        const [userRes, fotoRes] = await Promise.all([
+          fetch("/api/me"),
+          fetch("/api/foto"),
+        ]);
+
+        if (!userRes.ok || !fotoRes.ok) {
+          console.error("Erro ao buscar os dados do usuário ou imagem.");
+          return;
         }
+
+        const userInfo = await userRes.json();
+        const fotoData = await fotoRes.json();
+
+        setUserData({
+          ...userInfo,
+          profilePicture: `data:image/png;base64,${fotoData.base64}`, //o back ja ta vindo com base 64
+        });
       } catch (error) {
-        console.error("Erro na requisição:", error);
+        console.error("Erro ao buscar dados do usuário:", error);
       }
     };
 
     fetchUserData();
   }, []);
 
-  // Função para enviar a foto ao backend
+  // Enviar nova imagem e atualizar estado
   const handlePhotoUpload = async (file: File) => {
     const formData = new FormData();
     formData.append("imagem", file);
@@ -46,16 +56,21 @@ export default function UserProfilePage() {
         body: formData,
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setUserData((prev) => ({ ...prev, profilePicture: data.profilePicture })); // Atualiza a URL da foto no estado
-        alert("Foto atualizada com sucesso!");
-      } else {
-        alert("Erro ao atualizar a foto.");
-      }
+      if (!response.ok) throw new Error("Erro ao enviar imagem");
+
+      toast.success("Foto enviada com sucesso!", { duration: 2000 });
+
+      // Recarregar a nova imagem
+      const imagemResponse = await fetch("/api/foto");
+      const imagemData = await imagemResponse.json();
+
+      setUserData((prev) => ({
+        ...prev,
+        profilePicture: `data:image/png;base64,${imagemData.base64}`,
+      }));
     } catch (error) {
       console.error("Erro ao enviar a foto:", error);
-      alert("Erro ao enviar a foto.");
+      toast.error("Erro ao enviar a foto", { duration: 2000 });
     }
   };
 
@@ -64,14 +79,12 @@ export default function UserProfilePage() {
       <Navbar />
       <div className="max-w-5xl mx-auto px-6 pb-10" style={{ marginTop: "140px" }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {/* Componente de foto de perfil */}
           <ProfilePicture
             profilePicture={userData.profilePicture}
             name={userData.name}
             email={userData.email}
             onPhotoUpload={handlePhotoUpload}
           />
-          {/* Formulário de informações do usuário */}
           <ProfileForm
             userData={userData}
             onChange={(field, value) =>
@@ -81,7 +94,6 @@ export default function UserProfilePage() {
             isSaving={isSaving}
           />
         </div>
-        {/* Componente de atividades */}
         <Activities />
       </div>
     </div>

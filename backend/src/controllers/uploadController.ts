@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from "express";
 const upload = multer({//filtros da imagem
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 70 * 1024, // 70kb
+        fileSize: 5 * 1024 * 1024, // ate 5 mb
     },
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];

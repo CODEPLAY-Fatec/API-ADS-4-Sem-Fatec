@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { createUser, getAllUsers, AttPasswordService, updateUserService, salvarFotoService, getUserById, getUserInfo, buscarFotobyId } from "../services/userService";
+import sharp from "sharp";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 if (!SECRET_KEY) {
@@ -124,7 +125,7 @@ export const updateUserController = async (req: Request, res: Response) => {
     }
 }
 
-export const uploadFotoController = async (req: Request, res: Response)=> {
+export const uploadFotoController = async (req: Request, res: Response) => {
     try {
         if (!req.file) {
             res.status(400).send('Nenhum arquivo enviado');
@@ -136,8 +137,12 @@ export const uploadFotoController = async (req: Request, res: Response)=> {
             res.status(401).send('Usuário não autenticado');
             return;
         }
+        const imagemProcessada = await sharp(req.file.buffer)
+            .resize(300, 300)
+            .jpeg({ quality: 80 }) 
+            .toBuffer();
 
-        await salvarFotoService(req.file.buffer, userInfo.id);
+        await salvarFotoService(imagemProcessada, userInfo.id);
         res.status(200).send('Imagem salva com sucesso!');
     } catch (err) {
         console.error(err);
@@ -145,7 +150,7 @@ export const uploadFotoController = async (req: Request, res: Response)=> {
     }
 };
 
-export const getFotoController = async (req: Request, res: Response)=> {
+export const getFotoController = async (req: Request, res: Response) => {
     try {
         const user = await getUserInfo(req.cookies.token);
         if (!user) {

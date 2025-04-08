@@ -1,4 +1,5 @@
 import React from "react";
+import toast from "react-hot-toast";
 
 interface ProfilePictureProps {
   profilePicture: string; // URL da foto de perfil
@@ -19,11 +20,11 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
 
       // Validação do arquivo
       if (file.size > 5 * 1024 * 1024) { // Limite de 5 MB
-        alert("O arquivo é muito grande. Escolha uma imagem menor que 5 MB.");
+        toast.error("O arquivo deve ter no máximo 5 MB.",{duration:2000});
         return;
       }
       if (!file.type.startsWith("image/")) {
-        alert("Por favor, envie um arquivo de imagem.");
+        toast.error("Envie o arquivo de imagem.",{duration:2000});
         return;
       }
 
