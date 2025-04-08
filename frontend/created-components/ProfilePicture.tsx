@@ -1,10 +1,10 @@
 import React from "react";
 
 interface ProfilePictureProps {
-  profilePicture: string;
-  name: string;
-  email: string;
-  onPhotoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  profilePicture: string; // URL da foto de perfil
+  name: string; // Nome do usuário
+  email: string; // Email do usuário
+  onPhotoUpload: (file: File) => void; // Callback para enviar o arquivo ao backend
 }
 
 export const ProfilePicture: React.FC<ProfilePictureProps> = ({
@@ -13,11 +13,29 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
   email,
   onPhotoUpload,
 }) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+
+      // Validação do arquivo
+      if (file.size > 5 * 1024 * 1024) { // Limite de 5 MB
+        alert("O arquivo é muito grande. Escolha uma imagem menor que 5 MB.");
+        return;
+      }
+      if (!file.type.startsWith("image/")) {
+        alert("Por favor, envie um arquivo de imagem.");
+        return;
+      }
+
+      onPhotoUpload(file); // Envia o arquivo para o callback
+    }
+  };
+
   return (
     <div className="flex flex-col items-center text-center gap-3">
       <img
-        src={profilePicture || "/default-profile.png"}
-        alt=""
+        src={profilePicture || "/default-profile.png"} // Exibe a imagem ou uma padrão
+        alt="Foto de perfil"
         className="mt-15 w-35 h-35 rounded-full object-cover border shadow"
       />
       <label
@@ -31,7 +49,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={onPhotoUpload}
+        onChange={handleFileChange} // Chama a função ao selecionar um arquivo
       />
       <p className="font-semibold text-lg">{name || "Usuário"}</p>
       <p className="text-sm text-gray-500">{email || "email@exemplo.com"}</p>
