@@ -11,15 +11,23 @@ import { SelectNative } from "@/components/ui/select-native";
 import Institution from "@shared/Institution";
 import toast from "react-hot-toast";
 
-type state = {
+type ProjectFormState = {
   currentProject: Partial<Project>;
   projectSubjects: ProjectSubject[];
   institutions: Institution[];
   showSuccessModal: boolean;
 };
 
-export default class ProjectForm extends React.Component<{toggleForm: () => void}, state> {
-  constructor(props: {toggleForm: ()=> void}) {
+type ProjectFormProperties = {
+  onSubmit: () => void;
+  toggleForm: () => void;
+};
+
+export default class ProjectForm extends React.Component<
+  ProjectFormProperties,
+  ProjectFormState
+> {
+  constructor(props: ProjectFormProperties) {
     super(props);
     this.state = {
       currentProject: {},
@@ -45,50 +53,53 @@ export default class ProjectForm extends React.Component<{toggleForm: () => void
   submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!this.state.currentProject.name) {
-      toast.error("Por favor, preencha o nome do projeto.",{duration: 1500});
+      toast.error("Por favor, preencha o nome do projeto.", { duration: 1500 });
       return;
     }
-    if(!this.state.currentProject.subject){
-      toast.error("Por favor, selecione uma área de atuação.",{duration: 1500});
+    if (!this.state.currentProject.subject) {
+      toast.error("Por favor, selecione uma área de atuação.", {
+        duration: 1500,
+      });
       return;
     }
-    if(!this.state.currentProject.institution){
-      toast.error("Por favor, selecione uma instituição.",{duration: 1500});
+    if (!this.state.currentProject.institution) {
+      toast.error("Por favor, selecione uma instituição.", { duration: 1500 });
       return;
     }
-    if(!this.state.currentProject.status){
-      toast.error("Por favor, selecione um status.",{duration: 1500});
+    if (!this.state.currentProject.status) {
+      toast.error("Por favor, selecione um status.", { duration: 1500 });
       return;
     }
-    if(!this.state.currentProject.description){
-      toast.error("Por favor, preencha a descrição do projeto.",{duration: 1500});
+    if (!this.state.currentProject.description) {
+      toast.error("Por favor, preencha a descrição do projeto.", {
+        duration: 1500,
+      });
       return;
     }
 
-    
-  
     const projectData: Project = {
       id: 0,
       name: this.state.currentProject.name,
       description: this.state.currentProject.description,
       subject: this.state.currentProject.subject,
       status: this.state.currentProject.status,
-      institution: this.state.currentProject.institution, 
+      institution: this.state.currentProject.institution,
       creator: 1,
     };
-  
+
     try {
       await axios.post("/api/projects", projectData);
-        toast.success("Projeto criado com sucesso!"); 
-        this.props.toggleForm();
+      toast.success("Projeto criado com sucesso!");
+      this.props.toggleForm();
+      this.props.onSubmit();
     } catch (error) {
-      toast.error("Erro ao criar Projeto",{duration: 1500});
+      toast.error("Erro ao criar Projeto", { duration: 1500 });
     }
-  };  
+  };
 
   closeSuccessModal = () => {
     this.setState({ showSuccessModal: false }, () => {
-      document.body.style.overflow = "auto"; 
+      document.body.style.overflow = "auto";
     });
   };
 
@@ -107,7 +118,9 @@ export default class ProjectForm extends React.Component<{toggleForm: () => void
         {this.state.showSuccessModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50">
-              <p className="text-lg font-semibold text-black">Projeto criado com sucesso!</p>
+              <p className="text-lg font-semibold text-black">
+                Projeto criado com sucesso!
+              </p>
               <Button
                 onClick={this.closeSuccessModal}
                 className="mt-4 bg-[#162b5e] text-white px-6 py-2 rounded-full hover:bg-[#0f224b] transition-transform duration-200"
@@ -150,7 +163,9 @@ export default class ProjectForm extends React.Component<{toggleForm: () => void
             <SelectNative
               id="subject"
               value={this.state.currentProject.subject || ""}
-              onChange={(e) => this.updateProjectData("subject", e.target.value)}
+              onChange={(e) =>
+                this.updateProjectData("subject", e.target.value)
+              }
               className="w-full"
             >
               <option value="" disabled>

@@ -16,7 +16,7 @@ import FetchedProject from "@/types/FetchedProject";
 type ProjectEditorProps = {
   project: FetchedProject;
   setCurrentProject: (project: ProjectEditorProps["project"]) => void;
-  onClose: () => void;
+  onClose: (deleted: boolean) => void;
   users: User[];
   creator: User;
 };
@@ -54,7 +54,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
       await axios.patch("/api/projects", editableProject);
       toast.success("Atualizado com sucesso!", {duration: 1500});
       setCurrentProject(editableProject);
-      onClose();
+      onClose(false);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao atualizar projeto", { duration: 1500 });
@@ -65,7 +65,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
     try {
       await axios.delete(`/api/projects/${project.id}`);
       toast.success("Deletado com sucesso!");
-      onClose();
+      onClose(true);
     } catch (error) {
       toast.error("Erro ao deletar projeto", { duration: 1500 });
       console.log(error)

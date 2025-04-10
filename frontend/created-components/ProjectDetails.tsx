@@ -128,7 +128,12 @@ export default function ProjectDetails({
           setCurrentProject={(project) => {
             setCurrentProject(project);
           }}
-          onClose={() => setEditing(false)}
+          onClose={(deleted: boolean) => {
+            setEditing(false);
+            if (deleted) {
+              closeSelectedProjectAction();
+            }
+          }}
           users={currentProject.projectMember}
           creator={currentProjectCreator}
         />
@@ -136,4 +141,3 @@ export default function ProjectDetails({
     </div>
   );
 }
-

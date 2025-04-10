@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import axios from "axios";
-import { useRouter } from 'next/navigation';
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { Dispatch, useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import ProjectType from "@shared/Project";
 
 type FetchedProject = ProjectType & {
@@ -25,8 +24,7 @@ type TabelaProps = {
     setSelectedProject: any; 
 }
 
-export default function Tabela(props: TabelaProps) {
-    const router = useRouter();
+export default forwardRef(function Tabela(props: TabelaProps, ref) {
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
     const [data, setData] = useState<FetchedProject[]>([]);
 
@@ -42,12 +40,12 @@ export default function Tabela(props: TabelaProps) {
 
     useEffect(() => {
         fetchProjects();
-        const interval = setInterval(() => {
-            fetchProjects();
-        }, 3000);
-
-        return () => clearInterval(interval);
     }, []);
+
+    // expor fetchProjects
+    useImperativeHandle(ref, () => ({
+        fetchProjects,
+    }));
 
     const handleProjectClick = (project: FetchedProject) => {
         props.setSelectedProject(project) 
@@ -126,4 +124,4 @@ export default function Tabela(props: TabelaProps) {
             </div>
         </div>
     );
-}
+})
