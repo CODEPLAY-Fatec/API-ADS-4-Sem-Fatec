@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
@@ -17,7 +17,7 @@ export interface TaskEvent {
   title: string;
   start: Date;
   end: Date;
-  status?: Task["status"]; 
+  status?: Task["status"];
   allDay?: boolean;
 }
 
@@ -27,7 +27,6 @@ interface TaskCalendarProps {
 }
 
 export function TaskCalendar({ events, onSelectEvent }: TaskCalendarProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const eventStyleGetter = (event: TaskEvent) => {
@@ -67,64 +66,61 @@ export function TaskCalendar({ events, onSelectEvent }: TaskCalendarProps) {
 
   return (
     <div className="relative">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
-        aria-label="Abrir calendário"
-      >
-        <FiCalendar size={24} />
-      </button>
 
-      {isExpanded && (
-        <div className="absolute right-0 bottom-full mb-3 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 w-[700px] h-[700px] animate-fade-in">
-
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            onSelectEvent={onSelectEvent}
-            eventPropGetter={eventStyleGetter}
-            dayPropGetter={dayPropGetter}
-            selectable
-            onSelectSlot={(slotInfo) => {
-              const clickedDate = slotInfo.start;
-              const isSameDate =
-                selectedDate &&
-                clickedDate.toDateString() === selectedDate.toDateString();
-
-              if (isSameDate) {
-                setSelectedDate(null); // desseleciona data
-              } else {
-                setSelectedDate(clickedDate); // seleciona nova data
-              }
-            }}
-            defaultView="month"
-            views={["month"]}
-            popup
-            messages={{
-              month: "Mês",
-              today: "Hoje",
-              previous: "←",
-              next: "→",
-              week: "Semana",
-              day: "Dia",
-              agenda: "Agenda",
-              date: "Data",
-              time: "Hora",
-              event: "Evento",
-              noEventsInRange: "Nenhum evento neste período.",
-            }}
-            components={{
-              toolbar: () => null,
-            }}
-            style={{
-              fontSize: "0.8rem",
-              borderRadius: "12px",
-            }}
-          />
+      <div className="inline-block mx-auto mt-4 bg-white rounded-2xl shadow-md border border-gray-200 p-4">
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-700">📅 Calendário</h2>
         </div>
-      )}
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          onSelectEvent={onSelectEvent}
+          eventPropGetter={eventStyleGetter}
+          dayPropGetter={dayPropGetter}
+          selectable
+          onSelectSlot={(slotInfo) => {
+            const clickedDate = slotInfo.start;
+            const isSameDate =
+              selectedDate &&
+              clickedDate.toDateString() === selectedDate.toDateString();
+
+            if (isSameDate) {
+              setSelectedDate(null);
+            } else {
+              setSelectedDate(clickedDate);
+            }
+          }}
+          defaultView="month"
+          views={["month"]}
+          popup
+          messages={{
+            month: "Mês",
+            today: "Hoje",
+            previous: "←",
+            next: "→",
+            week: "Semana",
+            day: "Dia",
+            agenda: "Agenda",
+            date: "Data",
+            time: "Hora",
+            event: "Evento",
+            noEventsInRange: "Nenhum evento neste período.",
+          }}
+          components={{
+            toolbar: () => null,
+          }}
+          style={{
+            fontSize: "1rem",
+            borderRadius: "8px",
+            height: "500px",
+            width: "500px"
+          }}
+        />
+      </div>
+
+
     </div>
   );
 }
