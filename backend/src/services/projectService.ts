@@ -2,6 +2,7 @@ import Project from "@shared/Project";
 import { User } from "@shared/User";
 import { PrismaClient } from "@prisma/client";
 import Task from "@shared/Task";
+import { title } from "process";
 
 const prisma = new PrismaClient();
 
@@ -397,3 +398,22 @@ export const deleteTaskService = async (taskId: number, userId: number) => {
   });
   return deleteTask;
 };
+
+export const getUserTasks = async (userId: number) => {
+  const tasks = await prisma.tasks.findMany({
+    where: {
+      taskUser: userId
+    },
+    select: {
+      title: true,
+      finish: true,
+      projects: {
+        select: {
+          name: true,
+        }
+
+      },
+    }
+  })
+  return tasks;
+}

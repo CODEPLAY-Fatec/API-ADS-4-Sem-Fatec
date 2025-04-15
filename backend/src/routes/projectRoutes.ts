@@ -13,11 +13,13 @@ import {
     getTasksController,
     updateTaskController,
     addUserTaskController,
-    deleteTaskController
+    deleteTaskController,
+    getUserTaskController
 } from "../controllers/projectController";
 const router: Router = Router();
 
 router.post("/projects", createProjectController);
+router.get("/projects/user/task", getUserTaskController);
 router.get("/projects", getProjectsController);
 router.get("/projects/subjects", getProjectSubjectsController);
 router.get("/projects/institutions", getInstitutionsController);

@@ -15,6 +15,7 @@ import {
     getTasksService,
     updateTaskService,
     deleteTaskService,
+    getUserTasks
 } from "../services/projectService";
 import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
 
@@ -230,4 +231,16 @@ export const deleteTaskController   = async (req: Request, res: Response) => {
         res.status(500).send({ message: "Erro ao deletar tarefa." });
         console.warn(error);
     }
+}
+
+export const getUserTaskController = async(req:Request, res:Response) => {
+    const user = await getUserInfo(req.cookies.token);
+    try {
+        const tasks = await getUserTasks(user.id);
+        res.status(200).send({tasks});
+    }catch(error){
+        res.status(500).send({ message: "Erro ao buscar tarefas do usuario." });
+        console.warn(error);
+    }
+
 }
