@@ -11,6 +11,7 @@ import FetchedProject from "@/types/FetchedProject";
 import DescriptionComponent from "./DescriptionComponent";
 import TaskList from "./TaskList";
 import toast from "react-hot-toast";
+import KanbanBoard from "./KanbanBoard";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -171,6 +172,14 @@ export default function ProjectDetails({
                 currentProjectCreator={currentProjectCreator}
               />
             )}
+          {currentTab === "Kanban" && (
+                        <KanbanBoard 
+                          tasks={currentProjectTasks} 
+                          onEditTask={(task) => {
+                            const taskToEdit = currentProjectTasks.find(t => t.id === task.id);
+                          }} 
+                        />
+                      )}
             {currentTab === "Relatórios" && (
               <TaskCalendar events={calendarEvents} />
             )}
