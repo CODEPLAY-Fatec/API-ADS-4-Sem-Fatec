@@ -10,6 +10,7 @@ import Task from "@shared/Task";
 import FetchedProject from "@/types/FetchedProject";
 import DescriptionComponent from "./DescriptionComponent";
 import TaskList from "./TaskList";
+import toast from "react-hot-toast";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -41,8 +42,13 @@ export default function ProjectDetails({
 
         setCurrentProject(projectResponse.data.project);
         setCurrentProjectCreator(projectResponse.data.creator);
-        console.warn(projectTasksResponse.data);
-        setCurrentProjectTasks(projectTasksResponse.data);
+        setCurrentProjectTasks(
+          projectTasksResponse.data.map((task: Task) => ({
+            ...task,
+            start: task.start ? new Date(task.start) : new Date(),
+            finish: task.finish ? new Date(task.finish) : new Date(),
+          })),
+        );
 
         // Mapeando tarefas para eventos do calendário
         if (projectTasksResponse.data.tasks) {
@@ -64,6 +70,64 @@ export default function ProjectDetails({
 
     fetchProjectDetails();
   }, [projectId]);
+
+  const addTask = async (task: Task) => {
+    if (currentProjectTasks.some((t) => t.id === task.id)) {
+      try {
+        const response = await axios.patch(`/api/projects/tasks/${task.id}`, {
+          task: task,
+        });
+        if (response.status !== 200) {
+          throw new Error("Erro ao atualizar tarefa");
+        }
+        setCurrentProjectTasks((prevTasks) => [
+          ...prevTasks.filter((t) => t.id !== task.id),
+          {
+            ...task,
+          },
+        ]);
+      } catch (error) {
+        console.error("Erro ao atualizar tarefa:", error);
+        toast.error("Erro ao atualizar tarefa");
+      }
+    } else {
+      try {
+        const response = await axios.post(`api/projects/${projectId}/tasks`, {
+          task: task,
+        });
+
+        if (response.status !== 201) {
+          throw new Error("Erro ao adicionar tarefa");
+        }
+        setCurrentProjectTasks((prevTasks) => [
+          ...prevTasks,
+          {
+            ...task,
+            id: response.data.id,
+          },
+        ]);
+        toast.success("Tarefa criada com sucesso!");
+      } catch (error) {
+        console.error("Erro ao adicionar tarefa:", error);
+        toast.error("Erro ao adicionar tarefa");
+      }
+    }
+  };
+
+  const deleteTask = async (task: Task) => {
+    try {
+      const response = await axios.delete(`api/projects/tasks/${task.id}`);
+      if (response.status !== 200) {
+        throw new Error("Erro ao deletar tarefa");
+      }
+      toast.success("Tarefa deletada com sucesso!");
+      setCurrentProjectTasks((prevTasks) =>
+        prevTasks.filter((t) => t.id !== task.id),
+      );
+    } catch (error) {
+      console.error("Erro ao deletar tarefa:", error);
+    }
+  };
 
   if (loading) return <div>Carregando...</div>;
 
@@ -112,10 +176,9 @@ export default function ProjectDetails({
             )}
             {currentTab === "Tarefas" && (
               <TaskList
-                tasks={currentProjectTasks}
-                setTasks={(t: Task[]): void => {
-                  setCurrentProjectTasks(t);
-                }}
+                currentTasks={currentProjectTasks}
+                addTask={addTask}
+                deleteTask={deleteTask}
               />
             )}
           </div>

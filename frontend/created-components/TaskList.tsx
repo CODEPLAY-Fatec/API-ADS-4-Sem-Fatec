@@ -11,11 +11,11 @@ import {
 import TaskForm from "./TaskForm";
 
 type TaskListProps = {
-  tasks: Task[];
-  setTasks: (t: Task[]) => void;
+  currentTasks: Task[];
+  addTask: (task: Task) => void;
+  deleteTask: (task: Task) => void;
 };
-export default function TaskList({ tasks, setTasks: setTasks }: TaskListProps) {
-  const [currentTasks, setCurrentTasks] = useState<Task[]>(tasks);
+export default function TaskList({ currentTasks, addTask, deleteTask }: TaskListProps) {
   const [showTaskForm, setShowTaskForm] = useState<true | false>(false);
   const [currentEditingTask, setCurrentEditingTask] = useState<Task | null>(
     null,
@@ -36,24 +36,8 @@ export default function TaskList({ tasks, setTasks: setTasks }: TaskListProps) {
               setShowTaskForm(!showTaskForm);
               setCurrentEditingTask(null);
             }}
-            addTask={(task: Task) => {
-              if (currentEditingTask) {
-                const updatedTasks = currentTasks.map((t) =>
-                  t.id === task.id ? task : t,
-                );
-                setCurrentTasks(updatedTasks);
-                setTasks(updatedTasks);
-              } else {
-                const newTask = { ...task, id: Date.now() };
-                setCurrentTasks([...currentTasks, newTask]);
-                setTasks([...currentTasks, newTask]);
-              }
-            }}
-            removeTask={function (task: Task): void {
-              const updatedTasks = currentTasks.filter((t) => t.id !== task.id);
-              setCurrentTasks(updatedTasks);
-              setTasks(updatedTasks);
-            }}
+            addTask={addTask}
+            deleteTask={deleteTask}
           />
         </>
       ) : (

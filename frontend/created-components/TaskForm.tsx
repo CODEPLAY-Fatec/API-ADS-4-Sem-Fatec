@@ -13,7 +13,7 @@ type TaskFormProps = {
   task: Task | null;
   toggleForm: () => void;
   addTask: (task: Task) => void;
-  removeTask: (task: Task) => void;
+  deleteTask: (task: Task) => void;
 };
 
 export default class TaskForm extends React.Component<
@@ -178,7 +178,7 @@ export default class TaskForm extends React.Component<
               variant="destructive"
               type="button"
               onClick={() => {
-                this.props.removeTask(task);
+                this.props.deleteTask(task);
                 this.props.toggleForm();
               }}
             >
