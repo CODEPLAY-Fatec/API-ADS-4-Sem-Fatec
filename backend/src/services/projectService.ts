@@ -405,6 +405,7 @@ export const getUserTasks = async (userId: number) => {
       taskUser: userId
     },
     select: {
+      id:true,
       title: true,
       finish: true,
       projects: {
@@ -415,5 +416,10 @@ export const getUserTasks = async (userId: number) => {
       },
     }
   })
-  return tasks;
+
+  const formatedTasks = tasks.map(({ projects, ...rest }) => ({
+    ...rest,
+    projectName: projects.name,
+  }));
+  return formatedTasks;
 }
