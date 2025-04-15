@@ -119,7 +119,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
           variant="ghost"
           size="icon"
           aria-label="Close Form"
-          onClick={onClose}
+          onClick={() => {onClose(false)}}
           className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
         >
           <XIcon size={20} />
