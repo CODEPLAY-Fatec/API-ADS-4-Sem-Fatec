@@ -12,7 +12,8 @@ import {
     createTaskController,
     getTasksController,
     updateTaskController,
-    addUserTaskController
+    addUserTaskController,
+    deleteTaskController
 } from "../controllers/projectController";
 const router: Router = Router();
 
@@ -25,10 +26,10 @@ router.patch("/projects", updateProjectController);
 router.delete("/projects/:id", deleteProjectController); // Add delete route
 router.post("/projects/:id/user", addUserToProjectController);
 router.delete("/projects/:id/user/:user", removeUserFromProjectController);
-router.post("/projects/:id/task", createTaskController);
+router.post("/projects/:id/tasks", createTaskController);
 router.patch("/projects/tasks", addUserTaskController );
 router.get("/projects/:id/tasks", getTasksController);
 router.patch("/projects/tasks/:id", updateTaskController);
-router.delete("/projects/tasks/:id", deleteProjectController);
+router.delete("/projects/tasks/:id", deleteTaskController);
 
 export default router;

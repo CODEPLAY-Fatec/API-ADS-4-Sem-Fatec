@@ -3,25 +3,23 @@ import { User } from "@shared/User";
 import { PrismaClient } from "@prisma/client";
 import Task from "@shared/Task";
 
-
 const prisma = new PrismaClient();
 
-export const inTheProject = async (
-  projectId: number, userId: number) => {
+export const inTheProject = async (projectId: number, userId: number) => {
   const inProject = await prisma.projectMember.findFirst({
     where: {
       projectId: projectId,
-      userId: userId!
-    }
+      userId: userId!,
+    },
   });
   const IsCreator = await prisma.projects.findFirst({
     where: {
       creator: userId!,
-      id: projectId
-    }
-  })
-  return {inProject,IsCreator};
-}
+      id: projectId,
+    },
+  });
+  return { inProject, IsCreator };
+};
 
 export const hasAccess = async (projectId: number, userId: number) => {
   return prisma.projects.findFirst({
@@ -125,46 +123,55 @@ export const removeUserFromProjectService = async (
   return removeMember;
 };
 
-export const getProjectsService = async (user: User, searchName?: string, searchCreator?: string, searchInst?: string, searchSubj?: string, dateStart?: Date, dateFinish?: Date,searchStatus?: Project['status']) => {
-
+export const getProjectsService = async (
+  user: User,
+  searchName?: string,
+  searchCreator?: string,
+  searchInst?: string,
+  searchSubj?: string,
+  dateStart?: Date,
+  dateFinish?: Date,
+  searchStatus?: Project["status"],
+) => {
   //essa parte toma conta de filtrar a parte do criador pois é um trabalho
-  let creatorIds : {id:number}[] = []//inicializa a array de ids para nao ficar preso dentro do escopo do if
-  if(searchCreator){
-      creatorIds = await prisma.users.findMany({//pegando a lista de possiveis usuarios com o nome 
-      where :{
-        name: {contains:searchCreator}
+  let creatorIds: { id: number }[] = []; //inicializa a array de ids para nao ficar preso dentro do escopo do if
+  if (searchCreator) {
+    creatorIds = await prisma.users.findMany({
+      //pegando a lista de possiveis usuarios com o nome
+      where: {
+        name: { contains: searchCreator },
       },
-      select:{
-        id:true
-      }
-    })
+      select: {
+        id: true,
+      },
+    });
   }
-  const idList = creatorIds.map(user => user.id);//pegando a lista de ids de possiveis criadores e transformando em uma lista de ids
+  const idList = creatorIds.map((user) => user.id); //pegando a lista de ids de possiveis criadores e transformando em uma lista de ids
 
   //pegando os projetos e aplicandos os possiveis filtros
   const projects = await prisma.projects.findMany({
     where: {
       AND: [
-      {OR: [
-        { creator: user.id },
         {
-          projectMember: {
-            some: {
-              userId: user.id,
+          OR: [
+            { creator: user.id },
+            {
+              projectMember: {
+                some: {
+                  userId: user.id,
+                },
+              },
             },
-          },
-        }, 
+          ],
+        },
+        ...(searchName ? [{ name: { contains: searchName } }] : []), //fora do OR dentro do AND
+        ...(searchCreator ? [{ creator: { in: idList } }] : []), //filtrar por criador
+        ...(searchInst ? [{ institution: { contains: searchInst } }] : []), //filtrar por instuiçao
+        ...(searchSubj ? [{ subject: { contains: searchSubj } }] : []), //filtrar por area de atuaçao
+        ...(dateStart ? [{ start: { gt: dateStart } }] : []), //para buscar registros depois da data
+        ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []), //para buscar registros antes da data
+        ...(searchStatus ? [{ status: searchStatus }] : []), //para buscar por status
       ],
-    },
-    ...(searchName ? [{ name: { contains: searchName} }] : []),//fora do OR dentro do AND
-    ...(searchCreator ?[{creator: {in: idList}}] : []),//filtrar por criador
-    ...(searchInst ? [{ institution : { contains : searchInst} }] : []),//filtrar por instuiçao
-    ...(searchSubj ? [{ subject : { contains : searchSubj} }] : []),//filtrar por area de atuaçao
-    ...(dateStart ? [{ start : {gt : dateStart} }] : []),//para buscar registros depois da data
-    ...(dateFinish ?[{finish : {lt : dateFinish}}] : []),//para buscar registros antes da data
-    ...(searchStatus ? [{ status: searchStatus }] : []),//para buscar por status
-
-  ]
     },
     include: {
       users: {
@@ -177,11 +184,12 @@ export const getProjectsService = async (user: User, searchName?: string, search
     },
   });
 
-  const formattedProjects = projects.map(({ users, ...rest }) => ({//um map somente para alternar os users retornados como creator
+  const formattedProjects = projects.map(({ users, ...rest }) => ({
+    //um map somente para alternar os users retornados como creator
     ...rest,
     creatorInfo: users, // users agora se chama Creator
   }));
-  
+
   return formattedProjects;
 };
 
@@ -210,7 +218,7 @@ export const getProjectByIdService = async (projectId: number, user: User) => {
 
   return {
     ...project,
-    projectMember: project!.projectMember.map(member => ({
+    projectMember: project!.projectMember.map((member) => ({
       ...member.users,
     })),
   };
@@ -246,10 +254,16 @@ export const deleteProjectService = async (projectId: number, user: User) => {
   });
 };
 
-export const createTaskService = async (task: Task, projectId: number,userId:number) => {
+export const createTaskService = async (
+  task: Task,
+  projectId: number,
+  userId: number,
+) => {
   const IsMember = inTheProject(projectId, userId);
-  if(!IsMember) {
-    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  if (!IsMember) {
+    throw new Error(
+      "Usuário não tem permissão para criar tarefas neste projeto.",
+    );
   }
   const createTask = prisma.tasks.create({
     data: {
@@ -277,8 +291,10 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
   const IsMember = inTheProject(task!.id, userId);
-  if(!IsMember) {
-    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  if (!IsMember) {
+    throw new Error(
+      "Usuário não tem permissão para criar tarefas neste projeto.",
+    );
   }
   const addUserTask = await prisma.tasks.update({
     where: {
@@ -291,30 +307,35 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
   return addUserTask;
 };
 
-export const getTasksService = async (projectId: number,userId:number,searchStatus?:Task['status'],searchTaskUser?:number[],searchPriority?:Task['priority'],searchTitle?:string,dateStart?:Date,dateFinish?:Date) => {
-
+export const getTasksService = async (
+  projectId: number,
+  userId: number,
+  searchStatus?: Task["status"],
+  searchTaskUser?: number[],
+  searchPriority?: Task["priority"],
+  searchTitle?: string,
+  dateStart?: Date,
+  dateFinish?: Date,
+) => {
   //verificaçao para ver se percente ao projeto
   const IsMember = inTheProject(projectId, userId);
-  if(!IsMember) {
-    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  if (!IsMember) {
+    throw new Error(
+      "Usuário não tem permissão para criar tarefas neste projeto.",
+    );
   }
 
-  
   //task vai pode ser filtrado por status,qm esta fazendo,prioridade,data fim e data inicio ,titulo
-
 
   const tasks = await prisma.tasks.findMany({
     where: {
-      AND: [
-      {projectId: projectId},
-      ],
-      ...(searchStatus ? [{ status: searchStatus }] : []),//para buscar por status
-      ...(searchPriority ? [{ priority: searchPriority }] : []),//para buscar por prioridade
-      ...(searchTitle ? [{ title: { contains: searchTitle } }] : []),//para buscar por titulo
-      ...(dateStart ? [{ start: { gt: dateStart } }] : []),//para buscar por data de inicio
-      ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []),//para buscar por data de fim
-      ...(searchTaskUser ? [{ taskUser: { in: searchTaskUser } }] : []),//para buscar por usuario
-      
+      AND: [{ projectId: projectId }],
+      ...(searchStatus ? [{ status: searchStatus }] : []), //para buscar por status
+      ...(searchPriority ? [{ priority: searchPriority }] : []), //para buscar por prioridade
+      ...(searchTitle ? [{ title: { contains: searchTitle } }] : []), //para buscar por titulo
+      ...(dateStart ? [{ start: { gt: dateStart } }] : []), //para buscar por data de inicio
+      ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []), //para buscar por data de fim
+      ...(searchTaskUser ? [{ taskUser: { in: searchTaskUser } }] : []), //para buscar por usuario
     },
   });
   return tasks;
@@ -326,8 +347,10 @@ export const updateTaskService = async (
   projectId: number,
 ) => {
   const IsMember = inTheProject(projectId, user.id!);
-  if(!IsMember) {
-    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  if (!IsMember) {
+    throw new Error(
+      "Usuário não tem permissão para criar tarefas neste projeto.",
+    );
   }
   const HasAccess = await hasAccess(projectId, user.id!);
   if (!HasAccess) {
@@ -349,7 +372,7 @@ export const updateTaskService = async (
   });
 };
 
-export const deleteTaskService = async (taskId: number,userId:number) => {
+export const deleteTaskService = async (taskId: number, userId: number) => {
   //delete de task nao precisa ser o criador para deletar
   const task = await prisma.tasks.findFirst({
     where: {
@@ -359,12 +382,14 @@ export const deleteTaskService = async (taskId: number,userId:number) => {
   if (!task) {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
-  
+
   const IsMember = inTheProject(task!.id, userId);
-  if(!IsMember) {
-    throw new Error("Usuário não tem permissão para criar tarefas neste projeto.");
+  if (!IsMember) {
+    throw new Error(
+      "Usuário não tem permissão para criar tarefas neste projeto.",
+    );
   }
-  
+
   const deleteTask = await prisma.tasks.delete({
     where: {
       id: taskId,

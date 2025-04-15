@@ -161,8 +161,8 @@ export const createTaskController = async (req: Request, res: Response) => {// i
     }
 
     try {
-        await createTaskService(task, projectId,user.id);
-        res.status(201).send({ message: "Tarefa criada com sucesso!" });
+        const createdTask = await createTaskService(task, projectId,user.id);
+        res.status(201).send({ message: "Tarefa criada com sucesso!", id: createdTask.id});
     } catch (error) {
         res.status(500).send({ message: "Erro ao criar tarefa." });
         console.warn(error);
@@ -203,14 +203,14 @@ export const getTasksController= async (req: Request, res: Response) => {//apena
 }
 
 export const updateTaskController = async (req: Request, res: Response) => {//id do projeto no params e task no body
-    const task = req.body.task;
+    const taskId = req.body.id;
     const projectId = parseInt(req.params.projectId);
-    if (!task) {
-        res.status(400).send({ message: "Dados da tarefa invalidos" });
+    if (!taskId) {
+        res.status(400).send({ message: "Dados da tarefa inválidos" });
         return;
     }
     try {
-        await updateTaskService(task, await getUserInfo(req.cookies.token),projectId);
+        await updateTaskService(taskId, await getUserInfo(req.cookies.token),projectId);
         res.status(201).send({ message: "Tarefa atualizada com sucesso!" });
     }
     catch (error) {
@@ -220,7 +220,7 @@ export const updateTaskController = async (req: Request, res: Response) => {//id
 }
 
 export const deleteTaskController   = async (req: Request, res: Response) => {
-    const taskId = parseInt(req.params.taskId);
+    const taskId = parseInt(req.params.id);
     const user = await getUserInfo(req.cookies.token);
     if(!taskId){
         res.status(400).send({ message: "Dados da tarefa invalidos" });
@@ -229,7 +229,7 @@ export const deleteTaskController   = async (req: Request, res: Response) => {
 
     try {
         await deleteTaskService(taskId, user.id);
-        res.status(201).send({ message : "Tarefa deletada com sucesso!"});
+        res.status(200).send({ message : "Tarefa deletada com sucesso!"});
     }catch (error){
         res.status(500).send({ message: "Erro ao deletar tarefa." });
         console.warn(error);
