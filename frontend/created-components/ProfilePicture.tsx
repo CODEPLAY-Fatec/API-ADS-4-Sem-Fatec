@@ -33,15 +33,15 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center text-center gap-3">
+    <div className="flex flex-col items-center text-center gap-2">
       <img
         src={profilePicture || "/default-profile.png"} // Exibe a imagem ou uma padrão
         alt="Foto de perfil"
-        className="mt-15 w-35 h-35 rounded-full object-cover border shadow"
+        className="w-24 h-24 rounded-full object-cover border shadow"
       />
       <label
         htmlFor="photo-upload"
-        className="mt-5 text-sm text-blue-500 cursor-pointer hover:underline"
+        className="text-sm text-blue-500 cursor-pointer hover:underline"
       >
         Alterar foto
       </label>
@@ -52,7 +52,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
         className="hidden"
         onChange={handleFileChange} // Chama a função ao selecionar um arquivo
       />
-      <p className="font-semibold text-lg">{name || "Usuário"}</p>
+      <p className="font-semibold text-base">{name || "Usuário"}</p>
       <p className="text-sm text-gray-500">{email || "email@exemplo.com"}</p>
     </div>
   );

@@ -68,9 +68,6 @@ export function TaskCalendar({ events, onSelectEvent }: TaskCalendarProps) {
     <div className="relative">
 
       <div className="inline-block mx-auto mt-4 bg-white rounded-2xl shadow-md border border-gray-200 p-4">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-700">📅 Calendário</h2>
-        </div>
         <Calendar
           localizer={localizer}
           events={events}

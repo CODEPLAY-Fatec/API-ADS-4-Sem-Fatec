@@ -274,34 +274,46 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
       </div>
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50">
-            <p className="text-lg font-semibold text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close Modal"
+              onClick={() => setShowSuccessModal(false)}
+              className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
+            >
+              <XIcon size={16} />
+            </Button>
+            <div className="flex justify-center mb-4 items-center mt-2">
+              <GradientText>Sucesso!</GradientText>
+            </div>
+            <p className="text-lg text-black mb-4">
               Projeto atualizado com sucesso!
             </p>
-            <Button
-              onClick={() => setShowSuccessModal(false)}
-              className="mt-4 bg-[#162b5e] text-white px-6 py-2 rounded-full hover:bg-[#0f224b] transition-transform duration-200"
-            >
-              OK
-            </Button>
           </div>
         </div>
       )}
       {showDeleteSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50">
-            <p className="text-lg font-semibold text-black">
-              Projeto deletado com sucesso!
-            </p>
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">
             <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close Modal"
               onClick={() => {
                 setShowDeleteSuccessModal(false);
-                onClose();
+                onClose(true);
               }}
-              className="mt-4 bg-[#162b5e] text-white px-6 py-2 rounded-full hover:bg-[#0f224b] transition-transform duration-200"
+              className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
             >
-              OK
+              <XIcon size={16} />
             </Button>
+            <div className="flex justify-center mb-4 items-center mt-2">
+              <GradientText>Sucesso!</GradientText>
+            </div>
+            <p className="text-lg text-black mb-4">
+              Projeto deletado com sucesso!
+            </p>
           </div>
         </div>
       )}

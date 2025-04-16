@@ -75,26 +75,32 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="max-w-5xl mx-auto px-6 pb-10" style={{ marginTop: "140px" }}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <ProfilePicture
-            profilePicture={userData.profilePicture}
-            name={userData.name}
-            email={userData.email}
-            onPhotoUpload={handlePhotoUpload}
-          />
-          <ProfileForm
-            userData={userData}
-            onChange={(field, value) =>
-              setUserData((prev) => ({ ...prev, [field]: value }))
-            }
-            onSave={() => console.log("Salvar alterações")}
-            isSaving={isSaving}
-          />
+    <div className="h-screen flex flex-col bg-transparent">
+      <Navbar className="h-10" /> 
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 py-2 flex items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+          <div className="md:col-span-1 flex flex-col items-center justify-center">
+            <ProfilePicture
+              profilePicture={userData.profilePicture}
+              name={userData.name}
+              email={userData.email}
+              onPhotoUpload={handlePhotoUpload}
+            />
+          </div>
+          <div className="md:col-span-2 flex flex-col">
+            <ProfileForm
+              userData={userData}
+              onChange={(field, value) =>
+                setUserData((prev) => ({ ...prev, [field]: value }))
+              }
+              onSave={() => console.log("Salvar alterações")}
+              isSaving={isSaving}
+            />
+          </div>
+          <div className="md:col-span-3">
+            <Activities />
+          </div>
         </div>
-        <Activities />
       </div>
     </div>
   );

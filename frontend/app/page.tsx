@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="relative pt-32">
+    <div className="relative min-h-screen flex items-center justify-center">
       <div className="absolute top-5 right-5 flex gap-4">
         <Link
           href="/cadastro"
@@ -19,15 +19,15 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="flex flex-col gap-6 p-6">
-        <div className="text-center text-7xl font-black leading-tight">
+      <div className="flex flex-col gap-6 p-6 text-center">
+        <div className="text-7xl font-black leading-tight">
           <span>Uma ferramenta que</span> revolucionará seus{" "}
           <GradientText size="text-7xl" weight="font-black">
             projetos.
           </GradientText>
         </div>
 
-        <div className="text-center mt-6 mb-4">
+        <div className="mt-6 mb-4">
           <h3 className="text-xl px-32">
             Transforme suas ideias em realidade com nossa plataforma intuitiva e
             poderosa.

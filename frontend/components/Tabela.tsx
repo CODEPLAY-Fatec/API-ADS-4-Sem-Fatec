@@ -70,8 +70,12 @@ export default forwardRef(function Tabela(props: TabelaProps, ref) {
                     <TableBody>
                         {currentPageData.length ? (
                             currentPageData.map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell className="text-center cursor-pointer text-blue-500" onClick={() => handleProjectClick(row)}>
+                                <TableRow
+                                    key={row.id}
+                                    onClick={() => handleProjectClick(row)} 
+                                    className="cursor-pointer hover:bg-gray-100"
+                                >
+                                    <TableCell className="text-center text-blue-500">
                                         {row.name}
                                     </TableCell>
                                     <TableCell className="text-center">

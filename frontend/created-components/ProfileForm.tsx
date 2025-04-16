@@ -19,9 +19,9 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
     isSaving,
   }) => {
     return (
-      <div className="mt-15 col-span-2 rounded-xl shadow bg-white p-10">
-        <h2 className="text-lg font-semibold mb-5">Informações</h2>
-        <div className="flex flex-col gap-4">
+      <div className="mt-2 col-span-2 rounded-xl shadow bg-white p-6">
+        <h2 className="text-base font-semibold mb-4">Informações</h2>
+        <div className="flex flex-col gap-3">
           <div>
             <Label htmlFor="name">Nome</Label>
             <Input
@@ -48,7 +48,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
           </div>
         </div>
         <Button
-          className="mt-4 w-full"
+          className="mt-3 w-full bg-blue-900"
           onClick={onSave}
           disabled={isSaving}
         >
