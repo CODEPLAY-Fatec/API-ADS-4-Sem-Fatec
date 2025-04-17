@@ -43,7 +43,9 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
             toast.success("Senha alterada com sucesso!");
             onBack(); // Voltar ao formulário de perfil
         } catch (error: any) {
-            toast.error(error.message || "Erro ao alterar a senha.");
+            // Exiba a mensagem de erro retornada pelo backend
+            const errorMessage = error.message || "Erro ao alterar a senha.";
+            toast.error(errorMessage);
         } finally {
             setIsSubmitting(false);
         }

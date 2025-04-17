@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { createUser, getAllUsers, AttPasswordService, updateUserService, salvarFotoService, getUserById, getUserInfo, buscarFotobyId } from "../services/userService";
 import sharp from "sharp";
+import { AttPasswordService, buscarFotobyId, createUser, getAllUsers, getUserInfo, salvarFotoService, updateUserService } from "../services/userService";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 if (!SECRET_KEY) {
@@ -92,26 +92,30 @@ export const getAllUsersController = async (req: Request, res: Response) => {
 export const AttPasswordController = async (req: Request, res: Response) => {
     const { password, newpassword } = req.body;
     const token = req.cookies?.token;
+
     if (!token || !password) {
         res.status(401).json({ message: "Preencha todos os campos para alterar senha." });
         console.log("Usuário não autenticado.");
         return;
     }
+
     try {
         const decoded = jwt.verify(token, SECRET_KEY) as jwt.JwtPayload;
         await AttPasswordService(decoded.id, password, newpassword);
         res.status(201).send({ message: "Senha alterada com sucesso!" });
-    } catch (error) {
-        res.status(500).send({ message: error });
+    } catch (error: any) {
+        // Retorne uma mensagem clara no erro
+        const errorMessage = error.message || "Erro ao alterar a senha.";
+        res.status(400).json({ message: errorMessage });
         console.warn(error);
     }
-}
+};
 
 export const updateUserController = async (req: Request, res: Response) => {
     const { user: User } = req.body;
     const token = req.cookies?.token;
     if (!token) {
-        res.status(401).json({ message: "Não foi encontrado o cookie" });//retorno de erro pro frontend caso eles esqueçam de enviar
+        res.status(401).json({ message: "Não foi encontrado o cookie" }); //retorno de erro pro frontend caso eles esqueçam de enviar
         console.log("Cookie faltando");
         return;
     }
@@ -123,30 +127,27 @@ export const updateUserController = async (req: Request, res: Response) => {
         res.status(500).send({ message: "Erro ao atualizar usuário." });
         console.warn(error);
     }
-}
+};
 
 export const uploadFotoController = async (req: Request, res: Response) => {
     try {
         if (!req.file) {
-            res.status(400).send('Nenhum arquivo enviado');
+            res.status(400).send("Nenhum arquivo enviado");
             return;
         }
 
         const userInfo = await getUserInfo(req.cookies.token);
         if (!userInfo) {
-            res.status(401).send('Usuário não autenticado');
+            res.status(401).send("Usuário não autenticado");
             return;
         }
-        const imagemProcessada = await sharp(req.file.buffer)
-            .resize(300, 300)
-            .jpeg({ quality: 80 }) 
-            .toBuffer();
+        const imagemProcessada = await sharp(req.file.buffer).resize(300, 300).jpeg({ quality: 80 }).toBuffer();
 
         await salvarFotoService(imagemProcessada, userInfo.id);
-        res.status(200).send('Imagem salva com sucesso!');
+        res.status(200).send("Imagem salva com sucesso!");
     } catch (err) {
         console.error(err);
-        res.status(500).send('Erro ao salvar imagem');
+        res.status(500).send("Erro ao salvar imagem");
     }
 };
 
@@ -154,20 +155,20 @@ export const getFotoController = async (req: Request, res: Response) => {
     try {
         const user = await getUserInfo(req.cookies.token);
         if (!user) {
-            res.status(401).send('Usuário não autenticado');
+            res.status(401).send("Usuário não autenticado");
             return;
         }
 
         const imagem = await buscarFotobyId(user.id);
         if (!imagem) {
-            res.status(404).send('Foto não encontrada');
+            res.status(404).send("Foto não encontrada");
             return;
         }
 
-        const base64Image = Buffer.from(imagem.file).toString('base64');
+        const base64Image = Buffer.from(imagem.file).toString("base64");
         res.json({ base64: base64Image });
     } catch (err) {
         console.error(err);
-        res.status(500).send('Erro ao buscar imagem');
+        res.status(500).send("Erro ao buscar imagem");
     }
 };
