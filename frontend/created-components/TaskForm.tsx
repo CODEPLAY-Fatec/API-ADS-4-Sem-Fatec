@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
 import Task from "@shared/Task";
 import { SelectNative } from "@/components/ui/select-native";
+import { XIcon } from "lucide-react";
+import GradientText from "./GradientText";
 
 type TaskFormProps = {
   task: Task | null;
@@ -61,11 +62,8 @@ export default class TaskForm extends React.Component<
 
     try {
       this.props.addTask(task);
-      toast.success("Tarefa criada com sucesso!");
       this.props.toggleForm();
-    } catch (error) {
-      toast.error("Ocorreu um erro ao criar a tarefa.");
-    }
+    } catch (error) {}
   };
 
   closeSuccessModal = () => {
@@ -134,7 +132,15 @@ export default class TaskForm extends React.Component<
               name="start"
               type="date"
               value={task.start ? task.start.toISOString().split("T")[0] : ""}
-              onChange={this.handleChange}
+              onChange={(e) => {
+                const date = new Date(e.target.value);
+                this.setState((prevState) => ({
+                  task: {
+                    ...prevState.task,
+                    start: date,
+                  },
+                }));
+              }}
               required
             />
           </div>
@@ -146,7 +152,15 @@ export default class TaskForm extends React.Component<
               name="finish"
               type="date"
               value={task.finish ? task.finish.toISOString().split("T")[0] : ""}
-              onChange={this.handleChange}
+              onChange={(e) => {
+                const date = new Date(e.target.value);
+                this.setState((prevState) => ({
+                  task: {
+                    ...prevState.task,
+                    start: date,
+                  },
+                }));
+              }}
               required
             />
           </div>
