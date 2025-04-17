@@ -75,10 +75,10 @@ export default function ProjectDetails({
   const addTask = async (task: Task) => {
     if (currentProjectTasks.some((t) => t.id === task.id)) {
       try {
-        const response = await axios.patch(`/api/projects/tasks/${task.id}`, {
+        const response = await axios.patch(`/api/projects/tasks/${currentProject?.id}`, {
           task: task,
         });
-        if (response.status !== 200) {
+        if (response.status !== 201) {
           throw new Error("Erro ao atualizar tarefa");
         }
         setCurrentProjectTasks((prevTasks) => [
