@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import GradientText from "./GradientText";
 import EmergeIn from "./EmergeIn";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { Dialog } from "@headlessui/react";
 
@@ -152,7 +152,21 @@ const LoginForm: React.FC = () => {
       </div>
       <Dialog open={isRecoveryOpen} onClose={() => setRecoveryOpen(false)}>
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
-          <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md relative">
+            <button 
+              onClick={() => {
+                setRecoveryOpen(false);
+                setStep(1);
+                setRecoveryEmail("");
+                setRecoveryCode("");
+                setNewPassword("");
+                setConfirmNewPassword("");
+              }}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition-colors"
+              aria-label="Close"
+            >
+              <X size={24} />
+            </button>
             <h2 className="text-xl font-semibold text-black mb-4">
               {step === 1 && "Recuperar Senha"}
               {step === 2 && "Verificar Código"}

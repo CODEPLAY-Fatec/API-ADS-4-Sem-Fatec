@@ -12,6 +12,10 @@ import DescriptionComponent from "./DescriptionComponent";
 import TaskList from "./TaskList";
 import toast from "react-hot-toast";
 import KanbanBoard from "./KanbanBoard";
+import { Button } from "@/components/ui/button";
+import { XIcon } from "lucide-react";
+import GradientText from "./GradientText";
+import TaskForm from "./TaskForm";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -32,6 +36,10 @@ export default function ProjectDetails({
   const [loading, setLoading] = useState(true);
   const [calendarEvents, setCalendarEvents] = useState<TaskEvent[]>([]);
   const [currentTab, setCurrentTab] = useState("Descrição");
+  
+  // New state for task edit modal
+  const [showTaskForm, setShowTaskForm] = useState<boolean>(false);
+  const [currentEditingTask, setCurrentEditingTask] = useState<Task | null>(null);
 
   useEffect(() => {
     async function fetchProjectDetails() {
@@ -130,6 +138,16 @@ export default function ProjectDetails({
     }
   };
 
+  const handleEditTask = (task: Task) => {
+    setCurrentEditingTask(task);
+    setShowTaskForm(true);
+  };
+
+  const handleNewTask = () => {
+    setCurrentEditingTask(null);
+    setShowTaskForm(true);
+  };
+
   if (loading) return <div>Carregando...</div>;
 
   if (!currentProject || !currentProjectCreator) {
@@ -137,26 +155,57 @@ export default function ProjectDetails({
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <div className="flex flex-col flex-grow px-4 py-12">
+    <div className="flex flex-col relative">
+      {showTaskForm && (
+        <div className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close Form"
+              onClick={() => {
+                setShowTaskForm(false);
+                setCurrentEditingTask(null);
+              }}
+              className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
+            >
+              <XIcon size={20} />
+            </Button>
+            <div className="flex justify-center mb-4 items-center">
+              <GradientText>{currentEditingTask ? "Editar Tarefa" : "Nova Tarefa"}</GradientText>
+            </div>
+            <TaskForm
+              task={currentEditingTask}
+              toggleForm={() => {
+                setShowTaskForm(false);
+                setCurrentEditingTask(null);
+              }}
+              addTask={addTask}
+              deleteTask={deleteTask}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col px-4 py-2">
         <div className="w-full max-w-7xl mx-auto">
-          <div className="p-6 max-w-4xl mx-auto relative">
+          <div className="p-4 max-w-4xl mx-auto relative">
             <button
               onClick={() => {
                 console.log("Redirecionando para /projetos");
                 //router.push("/projetos");
                 closeSelectedProjectAction();
               }}
-              className="absolute top-16 left-8 text-3xl text-gray-700 hover:text-gray-900"
+              className="absolute top-4 left-8 text-3xl text-gray-700 hover:text-gray-900"
             >
               &#60;
             </button>
-            <h1 className="text-blue-600 text-2xl font-semibold text-center mt-8">
+            <h1 className="text-blue-600 text-2xl font-semibold text-center mt-2">
               {currentProject.name}
             </h1>
             <button
               onClick={() => setEditing(true)}
-              className="absolute top-16 right-8 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
+              className="absolute top-4 right-8 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
             >
               Editar
             </button>
@@ -165,29 +214,42 @@ export default function ProjectDetails({
           <TabNavigation onTabChange={(tab) => setCurrentTab(tab)} />
 
           {/* Conteúdo da aba selecionada */}
-          <div className="mt-8">
+          <div className="mt-4">
             {currentTab === "Descrição" && (
               <DescriptionComponent
                 currentProject={currentProject}
                 currentProjectCreator={currentProjectCreator}
               />
             )}
-          {currentTab === "Kanban" && (
-                        <KanbanBoard 
-                          tasks={currentProjectTasks} 
-                          onEditTask={(task) => {
-                            const taskToEdit = currentProjectTasks.find(t => t.id === task.id);
-                          }} 
-                        />
-                      )}
+            {currentTab === "Kanban" && (
+              <KanbanBoard 
+                tasks={currentProjectTasks} 
+                onEditTask={handleEditTask}
+              />
+            )}
             {currentTab === "Relatórios" && (
-              <TaskCalendar events={calendarEvents} />
+              <div className="border rounded-lg shadow-sm overflow-hidden">
+                <div className="p-4">
+                  <h2 className="text-xl font-bold mb-4">Relatórios</h2>
+                  <div className="h-[300px] overflow-y-auto">
+                    <div className="scale-[0.6] origin-top-left">
+                      <TaskCalendar events={calendarEvents} />
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
             {currentTab === "Tarefas" && (
               <TaskList
                 currentTasks={currentProjectTasks}
                 addTask={addTask}
                 deleteTask={deleteTask}
+                onEditTask={handleEditTask}
+                onNewTask={handleNewTask}
+                tasks={currentProjectTasks}
+                setTasks={(tasks: Task[]): void => {
+                  setCurrentProjectTasks(tasks);
+                }}
               />
             )}
           </div>
@@ -195,20 +257,22 @@ export default function ProjectDetails({
       </div>
 
       {editing && (
-        <ProjectEditor
-          project={currentProject}
-          setCurrentProject={(project) => {
-            setCurrentProject(project);
-          }}
-          onClose={(deleted: boolean) => {
-            setEditing(false);
-            if (deleted) {
-              closeSelectedProjectAction();
-            }
-          }}
-          users={currentProject.projectMember}
-          creator={currentProjectCreator}
-        />
+        <div className="fixed inset-0 z-50 bg-transparent backdrop-blur-sm flex items-center justify-center">
+          <ProjectEditor
+            project={currentProject}
+            setCurrentProject={(project) => {
+              setCurrentProject(project);
+            }}
+            onClose={(deleted: boolean) => {
+              setEditing(false); 
+              if (deleted) {
+                closeSelectedProjectAction();
+              }
+            }}
+            users={currentProject.projectMember}
+            creator={currentProjectCreator}
+          />
+        </div>
       )}
     </div>
   );
