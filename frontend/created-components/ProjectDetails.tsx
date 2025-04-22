@@ -60,16 +60,14 @@ export default function ProjectDetails({
         );
 
         // Mapeando tarefas para eventos do calendário
-        if (projectTasksResponse.data.tasks) {
-          const events = projectTasksResponse.data.tasks.map((task: Task) => ({
-            id: task.id,
-            title: task.title,
-            start: task.start ? new Date(task.start) : new Date(),
-            end: task.finish ? new Date(task.finish) : new Date(),
-            status: task.status.toLowerCase() as TaskEvent["status"],
-          })) as TaskEvent[];
-          setCalendarEvents(events);
-        }
+        const events = projectTasksResponse.data.map((task: Task) => ({
+          id: task.id,
+          title: task.title,
+          start: task.start ? new Date(task.start) : new Date(),
+          end: task.finish ? new Date(task.finish) : new Date(),
+          status: task.status.toLowerCase() as TaskEvent["status"],
+        })) as TaskEvent[];
+        setCalendarEvents(events);
       } catch (error) {
         console.error("Erro ao buscar detalhes do projeto:", error);
       } finally {
@@ -230,9 +228,8 @@ export default function ProjectDetails({
             {currentTab === "Relatórios" && (
               <div className="border rounded-lg shadow-sm overflow-hidden">
                 <div className="p-4">
-                  <h2 className="text-xl font-bold mb-4">Relatórios</h2>
-                  <div className="h-[300px] overflow-y-auto">
-                    <div className="scale-[0.6] origin-top-left">
+                  <div className="overflow-y-auto">
+                    <div className="scale-[1] origin-top-left">
                       <TaskCalendar events={calendarEvents} />
                     </div>
                   </div>

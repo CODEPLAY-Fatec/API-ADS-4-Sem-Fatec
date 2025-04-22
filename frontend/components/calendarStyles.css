@@ -1,76 +1,79 @@
-/* Estilo geral do calendário */
 .rbc-calendar {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-  }
-  
-  /* nomes dos dias da semana */
-  .rbc-header {
-    text-align: center;
-    font-weight: 600;
-    color: #333;
-    padding: 8px 0;
-    text-transform: capitalize;
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #eee;
-  }
-  
-  /* célula do calendário */
-  .rbc-day-bg {
-    transition: background-color 0.2s ease;
-  }
-  
-  .rbc-day-bg:hover {
-    background-color: #f0f4ff;
-    cursor: pointer;
-  }
-  
-  .rbc-today {
-    background: linear-gradient(145deg, #7FFFD4, #66CDAA); 
-    color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(99, 102, 241, 0.5);
-    font-weight: 600;
-  }
-  
-  
-  /* dias selecionados */
-  .rbc-selected-cell {
-    background-color: #6366f1 !important;
-    color: white !important;
-    border-radius: 6px;
-  }
-  
-  /* dias inativos (de outro mês) */
-  .rbc-off-range {
-    color: #a1a1aa; 
-    opacity: 0.6;
-  }
-  
-  .rbc-month-row {
-    padding: 4px;
-  }
-  
-  .rbc-date-cell {
-    text-align: center;
-    padding: 6px 0;
-  }
-  
-  /* Data do mês (o número) */
-  .rbc-date-cell span {
-    display: inline-block;
-    width: 100%;
-    font-size: 13px;
-  }
-  
-  /* Melhor legibilidade em telas pequenas */
-  @media (max-width: 500px) {
-    .rbc-header {
-      font-size: 12px;
-    }
-  
-    .rbc-date-cell span {
-      font-size: 11px;
-    }
-  }
-  
+  font-size: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  width: 100% !important; 
+  margin-left: -350px; 
+  transform: scale(0.9);
+  transform-origin: top left; 
+  position: relative;
+  left: -8px; 
+}
+
+.rbc-header {
+  padding: 0.3rem;
+  font-size: 0.7rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.rbc-month-view {
+  border: none;
+  width: 100%;
+}
+
+.rbc-month-row {
+  min-height: 2.5rem !important;
+}
+
+.rbc-day-bg {
+  border: 3px solid #e2e8f0 !important;
+}
+
+.rbc-date-cell {
+  padding: 0;
+  height: 100%;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative;
+}
+
+.rbc-date-cell > a {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  line-height: 24px;
+  position: relative;
+}
+
+.rbc-off-range {
+  color: #cbd5e1;
+}
+
+.rbc-off-range .rbc-day-bg {
+  background-color: #f8fafc;
+}
+
+.rbc-today {
+  background-color: #eff6ff !important;
+}
+
+.rbc-date-cell .rbc-day-bg {
+  position: relative;
+}
+
+.finish-date-cell::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: calc(50% - 3px); 
+  width: 6px;
+  height: 6px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  z-index: 10;
+  transform: none; 
+}
