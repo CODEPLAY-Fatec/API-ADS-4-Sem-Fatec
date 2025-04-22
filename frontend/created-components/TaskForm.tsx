@@ -157,7 +157,7 @@ export default class TaskForm extends React.Component<
                 this.setState((prevState) => ({
                   task: {
                     ...prevState.task,
-                    start: date,
+                    finish: date,
                   },
                 }));
               }}
