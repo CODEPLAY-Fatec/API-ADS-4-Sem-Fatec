@@ -223,6 +223,14 @@ export default function ProjectDetails({
               <KanbanBoard 
                 tasks={currentProjectTasks} 
                 onEditTask={handleEditTask}
+                projectId={projectId}
+                onTaskUpdate={(updatedTask) => {
+                  setCurrentProjectTasks((prevTasks) => 
+                    prevTasks.map(task => 
+                      task.id === updatedTask.id ? updatedTask : task
+                    )
+                  );
+                }}
               />
             )}
             {currentTab === "Relatórios" && (
