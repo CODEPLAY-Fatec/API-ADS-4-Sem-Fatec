@@ -127,10 +127,10 @@ export default function TaskList({
                             : task.status}
                       </TableCell>
                       <TableCell className="text-center">
-                        {task.start?.toLocaleDateString()}
+                        {task.start?.toLocaleDateString('pt-BR', {timeZone: "UTC"})}
                       </TableCell>
                       <TableCell className="text-center">
-                        {task.finish?.toLocaleDateString()}
+                        {task.finish?.toLocaleDateString('pt-BR', {timeZone: "UTC"})}
                       </TableCell>
                     </TableRow>
                   ))}

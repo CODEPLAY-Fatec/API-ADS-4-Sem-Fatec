@@ -24,7 +24,7 @@ export default function KanbanBoard({ tasks, onEditTask, projectId, onTaskUpdate
 
   const formatDate = (date: Date | null | undefined) => {
     if (!date) return "-";
-    return date.toLocaleDateString('pt-BR');
+    return date.toLocaleDateString('pt-BR', {timeZone: "UTC"});
   };
 
   const getStatusColor = (status: string) => {

@@ -13,7 +13,7 @@ import { Dialog } from "@headlessui/react";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ id: 0, email: "", password: "" });
+  const [formData, setFormData] = useState({ id: 0, name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isRecoveryOpen, setRecoveryOpen] = useState(false);

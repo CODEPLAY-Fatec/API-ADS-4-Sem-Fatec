@@ -73,7 +73,7 @@ export default function UserProfilePage() {
 
     return (
         <div className="h-screen flex flex-col bg-transparent">
-        <Navbar className="h-10" />
+        <Navbar />
         <div className="flex-1 w-full max-w-5xl mx-auto px-4 py-2 flex items-center justify-center">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="md:col-span-1 flex flex-col items-center justify-center">

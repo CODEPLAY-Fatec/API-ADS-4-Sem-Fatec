@@ -6,22 +6,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle, Dispatch, SetStateAction } from "react";
 import ProjectType from "@shared/Project";
+import { User } from "@shared/User";
 
 type FetchedProject = ProjectType & {
     creatorInfo: User;
     users: User[];
 }
 
-type User = {
-    id: number;
-    name: string;
-    email: string;
-};
-
 type TabelaProps = {
-    setSelectedProject: any; 
+    setSelectedProject: Dispatch<SetStateAction<FetchedProject | null>>; 
 }
 
 export default forwardRef(function Tabela(props: TabelaProps, ref) {
