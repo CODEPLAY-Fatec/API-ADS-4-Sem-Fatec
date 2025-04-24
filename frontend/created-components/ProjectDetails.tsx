@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 import GradientText from "./GradientText";
 import TaskForm from "./TaskForm";
+import Report from "./Report";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -234,15 +235,7 @@ export default function ProjectDetails({
               />
             )}
             {currentTab === "Relatórios" && (
-              <div className="border rounded-lg shadow-sm overflow-hidden">
-                <div className="p-4">
-                  <div className="overflow-y-auto">
-                    <div className="scale-[1] origin-top-left">
-                      <TaskCalendar events={calendarEvents} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Report events={calendarEvents} />
             )}
             {currentTab === "Tarefas" && (
               <TaskList
