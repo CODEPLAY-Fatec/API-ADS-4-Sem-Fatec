@@ -58,8 +58,8 @@ export const addUserToProjectController = async (req: Request, res: Response) =>
     }
 
     try {
-        await addUserToProjectService(projectId, user.id, await getUserInfo(req.cookies.token));
-        res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!" });
+        const usuarioAdd = await addUserToProjectService(projectId, user.id, await getUserInfo(req.cookies.token));
+        res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!", user : usuarioAdd });
     } catch (error) {
         res.status(500).send({ message: "Erro ao adicionar usuário ao projeto.", user: user });
         console.warn(error);
@@ -85,15 +85,23 @@ export const removeUserFromProjectController = async (req: Request, res: Respons
 }
 
 export const getProjectsController = async (req: Request, res: Response) => {
-    const {searchName,searchCreator,searchInst,searchSubj,dateStart,dateFinish,searchStatus} = req.body;
+    const  searchStatus  = req.query.searchStatus as Project['status'];
+    const searchName = req.query.searchName as string;
+    const searchCreator = req.query.searchCreator as string;
+    const searchInst = req.query.searchInst as string;
+    const searchSubj = req.query.searchSubj as string;
+    const dateStart = req.query.dateStart as string;
+    const dateFinish = req.query.dateFinish as string;
+
     try {
         const userInfo = await getUserInfo(req.cookies.token);
         if (userInfo.id === undefined) {
             res.status(400).send({ message: "User ID is missing." });
             return;
         }
-        const result = await getProjectsService(userInfo,searchName,searchCreator,searchInst,searchSubj,dateStart,dateFinish,searchStatus);
-        // considerar usar Set para filtrar mais rápido, não sei se vai ser necessário.
+
+        
+        const result = await getProjectsService(userInfo,searchName,searchCreator,searchInst,searchSubj,dateStart ? new Date(dateStart) : undefined,dateFinish ? new Date(dateFinish) : undefined,searchStatus);
         res.status(200).send({ result }); 
     } catch (error) {
         console.error("Erro ao buscar projetos:", error);

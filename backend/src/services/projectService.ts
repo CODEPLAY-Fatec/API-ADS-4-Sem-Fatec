@@ -2,7 +2,6 @@ import Project from "@shared/Project";
 import { User } from "@shared/User";
 import { PrismaClient } from "@prisma/client";
 import Task from "@shared/Task";
-import { title } from "process";
 
 const prisma = new PrismaClient();
 
@@ -357,12 +356,7 @@ export const updateTaskService = async (
   if (!HasAccess) {
     throw new Error("Usuário não tem permissão para editar esta tarefa.");
   }
-  const oldTask = await prisma.tasks.findFirst({
-      where: {
-          id: task.id
-      }
-  })
-  await prisma.tasks.update({
+  const updatedTask = await prisma.tasks.update({
     where: {
       id: task.id,
     },
@@ -374,9 +368,6 @@ export const updateTaskService = async (
       priority: task.priority,
       status: task.status,
       timeEstimate: task.timeEstimate || null,
-      lastUpdated: new Date(),
-      finishedAt: oldTask?.status !== "Concluido" && task.status === "Concluido" ? new Date() : null,
-      taskUser: task.taskUser || null,
     },
   });
 };
