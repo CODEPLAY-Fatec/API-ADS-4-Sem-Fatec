@@ -8,11 +8,9 @@ interface ReportProps {
 export default function Report({ events }: ReportProps) {
   return (
     <div className="border rounded-lg shadow-sm overflow-hidden">
-      <div className="p-4">
-        <div className="overflow-y-auto">
-          <div className="scale-[1] origin-top-left">
-            <TaskCalendar events={events} />
-          </div>
+      <div className="p-6">
+        <div className="mx-auto pl-15 pr-2 py-2">
+          <TaskCalendar events={events} />
         </div>
       </div>
     </div>
