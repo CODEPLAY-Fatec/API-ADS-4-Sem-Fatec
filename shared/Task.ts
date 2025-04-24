@@ -5,6 +5,9 @@ type Task = {
   description?: string;
   start?: Date;
   finish?: Date;
+  createdAt?: Date;
+  finishedAt?: Date;
+  lastUpdated?: Date;
   priority?: "Baixa" | "Media" | "Alta";
   status: "Fechado" | "Em_andamento" | "Concluido";
   timeEstimate?: number;
