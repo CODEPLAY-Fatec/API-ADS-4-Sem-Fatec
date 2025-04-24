@@ -9,9 +9,12 @@ import Task from "@shared/Task";
 import { SelectNative } from "@/components/ui/select-native";
 import { XIcon } from "lucide-react";
 import GradientText from "./GradientText";
+import { User } from "@shared/User";
 
 type TaskFormProps = {
   task: Task | null;
+  projectMembers: User[];
+  projectCreator: User;
   toggleForm: () => void;
   addTask: (task: Task) => void;
   deleteTask: (task: Task) => void;
@@ -25,6 +28,7 @@ export default class TaskForm extends React.Component<
     super(props);
     this.state = {
       task: {
+        ...props.task,
         id: props.task ? props.task.id : Date.now(),
         title: props.task ? props.task.title : "",
         description: props.task ? props.task.description : "",
@@ -50,11 +54,24 @@ export default class TaskForm extends React.Component<
     }));
   };
 
+  getCurrentTaskUserName = (task: Task) => {
+    //const user = this.props.projectMembers.find(
+    //  (u: User) => task.taskUser == u.id,
+    //);
+    //const creator = this.props.projectCreator.id == task.taskUser;
+    //return (
+    //  (user && user.name) || (creator && this.props.projectCreator.name) || ""
+    //);
+    return this.props.projectMembers.find((u: User) => task.taskUser == u.id)
+      ?.name || this.props.projectCreator.id == task.taskUser
+      ? this.props.projectCreator.name
+      : "";
+  };
+
   submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const { task } = this.state;
-
     if (!task.title || !task.description || !task.status) {
       toast.error("Por favor, preencha todos os campos.", { duration: 1500 });
       return;
@@ -177,6 +194,37 @@ export default class TaskForm extends React.Component<
               <option value="Fechado">Fechado</option>
               <option value="Em_andamento">Em andamento</option>
               <option value="Concluído">Concluído</option>
+            </SelectNative>
+          </div>
+
+          <div>
+            <Label htmlFor="taskUser">Atribuir a</Label>
+            <SelectNative
+              id="taskUser"
+              name="taskUser"
+              value={this.getCurrentTaskUserName(task)}
+              onChange={(e) => {
+                this.setState((prevState) => ({
+                  task: {
+                    ...prevState.task,
+                    taskUser: parseInt(e.target.value) || undefined,
+                  },
+                }));
+              }}
+              className="w-full"
+            >
+              <option value="">Não atribuir</option>
+              <option
+                key={this.props.projectCreator.id}
+                value={this.props.projectCreator.id}
+              >
+                {this.props.projectCreator.name}
+              </option>
+              {this.props.projectMembers.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
+                </option>
+              ))}
             </SelectNative>
           </div>
 

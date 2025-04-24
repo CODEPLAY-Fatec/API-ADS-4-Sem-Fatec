@@ -376,6 +376,7 @@ export const updateTaskService = async (
       timeEstimate: task.timeEstimate || null,
       lastUpdated: new Date(),
       finishedAt: oldTask?.status !== "Concluido" && task.status === "Concluido" ? new Date() : null,
+      taskUser: task.taskUser || null,
     },
   });
 };

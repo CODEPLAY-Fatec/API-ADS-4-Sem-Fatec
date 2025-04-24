@@ -94,10 +94,11 @@ export default function ProjectDetails({
             ...task,
           },
         ]);
+        toast.success("Tarefa atualizada com sucesso!");
       } catch (error) {
         console.error("Erro ao atualizar tarefa:", error);
         toast.error("Erro ao atualizar tarefa");
-      }
+      } 
     } else {
       try {
         const response = await axios.post(`api/projects/${projectId}/tasks`, {
@@ -174,6 +175,8 @@ export default function ProjectDetails({
               <GradientText>{currentEditingTask ? "Editar Tarefa" : "Nova Tarefa"}</GradientText>
             </div>
             <TaskForm
+              projectMembers={currentProject.projectMember}
+              projectCreator={currentProjectCreator}
               task={currentEditingTask}
               toggleForm={() => {
                 setShowTaskForm(false);
@@ -191,7 +194,6 @@ export default function ProjectDetails({
           <div className="p-4 max-w-4xl mx-auto relative">
             <button
               onClick={() => {
-                console.log("Redirecionando para /projetos");
                 //router.push("/projetos");
                 closeSelectedProjectAction();
               }}
