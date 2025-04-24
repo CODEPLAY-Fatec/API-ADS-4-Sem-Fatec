@@ -52,9 +52,9 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
     };
 
     return (
-        <div className="mt-15 col-span-2 rounded-xl shadow bg-white p-10">
-            <h2 className="text-lg font-semibold mb-5">Alterar Senha</h2>
-            <div className="flex flex-col gap-4">
+        <div className="mt-2 rounded-xl shadow bg-white p-4">
+            <h2 className="text-base font-semibold mb-3">Alterar Senha</h2>
+            <div className="flex flex-col gap-2">
                 <div>
                     <Label htmlFor="currentPassword">Senha Atual</Label>
                     <Input id="currentPassword" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
@@ -68,12 +68,14 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
                     <Input id="confirmNewPassword" type="password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
                 </div>
             </div>
-            <Button className="mt-4 w-full bg-blue-500 text-white" onClick={handleChangePassword} disabled={isSubmitting}>
-                {isSubmitting ? "Alterando..." : "Alterar Senha"}
-            </Button>
-            <Button className="mt-4 w-full bg-gray-300 text-black" onClick={onBack} disabled={isSubmitting}>
-                Voltar
-            </Button>
+            <div className="flex gap-3 mt-3">
+                <Button className="flex-1 bg-blue-500 text-white" onClick={handleChangePassword} disabled={isSubmitting}>
+                    {isSubmitting ? "Alterando..." : "Alterar Senha"}
+                </Button>
+                <Button className="flex-1 bg-gray-300 text-black" onClick={onBack} disabled={isSubmitting}>
+                    Voltar
+                </Button>
+            </div>
         </div>
     );
 };

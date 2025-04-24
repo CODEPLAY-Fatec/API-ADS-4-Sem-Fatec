@@ -72,31 +72,32 @@ export default function UserProfilePage() {
     };
 
     return (
-        <div className="h-screen flex flex-col bg-transparent">
-        <Navbar />
-        <div className="flex-1 w-full max-w-5xl mx-auto px-4 py-2 flex items-center justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="md:col-span-1 flex flex-col items-center justify-center">
-              <ProfilePicture profilePicture={userData.profilePicture} onPhotoUpload={handlePhotoUpload} name={userData.name} email={userData.email} />
-            </div>
-            <div className="md:col-span 2 flex flex-col">
-              {isChangingPassword ? (
-                <ChangePassword onBack={() => setIsChangingPassword(false)} />
-              ) : (
-                <ProfileForm
-                  userData={userData}
-                  onChange={(field, value) => setUserData((prev) => ({ ...prev, [field]: value }))}
-                  onSave={() => console.log("Salvar alterações")}
-                  isSaving={isSaving}
-                  onChangePassword={() => setIsChangingPassword(true)}
-                />
-              )}
-            </div>
-            <div className="md:col-span-3">
+        <div className="min-h-screen flex flex-col bg-transparent">
+          <Navbar />
+          <div className="flex-1 flex items-center justify-center pt-16 px-4 pb-8">
+            <div className="w-full max-w-4xl">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="md:col-span-1 flex flex-col items-center justify-center">
+                  <ProfilePicture profilePicture={userData.profilePicture} onPhotoUpload={handlePhotoUpload} name={userData.name} email={userData.email} />
+                </div>
+                <div className="md:col-span-2">
+                  {isChangingPassword ? (
+                    <ChangePassword onBack={() => setIsChangingPassword(false)} />
+                  ) : (
+                    <ProfileForm
+                      userData={userData}
+                      onChange={(field, value) => setUserData((prev) => ({ ...prev, [field]: value }))}
+                      onSave={() => console.log("Salvar alterações")}
+                      isSaving={isSaving}
+                      onChangePassword={() => setIsChangingPassword(true)}
+                    />
+                  )}
+                </div>
+              </div>
+              
               <Activities />
             </div>
           </div>
         </div>
-      </div>
     );
 }
