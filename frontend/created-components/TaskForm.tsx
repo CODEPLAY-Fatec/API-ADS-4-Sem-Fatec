@@ -193,7 +193,7 @@ export default class TaskForm extends React.Component<
             >
               <option value="Fechado">Fechado</option>
               <option value="Em_andamento">Em andamento</option>
-              <option value="Concluído">Concluído</option>
+              <option value="Concluido">Concluído</option>
             </SelectNative>
           </div>
 
