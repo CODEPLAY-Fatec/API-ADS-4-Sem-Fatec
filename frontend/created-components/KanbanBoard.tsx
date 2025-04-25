@@ -156,11 +156,11 @@ export default function KanbanBoard({ tasks, onEditTask, projectId, onTaskUpdate
   );
 
   return (
-    <div className="border rounded-lg shadow-sm overflow-hidden">
-      <div className="p-4">
+    <div className="border rounded-lg shadow-sm overflow-hidden h-[55vh] flex flex-col">
+      <div className="p-4 overflow-y-auto flex-1">
         <h2 className="text-xl font-bold mb-4">Kanban</h2>
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="flex h-[300px]">
+          <div className="flex h-[calc(100%-3rem)]">
             {renderColumn("Fechado", closedTasks, "Fechado", "fechado")}
             {renderColumn("Em Andamento", inProgressTasks, "Em_andamento", "em-andamento")}
             {renderColumn("Concluído", completedTasks, "Concluido", "concluido")}

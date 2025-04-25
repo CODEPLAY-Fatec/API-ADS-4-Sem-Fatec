@@ -35,8 +35,8 @@ export default function DescriptionComponent({
   };
 
   return (
-    <div className="border rounded-lg shadow-sm overflow-hidden">
-      <div className="p-4">
+    <div className="border rounded-lg shadow-sm overflow-hidden h-[55vh] flex flex-col">
+      <div className="p-4 overflow-y-auto flex-1">
         <h2 className="text-xl font-bold mb-4 text-left">Descrição</h2>
 
         <div className="flex justify-center">

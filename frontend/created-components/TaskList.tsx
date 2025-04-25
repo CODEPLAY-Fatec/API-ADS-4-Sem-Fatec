@@ -84,8 +84,8 @@ export default function TaskList({
         </div>
       )}
 
-      <div className="border rounded-lg shadow-sm overflow-hidden">
-        <div className="p-4">
+      <div className="border rounded-lg shadow-sm overflow-hidden h-[55vh] flex flex-col">
+        <div className="p-4 overflow-y-auto flex-1">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Lista de Tarefas</h2>
             <button
@@ -96,7 +96,7 @@ export default function TaskList({
             </button>
           </div>
           
-          <div className="h-[300px] overflow-hidden">
+          <div className="overflow-hidden flex-1">
             <div className="h-full overflow-y-auto border rounded">
               <Table className="table-fixed">
                 <TableHeader className="sticky top-0 bg-white z-10">
