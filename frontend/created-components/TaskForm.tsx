@@ -198,7 +198,7 @@ export default class TaskForm extends React.Component<
                   }
                 })?.id ||
                 (this.state.task.taskUser == this.props.projectCreator.id &&
-                  this.props.projectCreator.name) ||
+                  this.props.projectCreator.id) ||
                 ""
               }
               onChange={async (e) => {
