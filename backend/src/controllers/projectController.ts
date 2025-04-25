@@ -18,6 +18,8 @@ import {
     getUserTasks
 } from "../services/projectService";
 import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
+import Task from "@shared/Task";
+import { parse } from "path";
 
 export const createProjectController = async (req: Request, res: Response) => {
     const ProjectData: Project = req.body;
@@ -196,14 +198,23 @@ export const addUserTaskController = async (req: Request, res: Response) => {//s
 
 export const getTasksController= async (req: Request, res: Response) => {//apenas o id do projeto no params
     const projectId = parseInt(req.params.id);
-    const {searchStatus,searchTaskUser,searchPriority,searchTitle,dateStart,dateFinish} = req.body;
+    
+    const searchStatus = req.query.searchStatus as Task['status'];
+    const searchTaskUser = parseInt(req.query.searchTaskUser as string);
+    const searchPriority = req.query.searchPriority as Task['priority'];
+    const searchTitle = req.query.searchTitle as string;
+    const dateStart = req.query.dateStart as string;
+    const dateFinish = req.query.dateFinish as string;
+
+
+
     const User = await getUserInfo(req.cookies.token);
     if (isNaN(projectId)) {
         res.status(400).send({ message: "ID do projeto inválido." });
         return;
     }
     try {  
-        const tasks = await getTasksService(projectId,User.id,searchStatus,searchTaskUser,searchPriority,searchTitle,dateStart,dateFinish);
+        const tasks = await getTasksService(projectId,User.id,searchStatus,searchTaskUser,searchPriority,searchTitle,dateStart ? new Date(dateStart):undefined,dateFinish ? new Date(dateFinish):undefined);  
         res.status(200).send(tasks);
     }catch (error) {
         res.status(500).send({ message: "Erro ao buscar tarefas." });

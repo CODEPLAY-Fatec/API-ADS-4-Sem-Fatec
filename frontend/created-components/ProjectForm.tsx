@@ -96,6 +96,7 @@ export default class ProjectForm extends React.Component<
       this.props.onSubmit();
     } catch (error) {
       toast.error("Erro ao criar Projeto", { duration: 1500 });
+      console.warn(error);
     }
   };
 
