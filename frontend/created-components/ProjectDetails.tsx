@@ -114,6 +114,44 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
             }
         }
     };
+    
+    const setTaskUser = async (task: Task, userId: number) => {
+        try {
+            const response = await axios.patch(`/api/projects/tasks`, {taskId: task.id, taskUser: userId})
+            if (response.status !== 201) {
+                throw new Error("Erro ao atualizar tarefa");
+            }
+            toast.success("Usuário atribuído com sucesso!");
+            setCurrentProjectTasks((prevTasks) =>
+                prevTasks.map((t) => {
+                    if (t.id === task.id) {
+                        console.warn("found task to change")
+                        return {
+                            ...t,
+                            taskUser: userId,
+                        };
+                    }
+                    return t;
+                })
+            );
+            setCurrentEditingTask((prevTask) => {
+                if (prevTask) {
+                    console.warn("found task to edit")
+
+                    return {
+                        ...prevTask,
+                        taskUser: userId,
+                    };
+                }
+                return prevTask;
+            })
+        }
+        catch (error) {
+            console.error("Erro ao atualizar tarefa:", error);
+            toast.error("Erro ao atualizar tarefa");
+        }
+        
+    }
 
     const deleteTask = async (task: Task) => {
         try {
@@ -174,6 +212,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                             }}
                             addTask={addTask}
                             deleteTask={deleteTask}
+                            setTaskUser={setTaskUser}
                         />
                     </div>
                 </div>

@@ -71,6 +71,8 @@ export default function TaskList({
             <div className="flex justify-center mb-4 items-center">
               <GradientText>{currentEditingTask ? "Editar Tarefa" : "Nova Tarefa"}</GradientText>
             </div>
+            { 
+            /*
             <TaskForm
               task={currentEditingTask}
               toggleForm={() => {
@@ -80,6 +82,8 @@ export default function TaskList({
               addTask={addTask}
               deleteTask={deleteTask}
             />
+            */
+            } 
           </div>
         </div>
       )}

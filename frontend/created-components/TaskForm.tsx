@@ -18,6 +18,7 @@ type TaskFormProps = {
   toggleForm: () => void;
   addTask: (task: Task) => void;
   deleteTask: (task: Task) => void;
+  setTaskUser: (task: Task, userId: number) => Promise<void>;
 };
 
 export default class TaskForm extends React.Component<
@@ -46,26 +47,12 @@ export default class TaskForm extends React.Component<
     >,
   ) => {
     const { name, value } = e.target;
-    this.setState((prevState: any) => ({
+    this.setState((prevState) => ({
       task: {
         ...prevState.task,
         [name]: value,
       },
     }));
-  };
-
-  getCurrentTaskUserName = (task: Task) => {
-    //const user = this.props.projectMembers.find(
-    //  (u: User) => task.taskUser == u.id,
-    //);
-    //const creator = this.props.projectCreator.id == task.taskUser;
-    //return (
-    //  (user && user.name) || (creator && this.props.projectCreator.name) || ""
-    //);
-    return this.props.projectMembers.find((u: User) => task.taskUser == u.id)
-      ?.name || this.props.projectCreator.id == task.taskUser
-      ? this.props.projectCreator.name
-      : "";
   };
 
   submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,7 +67,9 @@ export default class TaskForm extends React.Component<
     try {
       this.props.addTask(task);
       this.props.toggleForm();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   closeSuccessModal = () => {
@@ -90,7 +79,8 @@ export default class TaskForm extends React.Component<
   };
 
   render() {
-    const { task } = this.state;
+    const task = this.state.task;
+    console.warn(task);
 
     return (
       <div className="relative">
@@ -193,7 +183,6 @@ export default class TaskForm extends React.Component<
             >
               <option value="Fechado">Fechado</option>
               <option value="Em_andamento">Em andamento</option>
-              <option value="Concluido">Concluído</option>
             </SelectNative>
           </div>
 
@@ -202,12 +191,23 @@ export default class TaskForm extends React.Component<
             <SelectNative
               id="taskUser"
               name="taskUser"
-              value={this.getCurrentTaskUserName(task)}
-              onChange={(e) => {
+              value={
+                this.props.projectMembers.find((u: User) => {
+                  if (u.id == this.state.task.taskUser) {
+                    return u;
+                  }
+                })?.id ||
+                (this.state.task.taskUser == this.props.projectCreator.id &&
+                  this.props.projectCreator.name) ||
+                ""
+              }
+              onChange={async (e) => {
+                const userId = parseInt(e.target.value);
+                await this.props.setTaskUser(task, userId);
                 this.setState((prevState) => ({
                   task: {
                     ...prevState.task,
-                    taskUser: parseInt(e.target.value) || undefined,
+                    taskUser: userId,
                   },
                 }));
               }}
