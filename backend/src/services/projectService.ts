@@ -380,6 +380,13 @@ export const updateTaskService = async (
   if (!HasAccess) {
     throw new Error("Usuário não tem permissão para editar esta tarefa.");
   }
+  const oldTask = await prisma.tasks.findFirst({
+    where: {
+      id: task.id,
+    },
+  });
+  let concluding = oldTask?.status !== "Concluido" && task.status === "Concluido" ? true : false; // para determinar se uma tarefa está sendo concluida
+  let unconcluding = oldTask?.status === "Concluido" && task.status !== "Concluido" ? true : false; // caso contrário - se uma tarefa está deixando de ser concluída
   const updatedTask = await prisma.tasks.update({
     where: {
       id: task.id,
@@ -392,8 +399,10 @@ export const updateTaskService = async (
       priority: task.priority,
       status: task.status,
       timeEstimate: task.timeEstimate || null,
+      finishedAt: concluding ? new Date() : unconcluding ? null : oldTask?.finishedAt,
     },
   });
+  return updatedTask;
 };
 
 export const deleteTaskService = async (taskId: number, userId: number) => {

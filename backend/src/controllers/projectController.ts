@@ -226,8 +226,8 @@ export const updateTaskController = async (req: Request, res: Response) => {//id
     const task = req.body.task;
     const projectId = parseInt(req.params.projectId);
     try {
-        await updateTaskService(task, await getUserInfo(req.cookies.token),projectId);
-        res.status(201).send({ message: "Tarefa atualizada com sucesso!" });
+        const updatedTask = await updateTaskService(task, await getUserInfo(req.cookies.token),projectId);
+        res.status(201).send({ message: "Tarefa atualizada com sucesso!", task: updatedTask});
     }
     catch (error) {
         res.status(500).send({ message: "Erro ao atualizar tarefa." });

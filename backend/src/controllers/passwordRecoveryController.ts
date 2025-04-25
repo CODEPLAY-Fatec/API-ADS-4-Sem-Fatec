@@ -12,7 +12,7 @@ export const requestRecoveryCode = async (req: Request, res: Response) => {
   try {
     const emailSent = await sendPasswordRecoveryEmail(email, recoveryCode);
     if (!emailSent) {
-      return res.status(404).json({ message: "Usuário não encontrado." });
+      res.status(404).json({ message: "Usuário não encontrado." });
     }
 
     res.status(200).json({ message: "Código de recuperação enviado para o e-mail." });
@@ -26,12 +26,12 @@ export const verifyCode = async (req: Request, res: Response) => {
 
   try {
     if (!email || !code) {
-      return res.status(400).json({ message: "E-mail e código são obrigatórios." });
+      res.status(400).json({ message: "E-mail e código são obrigatórios." });
     }
 
     const isValid = await verifyRecoveryCode(email, code);
     if (isValid) {
-      return res.status(200).json({ message: "Código verificado com sucesso." });
+      res.status(200).json({ message: "Código verificado com sucesso." });
     }
 
     res.status(400).json({ message: "Código inválido ou expirado." });
@@ -45,11 +45,11 @@ export const resetPassword = async (req: Request, res: Response) => {
 
   try {
     if (!email || !newPassword) {
-      return res.status(400).json({ message: "E-mail e nova senha são obrigatórios." });
+      res.status(400).json({ message: "E-mail e nova senha são obrigatórios." });
     }
 
     if (newPassword.length < 8) {
-      return res.status(400).json({ message: "A nova senha deve ter pelo menos 8 caracteres." });
+      res.status(400).json({ message: "A nova senha deve ter pelo menos 8 caracteres." });
     }
 
     await updatePassword(email, newPassword);

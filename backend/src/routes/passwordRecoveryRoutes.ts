@@ -1,11 +1,11 @@
-import express from "express";
+import { Router } from "express";
 import {
   requestRecoveryCode,
   verifyCode,
   resetPassword,
 } from "../controllers/passwordRecoveryController";
 
-const router = express.Router();
+const router: Router = Router();
 
 router.post("/request-code", requestRecoveryCode);
 router.post("/verify-code", verifyCode);
