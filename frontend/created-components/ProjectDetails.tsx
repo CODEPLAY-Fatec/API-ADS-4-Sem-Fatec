@@ -17,7 +17,6 @@ import KanbanBoard from "./KanbanBoard";
 import Report from "./Report";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
-import { Settings} from "lucide-react";
 
 type ProjectDetailsProps = {
     projectId: number;
@@ -118,7 +117,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
 
     const setTaskUser = async (task: Task, userId: number) => {
         try {
-            const response = await axios.patch(`/api/projects/tasks`, { taskId: task.id, taskUser: userId })
+            const response = await axios.patch(`/api/projects/tasks`, { taskId: task.id, taskUser: userId });
             if (response.status !== 201) {
                 throw new Error("Erro ao atualizar tarefa");
             }
@@ -126,7 +125,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
             setCurrentProjectTasks((prevTasks) =>
                 prevTasks.map((t) => {
                     if (t.id === task.id) {
-                        console.warn("found task to change")
+                        console.warn("found task to change");
                         return {
                             ...t,
                             taskUser: userId,
@@ -137,7 +136,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
             );
             setCurrentEditingTask((prevTask) => {
                 if (prevTask) {
-                    console.warn("found task to edit")
+                    console.warn("found task to edit");
 
                     return {
                         ...prevTask,
@@ -145,14 +144,12 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                     };
                 }
                 return prevTask;
-            })
-        }
-        catch (error) {
+            });
+        } catch (error) {
             console.error("Erro ao atualizar tarefa:", error);
             toast.error("Erro ao atualizar tarefa");
         }
-
-    }
+    };
 
     const deleteTask = async (task: Task) => {
         try {
@@ -232,14 +229,12 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                             &#60;
                         </button>
                         <h1 className="text-blue-600 text-2xl font-semibold text-center mt-2">{currentProject.name}</h1>
-                        <Button
-                            variant="outline"
-
+                        <button
                             onClick={() => setEditing(true)}
-                            className="absolute top-4 right-8"
+                            className="absolute top-4 right-8 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
                         >
-                            <Settings />
-                        </Button>
+                            Editar
+                        </button>
                     </div>
 
                     <TabNavigation onTabChange={(tab) => setCurrentTab(tab)} />
@@ -257,7 +252,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                                 }}
                             />
                         )}
-                        {currentTab === "Relatórios" && <Report events={calendarEvents} tasks={currentProjectTasks} />}
+                        {currentTab === "Relatórios" && <Report events={calendarEvents} tasks={currentProjectTasks} currentProject={currentProject} />}
                         {currentTab === "Tarefas" && (
                             <TaskList
                                 currentTasks={currentProjectTasks}
