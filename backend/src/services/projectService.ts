@@ -311,7 +311,7 @@ export const getTasksService = async (
   projectId: number,
   userId: number,
   searchStatus?: Task["status"],
-  searchTaskUser?: number[],
+  searchTaskUser?: number,
   searchPriority?: Task["priority"],
   searchTitle?: string,
   dateStart?: Date,
