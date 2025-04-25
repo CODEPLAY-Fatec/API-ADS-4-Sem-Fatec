@@ -98,7 +98,19 @@ export const addUserToProjectService = async (
       userId: userId,
     },
   });
-  return addMember;
+
+  const userInfo = await prisma.users.findUnique({
+    where:{
+      id: userId,
+    },
+    select:{
+      id: true,
+      name:true,
+      email:true,
+    }
+  })
+
+  return userInfo;
 };
 
 export const removeUserFromProjectService = async (
@@ -290,6 +302,18 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
   if (!task) {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
+
+  const projectId = prisma.tasks.findUnique({//arrumar
+    where: {
+      id: taskId,
+    },
+    select: {
+      projectId: true,
+    },
+  });
+
+  console.log(projectId);
+
   const IsMember = inTheProject(task!.id, userId);
   if (!IsMember) {
     throw new Error(
