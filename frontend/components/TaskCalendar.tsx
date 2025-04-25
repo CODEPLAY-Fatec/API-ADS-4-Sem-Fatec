@@ -93,8 +93,7 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
         <div className="relative">
           {children}
           {isTaskFinishDate && (
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2
-                          w-2 h-2 bg-red-500 rounded-full z-10"></div>
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full z-10"></div>
           )}
         </div>
       </div>
@@ -117,7 +116,8 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
         defaultView="month"
         views={["month"]}
         style={{
-          height: "350px",
+          height: "400px",
+          margin: "0 auto",
           width: "100%"
         }}
       />
