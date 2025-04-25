@@ -1,3 +1,4 @@
+"use client";
 import Task from "@shared/Task";
 
 interface TaskStatsCardsProps {
@@ -19,8 +20,8 @@ const TaskStatsCards = ({ tasks }: TaskStatsCardsProps) => {
   });
 
   const tasksAEntregar = tasks.filter((task) => {
-    if (!task.finishedAt) return false;
-    const diff = new Date(task.finishedAt).getTime() - now.getTime();
+    if (task.finishedAt || !task.finish) return false;
+    const diff = new Date(task.finish).getTime() - now.getTime();
     return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
   });
 

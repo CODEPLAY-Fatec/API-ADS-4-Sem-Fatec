@@ -45,7 +45,7 @@ export default function KanbanBoard({ tasks, onEditTask, projectId, onTaskUpdate
       return;
     }
 
-    let newStatus: string;
+    let newStatus: Task["status"];
     switch (destination.droppableId) {
       case "fechado":
         newStatus = "Fechado";
@@ -83,20 +83,24 @@ export default function KanbanBoard({ tasks, onEditTask, projectId, onTaskUpdate
     );
 
     try {
-      console.log("Enviando atualização para:", `/api/projects/tasks/${projectId}`);
-
       const response = await axios.patch(`/api/projects/tasks/${projectId}`, {
         task: updatedTask,
       });
       
       if (response.status === 201 || response.status === 200) {
         toast.success(`Tarefa movida para ${newStatus.replace("_", " ")}`);
+        const updatedTask = response.data.task;
         
         if (onTaskUpdate) {
-          onTaskUpdate(updatedTask);
+          onTaskUpdate({
+              ...updatedTask,
+              start: updatedTask.start ? new Date(response.data.task.start) : null,
+              finish: updatedTask.finish ? new Date(response.data.task.finish) : null,
+              lastUpdated: updatedTask.lastUpdated ? new Date(response.data.task.lastUpdated) : null,
+          });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro detalhado:", error.response?.data || error);
       toast.error("Erro ao mover tarefa");
       setLocalTasks(tasks);

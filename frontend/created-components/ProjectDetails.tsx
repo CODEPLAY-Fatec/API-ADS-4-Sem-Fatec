@@ -72,6 +72,11 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
     }, [projectId]);
 
     const addTask = async (task: Task) => {
+        // TODO: setar a task atual sendo modificada como a resposta do servidor.
+        // ex: ao atualizar uma task, usar a resposta do servidor como o novo estado da task.
+        // isso para evitar discrepâncias devido à campos que podem ser null no retorno, mas não no envio.
+        // fazer o KanbanBoard usar esse método.
+        // "porque não fazer agora?" - faltam dois dias pra entrega.
         if (currentProjectTasks.some((t) => t.id === task.id)) {
             try {
                 const response = await axios.patch(`/api/projects/tasks/${currentProject?.id}`, {
