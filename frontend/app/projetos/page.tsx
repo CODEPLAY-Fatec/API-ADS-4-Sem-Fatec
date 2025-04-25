@@ -35,7 +35,7 @@ export default function Projetos() {
             </>
           ) : (
             <>
-              <div className="flex justify-between items-center mb-6 sticky top-4 z-10 py-4">
+              <div className="flex justify-between items-center mb-6 sticky top-4  py-4">
                 <h1 className="text-3xl font-semibold ">Projetos</h1>
                 <Button
                   className="rounded-full"

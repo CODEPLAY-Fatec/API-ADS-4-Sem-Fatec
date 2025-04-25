@@ -56,7 +56,7 @@ export default function FiltrosAvancados({ filters, setFilters }: Props) {
                 </Dialog.Trigger>
 
                 <Dialog.Portal>
-                    <Dialog.Overlay className="fixed inset-0 backdrop-blur-sm z-50" />
+                    <Dialog.Overlay className="fixed inset-0 backdrop-blur-sm " />
                     <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-md max-w-lg w-full shadow-lg">
                         <Dialog.Title className="text-lg font-semibold">Filtros Avançados</Dialog.Title>
                         <Dialog.Description className="mb-4 text-sm text-gray-500">
