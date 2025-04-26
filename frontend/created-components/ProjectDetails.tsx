@@ -77,6 +77,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
         // isso para evitar discrepâncias devido à campos que podem ser null no retorno, mas não no envio.
         // fazer o KanbanBoard usar esse método.
         // "porque não fazer agora?" - faltam dois dias pra entrega.
+        // fiz do mesmo jeito.
         if (currentProjectTasks.some((t) => t.id === task.id)) {
             try {
                 const response = await axios.patch(`/api/projects/tasks/${currentProject?.id}`, {
@@ -88,7 +89,11 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                 setCurrentProjectTasks((prevTasks) => [
                     ...prevTasks.filter((t) => t.id !== task.id),
                     {
-                        ...task,
+                        ...response.data.task,
+                        start: response.data.task.start ? new Date(response.data.task.start) : new Date(),
+                        finish: response.data.task.finish ? new Date(response.data.task.finish) : new Date(),
+                        lastUpdated: response.data.task.lastUpdated ? new Date(response.data.task.lastUpdated) : new Date(),
+                        finished: response.data.task.finishedd ? new Date(response.data.task.finishedd) : new Date(),
                     },
                 ]);
                 toast.success("Tarefa atualizada com sucesso!");
@@ -108,8 +113,11 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                 setCurrentProjectTasks((prevTasks) => [
                     ...prevTasks,
                     {
-                        ...task,
-                        id: response.data.id,
+                        ...response.data.task,
+                        start: response.data.task.start ? new Date(response.data.task.start) : new Date(),
+                        finish: response.data.task.finish ? new Date(response.data.task.finish) : new Date(),
+                        lastUpdated: response.data.task.lastUpdated ? new Date(response.data.task.lastUpdated) : new Date(),
+                        finished: response.data.task.finishedd ? new Date(response.data.task.finishedd) : new Date(),
                     },
                 ]);
                 toast.success("Tarefa criada com sucesso!");

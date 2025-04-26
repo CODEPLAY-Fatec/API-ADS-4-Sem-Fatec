@@ -283,6 +283,7 @@ export const createTaskService = async (
       description: task.description || null,
       start: task.start,
       finish: task.finish,
+      finishedAt: task.status == "Concluido" ? new Date() : null,
       priority: task.priority,
       status: task.status,
       projectId: projectId,

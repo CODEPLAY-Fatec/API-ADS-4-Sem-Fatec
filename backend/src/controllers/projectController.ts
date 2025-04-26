@@ -173,7 +173,7 @@ export const createTaskController = async (req: Request, res: Response) => {// i
 
     try {
         const createdTask = await createTaskService(task, projectId,user.id);
-        res.status(201).send({ message: "Tarefa criada com sucesso!", id: createdTask.id});
+        res.status(201).send({ message: "Tarefa criada com sucesso!", id: createdTask.id, task: createdTask});
     } catch (error) {
         res.status(500).send({ message: "Erro ao criar tarefa." });
         console.warn(error);
