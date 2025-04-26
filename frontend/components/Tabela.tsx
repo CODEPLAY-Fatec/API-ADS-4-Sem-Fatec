@@ -66,7 +66,7 @@ export default forwardRef(function Tabela(props: TabelaProps, ref) {
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             fetchProjects();
-        }, 500);
+        },);//se precisar adicionar delay so colocar aqui em ms
 
         return () => clearTimeout(delayDebounce);
     }, [filters, fetchProjects]);
