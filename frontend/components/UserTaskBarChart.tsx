@@ -56,6 +56,7 @@ const UserTaskBarChart = ({ tasks, users, projectCreator }: UserTaskBarChartProp
 
     const options: ChartOptions<"bar"> = {
         responsive: true,
+        indexAxis: "y", // Torna as barras horizontais
         plugins: {
             legend: {
                 position: "bottom",
@@ -63,10 +64,13 @@ const UserTaskBarChart = ({ tasks, users, projectCreator }: UserTaskBarChartProp
         },
         scales: {
             x: {
+                beginAtZero: true,
                 stacked: true,
+                ticks: {
+                    stepSize: 1, // Define as marcas de 1 em 1 no eixo x
+                },
             },
             y: {
-                beginAtZero: true,
                 stacked: true,
             },
         },
