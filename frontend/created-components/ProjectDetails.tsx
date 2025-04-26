@@ -265,7 +265,14 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                                 }}
                             />
                         )}
-                        {currentTab === "Relatórios" && <Report events={calendarEvents} tasks={currentProjectTasks} currentProject={currentProject} />}
+                        {currentTab === "Relatórios" && (
+                            <Report
+                                events={calendarEvents}
+                                tasks={currentProjectTasks}
+                                currentProject={currentProject}
+                                projectCreator={currentProjectCreator}
+                            />
+                        )}
                         {currentTab === "Tarefas" && (
                             <TaskList
                                 currentTasks={currentProjectTasks}

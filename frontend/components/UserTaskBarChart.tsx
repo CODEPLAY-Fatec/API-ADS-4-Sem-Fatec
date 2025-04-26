@@ -8,13 +8,28 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 interface UserTaskBarChartProps {
     tasks: Task[];
     users: User[];
+    projectCreator: User;
 }
 
-const UserTaskBarChart = ({ tasks, users }: UserTaskBarChartProps) => {
-    console.log("Tasks:", tasks);
-    console.log("Users:", users);
+// Function to get colors based on task status
+const getColorByStatus = (status: string) => {
+    switch (status) {
+        case "Fechado":
+            return "#EF4444"; // bg-red-500
+        case "Em_andamento":
+            return "#3B82F6"; // bg-blue-500
+        case "Concluido":
+            return "#10B981"; // bg-green-500
+        default:
+            return "#D1D5DB"; // bg-gray-300 (fallback color)
+    }
+};
 
-    const labels = users.map((user) => user.name);
+const UserTaskBarChart = ({ tasks, users, projectCreator }: UserTaskBarChartProps) => {
+    // Combine users and projectCreator into a single array
+    const allUsers = [...users, projectCreator];
+
+    const labels = allUsers.map((user) => user.name);
 
     const getStatusCount = (userId: number, status: Task["status"]) => tasks.filter((task) => task.taskUser === userId && task.status === status).length;
 
@@ -23,24 +38,21 @@ const UserTaskBarChart = ({ tasks, users }: UserTaskBarChartProps) => {
         datasets: [
             {
                 label: "Fechado",
-                data: users.map((user) => getStatusCount(user.id, "Fechado")),
-                backgroundColor: "#FF6384",
+                data: allUsers.map((user) => getStatusCount(user.id, "Fechado")),
+                backgroundColor: getColorByStatus("Fechado"),
             },
             {
                 label: "Em Andamento",
-                data: users.map((user) => getStatusCount(user.id, "Em_andamento")),
-                backgroundColor: "#FFCE56",
+                data: allUsers.map((user) => getStatusCount(user.id, "Em_andamento")),
+                backgroundColor: getColorByStatus("Em_andamento"),
             },
             {
                 label: "Concluído",
-                data: users.map((user) => getStatusCount(user.id, "Concluido")),
-                backgroundColor: "#36A2EB",
+                data: allUsers.map((user) => getStatusCount(user.id, "Concluido")),
+                backgroundColor: getColorByStatus("Concluido"),
             },
         ],
     };
-
-    console.log("Labels:", labels);
-    console.log("Datasets:", data.datasets);
 
     const options: ChartOptions<"bar"> = {
         responsive: true,
