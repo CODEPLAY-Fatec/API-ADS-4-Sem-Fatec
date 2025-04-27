@@ -304,7 +304,7 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
 
-  const projectId = prisma.tasks.findUnique({//arrumar
+  const result =  await prisma.tasks.findUnique({//arrumar
     where: {
       id: taskId,
     },
@@ -313,9 +313,7 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
     },
   });
 
-  console.log(projectId);
-
-  const IsMember = inTheProject(task!.id, userId);
+  const IsMember = inTheProject(result!.projectId, userId);
   if (!IsMember) {
     throw new Error(
       "Usuário não tem permissão para criar tarefas neste projeto.",
@@ -417,7 +415,16 @@ export const deleteTaskService = async (taskId: number, userId: number) => {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
 
-  const IsMember = inTheProject(task!.id, userId);
+  const result =  await prisma.tasks.findUnique({//arrumar
+    where: {
+      id: taskId,
+    },
+    select: {
+      projectId: true,
+    },
+  });
+
+  const IsMember = inTheProject(result!.projectId, userId);
   if (!IsMember) {
     throw new Error(
       "Usuário não tem permissão para criar tarefas neste projeto.",
