@@ -75,7 +75,7 @@ export default function FiltrosAvancados({ filters, setFilters }: Props) {
                                 <option value="">Status</option>
                                 <option value="Em_andamento">Em andamento</option>
                                 <option value="Concluido">Concluído</option>
-                                <option value="Cancelado">Cancelado</option>
+                                <option value="Fechado">Fechado</option>
                             </select>
 
                             {/* Criador */}
@@ -146,6 +146,22 @@ export default function FiltrosAvancados({ filters, setFilters }: Props) {
                             <Dialog.Close asChild>
                                 <Button variant="outline">Fechar</Button>
                             </Dialog.Close>
+                            <Button
+                                className="ml-2"
+                                onClick={() => {
+                                    setFilters({
+                                        searchName: "",
+                                        searchStatus: "",
+                                        searchCreator: "",
+                                        searchInst: "",
+                                        searchSubj: "",
+                                        dateStart: "",
+                                        dateFinish: "",
+                                    });
+                                }}
+                            >
+                                Limpar Filtros
+                            </Button>
                         </div>
                     </Dialog.Content>
                 </Dialog.Portal>

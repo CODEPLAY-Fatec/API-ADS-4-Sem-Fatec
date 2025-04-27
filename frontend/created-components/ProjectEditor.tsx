@@ -12,6 +12,7 @@ import { User } from "@shared/User";
 import ProjectSubject from "@shared/ProjectSubject";
 import Institution from "@shared/Institution";
 import FetchedProject from "@/types/FetchedProject";
+import { UserRoundX } from "lucide-react";
 
 type ProjectEditorProps = {
   project: FetchedProject;
@@ -244,12 +245,12 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                   >
                     <span>{member.name}</span>
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="icon"
                       onClick={() => handleRemoveMember(`${member.id}`)}
-                      className="text-red-600 hover:text-red-800"
+                      className="hover:scale-105"
                     >
-                      <XIcon size={16} />
+                      <UserRoundX />
                     </Button>
                   </li>
                 ))}

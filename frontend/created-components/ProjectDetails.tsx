@@ -17,6 +17,7 @@ import KanbanBoard from "./KanbanBoard";
 import Report from "./Report";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
+import { Settings } from "lucide-react";
 
 type ProjectDetailsProps = {
     projectId: number;
@@ -242,12 +243,13 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                             &#60;
                         </button>
                         <h1 className="text-blue-600 text-2xl font-semibold text-center mt-2">{currentProject.name}</h1>
-                        <button
+                        <Button
+                        variant="outline"
                             onClick={() => setEditing(true)}
-                            className="absolute top-4 right-8 bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
+                            className="absolute top-4 right-8  text-black rounded-lg"
                         >
-                            Editar
-                        </button>
+                            <Settings size={16}/>
+                        </Button>
                     </div>
 
                     <TabNavigation onTabChange={(tab) => setCurrentTab(tab)} />

@@ -89,7 +89,7 @@ export const Activities: React.FC = () => {
                     <tr key={task.id} className="border-b">
                       <td className="py-1 px-2">{task.title}</td>
                       <td className="py-1 px-2">{task.projectName}</td>
-                      <td className="py-1 px-2">{task.finish || "-"}</td>
+                      <td className="py-1 px-2">{ new Date(task.finish).toLocaleDateString() || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
