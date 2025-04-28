@@ -198,7 +198,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
         <div className="flex flex-col relative">
             {showTaskForm && (
                 <div className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8 relative">
+                    <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative">
                         <Button
                             variant="ghost"
                             size="icon"

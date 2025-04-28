@@ -128,7 +128,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
         <div className="flex justify-center mb-4 items-center">
           <GradientText>Detalhes do Projeto</GradientText>
         </div>
-        <div className="border-2 border-gray-300 rounded-xl p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
               <Label htmlFor="name">Nome</Label>
@@ -271,7 +270,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
               </div>
             </div>
           </form>
-        </div>
       </div>
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">

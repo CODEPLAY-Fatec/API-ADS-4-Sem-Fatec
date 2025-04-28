@@ -50,7 +50,7 @@ export default function Projetos() {
               {showForm && (
                 <>
                   <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
-                    <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg">
+                    <div className="relative max-w-md w-full p-8 bg-white rounded-md shadow-lg">
                       <Button
                         variant="ghost"
                         size="icon"

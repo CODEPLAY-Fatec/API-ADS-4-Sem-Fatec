@@ -117,7 +117,7 @@ export default class ProjectForm extends React.Component<
 
   render() {
     return (
-      <div className="relative">
+      <>
         {this.state.showSuccessModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">
@@ -142,7 +142,7 @@ export default class ProjectForm extends React.Component<
 
         <form
           onSubmit={this.submitForm}
-          className="space-y-4 max-w-md mx-auto border border-gray-300 p-4 rounded-md bg-white z-10 relative"
+          className="space-y-4 rounded-md bg-white z-10 relative"
         >
           <div>
             <Label htmlFor="name">Nome</Label>
@@ -235,7 +235,7 @@ export default class ProjectForm extends React.Component<
             </Button>
           </div>
         </form>
-      </div>
+      </>
     );
   }
 }

@@ -108,7 +108,7 @@ export default class TaskForm extends React.Component<
 
         <form
           onSubmit={this.submitForm}
-          className="space-y-4 max-w-md mx-auto border border-gray-300 p-4 rounded-md bg-white z-10 relative"
+          className="space-y-4 rounded-md bg-white z-10 relative"
         >
           <div>
             <Label htmlFor="title">Título</Label>
@@ -204,7 +204,9 @@ export default class TaskForm extends React.Component<
               }
               onChange={async (e) => {
                 const userId = parseInt(e.target.value);
-                await this.props.setTaskUser(task, userId);
+                if (this.props.task) {
+                    await this.props.setTaskUser(task, userId);
+                }
                 this.setState((prevState) => ({
                   task: {
                     ...prevState.task,
