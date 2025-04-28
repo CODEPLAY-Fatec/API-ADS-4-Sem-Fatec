@@ -53,11 +53,7 @@ export default function DescriptionComponent({
         <div className="flex justify-center">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
 
-
             <div className="flex flex-col mx-4">
-              <div className="bg-gray-100 rounded-lg p-3 mb-2">
-                <span className="font-medium text-gray-800">Informações do Projeto</span>
-              </div>
               <div className="bg-gray-50 p-3 rounded-lg">
                 {renderInfoItem(
                   "Título",
@@ -72,11 +68,7 @@ export default function DescriptionComponent({
               </div>
             </div>
 
-
             <div className="flex flex-col mx-4">
-              <div className="bg-gray-100 rounded-lg p-3 mb-2">
-                <span className="font-medium text-gray-800">Equipe e Cronograma</span>
-              </div>
               <div className="bg-gray-50 p-3 rounded-lg">
                 {renderInfoItem(
                   "Responsável",
@@ -103,11 +95,7 @@ export default function DescriptionComponent({
               </div>
             </div>
 
-
             <div className="flex flex-col mx-4">
-              <div className="bg-gray-100 rounded-lg p-3 mb-2">
-                <span className="font-medium text-gray-800">Informações Adicionais</span>
-              </div>
               <div className="bg-gray-50 p-3 rounded-lg">
                 {renderInfoItem(
                   "Área",
@@ -121,7 +109,6 @@ export default function DescriptionComponent({
                     {formatStatus(currentProject.status)}
                   </span>
                 )}
-
                 {renderInfoItem(
                   "Data de término",
                   <p className="text-gray-600">
