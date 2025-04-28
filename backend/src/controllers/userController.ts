@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import sharp from "sharp";
 import { AttPasswordService, buscarFotobyId, createUser, getAllUsers, getUserInfo, salvarFotoService, updateUserService } from "../services/userService";
+import { assignToken } from "../services/authService";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 if (!SECRET_KEY) {
@@ -117,8 +118,9 @@ export const AttPasswordController = async (req: Request, res: Response) => {
 };
 
 export const updateUserController = async (req: Request, res: Response) => {
-    const { user: User } = req.body;
+    const userData = req.body;
     const token = req.cookies?.token;
+    console.log(userData)
     if (!token) {
         res.status(401).json({ message: "Não foi encontrado o cookie" }); //retorno de erro pro frontend caso eles esqueçam de enviar
         console.log("Cookie faltando");
@@ -126,7 +128,20 @@ export const updateUserController = async (req: Request, res: Response) => {
     }
     const decoded = jwt.verify(token, SECRET_KEY) as jwt.JwtPayload;
     try {
-        await updateUserService(User, decoded.id);
+        await updateUserService(userData, decoded.id);
+        const newToken = await assignToken({
+            id: decoded.id,
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
+        });
+        res.clearCookie("token");
+        res.cookie("token", newToken, {
+            httpOnly: true, // Impede acesso via JavaScript no navegador
+            secure: process.env.NODE_ENV === "production", // Garante HTTPS em produção
+            sameSite: "strict", // Protege contra CSRF
+            maxAge: 24 * 60 * 60 * 7000, // 1 semana
+          });
         res.status(201).send({ message: "Usuário atualizado com sucesso!" });
     } catch (error) {
         res.status(500).send({ message: "Erro ao atualizar usuário." });

@@ -39,3 +39,12 @@ export const login = async (email: string, password: string): Promise<{ token: s
     throw new Error('Usuário ou senha incorretos.');
   }
 };
+
+export const assignToken = async (user: { id: number; name: string; email: string; phone: string }) => {
+  if (!SECRET_KEY) {
+    throw new Error('SECRET_KEY não definido.');
+  }
+
+  const token = jwt.sign(user, SECRET_KEY, { expiresIn: '1d' });
+  return token;
+}

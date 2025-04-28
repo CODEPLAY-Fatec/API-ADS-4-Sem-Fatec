@@ -9,6 +9,12 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+type UserProfile = {
+    name: string;
+    email: string;
+    phone: string;
+}
+
 export default function UserProfilePage() {
     const [userData, setUserData] = useState({
         name: "",
@@ -41,6 +47,22 @@ export default function UserProfilePage() {
 
         fetchUserData();
     }, []);
+
+    const updateProfile = async (userData: UserProfile) => {
+      try {
+        const response = await axios.patch("/api/users",userData, {withCredentials: true});
+        if (response.status === 201) {
+            toast.success("Perfil atualizado com sucesso!", { duration: 1500 });
+        } else {
+            toast.error("Erro ao atualizar perfil", { duration: 2000 });
+        }
+      }
+      catch (error) {
+        console.error("Erro ao atualizar perfil:", error);
+        toast.error("Erro ao atualizar perfil", { duration: 1500 });
+      }
+
+    }
 
     const handlePhotoUpload = async (file: File) => {
         const formData = new FormData();
@@ -83,7 +105,7 @@ export default function UserProfilePage() {
                     <ProfileForm
                       userData={userData}
                       onChange={(field, value) => setUserData((prev) => ({ ...prev, [field]: value }))}
-                      onSave={() => console.log("Salvar alterações")}
+                      onSave={() => updateProfile(userData)}
                       isSaving={isSaving}
                       onChangePassword={() => setIsChangingPassword(true)}
                     />
