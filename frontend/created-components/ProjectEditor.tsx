@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectNative } from "@/components/ui/select-native";
 import axios from "axios";
-import { XIcon } from "lucide-react";
+import { TrashIcon, XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import GradientText from "./GradientText";
 import toast from "react-hot-toast";
@@ -115,7 +115,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
   return (
     <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
-      <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg">
+      <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg max-h-[90vh] overflow-hidden">
         <Button
           variant="ghost"
           size="icon"
@@ -128,7 +128,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
         <div className="flex justify-center mb-4 items-center">
           <GradientText>Detalhes do Projeto</GradientText>
         </div>
-        <div className="border-2 border-gray-300 rounded-xl p-6">
+        <div className="border-2 border-gray-300 rounded-xl p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
               <Label htmlFor="name">Nome</Label>
@@ -240,17 +240,17 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
               <ul className="list-group mb-3">
                 {projectMembers.map((member) => (
                   <li
-                    key={member.id}
-                    className="flex justify-between items-center bg-gray-100 p-2 rounded-lg mb-2"
+                    key={`member-${member.id}`}
+                    className="flex justify-between items-center bg-white border border-gray rounded-lg mb-2"
                   >
-                    <span>{member.name}</span>
+                    <span className="pl-3">{member.name}</span>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="icon"
                       onClick={() => handleRemoveMember(`${member.id}`)}
-                      className="hover:scale-105"
+                      className="text-red-600 hover:text-red-800"
                     >
-                      <UserRoundX />
+                      <TrashIcon size={16} />
                     </Button>
                   </li>
                 ))}
