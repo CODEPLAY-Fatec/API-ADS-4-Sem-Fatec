@@ -33,7 +33,7 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 | Sprint | Previsão de Entrega |      Status      | Descrição                                           | MVP                                                                     |
 | :----: | :-----------------: | :--------------: | :-------------------------------------------------- | :---------------------------------------------------------------------- |
 |   1    |     30/03/2025      |   ✅ Concluído   | _"Configuração Inicial e Operações Básicas"_        | Cadastro, listagem, edição e exclusão de projetos.                      |
-|   2    |     27/04/2025      | ❌ Não Concluído | _"Gestão de Projetos e Visualizações"_              | Filtros de projetos, dashboard de acompanhamento, gestão de atividades. |
+|   2    |     27/04/2025      |   ✅ Concluído   | _"Gestão de Projetos e Visualizações"_              | Filtros de projetos, dashboard de acompanhamento, gestão de atividades. |
 |   3    |     25/05/2025      | ❌ Não Concluído | _"Implementação Técnica e Inteligência Artificial"_ | Interface conversacional baseada em IA, recuperação de dados.           |
 
 → [Voltar ao topo](#topo)
@@ -160,6 +160,11 @@ As seguintes ferramentas, linguagens, bibliotecas e tecnologias foram usadas na 
     alt="Alt text"
     title="nextjs"
     style="display: inline-block; margin: 0 auto; width: 60px"></th>
+    <th><img
+    src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg"
+    alt="Alt text"
+    title="Prisma"
+    style="display: inline-block; margin: 0 auto; width: 60px"></th>
   </thead>
 
   <tbody>
@@ -170,6 +175,7 @@ As seguintes ferramentas, linguagens, bibliotecas e tecnologias foram usadas na 
     <td>Typescript</td>
     <td>Node.Js</td>
     <td>Nextjs</td>
+    <td>Prisma</td>
   </tbody>
 
 </table>
