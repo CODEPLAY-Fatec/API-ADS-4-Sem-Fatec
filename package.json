@@ -11,6 +11,8 @@
         "@radix-ui/react-dialog": "^1.1.11",
         "@radix-ui/themes": "^3.2.1",
         "date-fns": "^4.1.0",
+        "react-dnd": "^16.0.1",
+        "react-dnd-html5-backend": "^16.0.1",
         "react-hot-toast": "^2.5.2",
         "react-loading-skeleton": "^3.5.0"
     }
