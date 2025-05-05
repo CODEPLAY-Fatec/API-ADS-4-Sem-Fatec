@@ -124,6 +124,15 @@ export const removeUserFromProjectService = async (
       "Usuário não tem permissão para remover usuários deste projeto.",
     );
   }
+  const removeFromTasks = await prisma.tasks.updateMany({
+    where: {
+      projectId: projectId,
+      taskUser: userId,
+    },
+    data: {
+      taskUser: null,
+    },
+  });
   const removeMember = await prisma.projectMember.delete({
     where: {
       projectId_userId: {
