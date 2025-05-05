@@ -126,7 +126,7 @@ export default class TaskForm extends React.Component<
             <Textarea
               id="description"
               name="description"
-              value={task.description}
+              value={task.description || ""}
               onChange={this.handleChange}
               required
             />

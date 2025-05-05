@@ -12,12 +12,17 @@ export const requestRecoveryCode = async (req: Request, res: Response) => {
   try {
     const emailSent = await sendPasswordRecoveryEmail(email, recoveryCode);
     if (!emailSent) {
-      res.status(404).json({ message: "Usuário não encontrado." });
+      res.status(404).send({ message: "Usuário não encontrado." });
+      return;
     }
-
-    res.status(200).json({ message: "Código de recuperação enviado para o e-mail." });
+    res
+      .status(200)
+      .send({ message: "Código de recuperação enviado para o e-mail." });
   } catch (error) {
-    res.status(500).json({ message: "Erro ao enviar o código de recuperação." });
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "Erro ao enviar o código de recuperação." });
   }
 };
 
@@ -26,17 +31,19 @@ export const verifyCode = async (req: Request, res: Response) => {
 
   try {
     if (!email || !code) {
-      res.status(400).json({ message: "E-mail e código são obrigatórios." });
+      res.status(400).send({ message: "E-mail e código são obrigatórios." });
+      return;
     }
 
     const isValid = await verifyRecoveryCode(email, code);
     if (isValid) {
-      res.status(200).json({ message: "Código verificado com sucesso." });
+      res.status(200).send({ message: "Código verificado com sucesso." });
+      return;
     }
 
-    res.status(400).json({ message: "Código inválido ou expirado." });
+    res.status(400).send({ message: "Código inválido ou expirado." });
   } catch (error) {
-    res.status(500).json({ message: "Erro ao verificar o código." });
+    res.status(500).send({ message: "Erro ao verificar o código." });
   }
 };
 
@@ -45,20 +52,26 @@ export const resetPassword = async (req: Request, res: Response) => {
 
   try {
     if (!email || !newPassword) {
-      res.status(400).json({ message: "E-mail e nova senha são obrigatórios." });
+      res
+        .status(400)
+        .send({ message: "E-mail e nova senha são obrigatórios." });
+      return;
     }
 
     if (newPassword.length < 8) {
-      res.status(400).json({ message: "A nova senha deve ter pelo menos 8 caracteres." });
+      res
+        .status(400)
+        .send({ message: "A nova senha deve ter pelo menos 8 caracteres." });
+      return;
     }
 
     await updatePassword(email, newPassword);
-    res.status(200).json({ message: "Senha atualizada com sucesso." });
+    res.status(200).send({ message: "Senha atualizada com sucesso." });
   } catch (error: any) {
     if (error.message === "Usuário não encontrado.") {
-      res.status(404).json({ message: error.message });
+      res.status(404).send({ message: error.message });
     } else {
-      res.status(500).json({ message: "Erro ao atualizar a senha." });
+      res.status(500).send({ message: "Erro ao atualizar a senha." });
     }
   }
 };

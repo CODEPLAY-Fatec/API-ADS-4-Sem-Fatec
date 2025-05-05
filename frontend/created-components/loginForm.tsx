@@ -79,6 +79,7 @@ const LoginForm: React.FC = () => {
         await axios.post("/api/password-recovery/reset-password", { email: recoveryEmail, newPassword });
         setRecoveryOpen(false);
         toast.success("Senha alterada com sucesso!");
+        setStep(1);
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
