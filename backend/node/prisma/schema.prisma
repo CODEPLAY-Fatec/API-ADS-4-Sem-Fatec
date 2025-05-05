@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model institutions {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique(map: "name") @db.VarChar(255)
+  projects projects[]
+}
+
+model projects {
+  id              Int              @id @default(autoincrement())
+  name            String           @db.Text
+  description     String?          @db.Text
+  subject         String?          @db.VarChar(255)
+  institution     String?          @db.VarChar(255)
+  creator         Int
+  status          projects_status?
+  start           DateTime?        @db.DateTime(0)
+  finish          DateTime?        @db.DateTime(0)
+  projectMember   projectMember[]
+  projectsubjects projectSubjects? @relation(fields: [subject], references: [name], onUpdate: NoAction, map: "projects_ibfk_1")
+  institutions    institutions?    @relation(fields: [institution], references: [name], onUpdate: NoAction, map: "projects_ibfk_2")
+  users           users            @relation(fields: [creator], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projects_ibfk_3")
+  tasks           tasks[]
+
+  @@index([creator], map: "creator")
+  @@index([institution], map: "institution")
+  @@index([subject], map: "subject")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tasks {
+  id           Int             @id @default(autoincrement())
+  projectId    Int
+  taskUser     Int?
+  title        String          @db.Text
+  description  String?         @db.Text
+  priority     tasks_priority?
+  timeEstimate Int?
+  start        DateTime?       @db.DateTime(0)
+  finish       DateTime?       @db.DateTime(0)
+  createdAt    DateTime        @default(now()) @db.DateTime(0)
+  finishedAt   DateTime?       @db.DateTime(0)
+  lastUpdated  DateTime?       @db.DateTime(0)
+  status       tasks_status
+  projects     projects        @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tasks_ibfk_1")
+  users        users?          @relation(fields: [taskUser], references: [id], onUpdate: NoAction, map: "tasks_ibfk_2")
+
+  @@index([projectId], map: "projectId")
+  @@index([taskUser], map: "taskUser")
+}
+
+model users {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.Text
+  email         String          @db.Text
+  phoneNumber   String?         @db.Text
+  password      String          @db.Text
+  projectMember projectMember[]
+  projects      projects[]
+  tasks         tasks[]
+  userPicture   userPicture?
+}
+
+model projectMember {
+  projectId Int
+  userId    Int
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectMember_ibfk_1")
+  projects  projects @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "projectMember_ibfk_2")
+
+  @@id([projectId, userId])
+  @@index([userId], map: "userId")
+}
+
+model projectSubjects {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique(map: "name") @db.VarChar(255)
+  projects projects[]
+}
+
+model userPicture {
+  userId Int   @id
+  file   Bytes @db.Blob
+  users  users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "userPicture_ibfk_1")
+}
+
+enum tasks_priority {
+  Baixa
+  Media @map("Média")
+  Alta
+}
+
+enum projects_status {
+  Fechado
+  Em_andamento @map("Em andamento")
+  Concluido    @map("Concluído")
+}
+
+enum tasks_status {
+  Fechado
+  Em_andamento @map("Em andamento")
+  Concluido    @map("Concluído")
+}
