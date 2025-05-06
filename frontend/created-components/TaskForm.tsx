@@ -44,7 +44,7 @@ export default class TaskForm extends React.Component<
   handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     this.setState((prevState) => ({
@@ -126,7 +126,7 @@ export default class TaskForm extends React.Component<
             <Textarea
               id="description"
               name="description"
-              value={task.description || ""}
+              value={task.description}
               onChange={this.handleChange}
               required
             />
@@ -140,7 +140,8 @@ export default class TaskForm extends React.Component<
               type="date"
               value={task.start ? task.start.toISOString().split("T")[0] : ""}
               onChange={(e) => {
-                const date = new Date(e.target.value);
+                const dateString = e.target.value;
+                const date = new Date(dateString + "T00:00:00");
                 this.setState((prevState) => ({
                   task: {
                     ...prevState.task,
@@ -160,7 +161,8 @@ export default class TaskForm extends React.Component<
               type="date"
               value={task.finish ? task.finish.toISOString().split("T")[0] : ""}
               onChange={(e) => {
-                const date = new Date(e.target.value);
+                const dateString = e.target.value;
+                const date = new Date(dateString + "T00:00:00");
                 this.setState((prevState) => ({
                   task: {
                     ...prevState.task,
@@ -205,7 +207,7 @@ export default class TaskForm extends React.Component<
               onChange={async (e) => {
                 const userId = parseInt(e.target.value);
                 if (this.props.task) {
-                    await this.props.setTaskUser(task, userId);
+                  await this.props.setTaskUser(task, userId);
                 }
                 this.setState((prevState) => ({
                   task: {
