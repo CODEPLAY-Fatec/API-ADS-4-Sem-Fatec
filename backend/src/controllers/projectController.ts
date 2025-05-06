@@ -17,9 +17,8 @@ import {
     deleteTaskService,
     getUserTasks
 } from "../services/projectService";
-import { getAllUsers, getUserByEmail, getUserById, getUserInfo } from "../services/userService";
+import { getUserByEmail, getUserById, getUserInfo } from "../services/userService";
 import Task from "@shared/Task";
-import { parse } from "path";
 
 export const createProjectController = async (req: Request, res: Response) => {
     const ProjectData: Project = req.body;

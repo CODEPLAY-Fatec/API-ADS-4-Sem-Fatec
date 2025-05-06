@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { authenticateToken } from "./middleware/middleware";
 import cookieParser from "cookie-parser";
 import passwordRecoveryRoutes from "./routes/passwordRecoveryRoutes";
+import chatRoutes from "./routes/chatRoutes";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use("/api/password-recovery", passwordRecoveryRoutes);
 app.use(authenticateToken); // as rotas abaixo desse autenticador estao protegidas
 
 app.use("/api", projectRoutes);
+app.use("/api", chatRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor rodando na porta ${PORT}`);
