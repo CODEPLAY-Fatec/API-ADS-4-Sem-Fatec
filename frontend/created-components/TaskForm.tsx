@@ -7,8 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
 import Task from "@shared/Task";
 import { SelectNative } from "@/components/ui/select-native";
-import { XIcon } from "lucide-react";
-import GradientText from "./GradientText";
 import { User } from "@shared/User";
 
 type TaskFormProps = {
@@ -23,7 +21,7 @@ type TaskFormProps = {
 
 export default class TaskForm extends React.Component<
   TaskFormProps,
-  { task: Task; showSuccessModal: boolean }
+  { task: Task } // Removido showSuccessModal
 > {
   constructor(props: TaskFormProps) {
     super(props);
@@ -37,7 +35,6 @@ export default class TaskForm extends React.Component<
         finish: props.task ? props.task.finish : new Date(),
         status: props.task ? props.task.status : "Fechado",
       },
-      showSuccessModal: false,
     };
   }
 
@@ -65,47 +62,19 @@ export default class TaskForm extends React.Component<
     }
 
     try {
-      this.props.addTask(task);
-      this.props.toggleForm();
+      await this.props.addTask(task);
+      this.props.toggleForm(); // Fecha o formulário diretamente
     } catch (error) {
       console.error(error);
+      toast.error("Erro ao salvar tarefa");
     }
-  };
-
-  closeSuccessModal = () => {
-    this.setState({ showSuccessModal: false }, () => {
-      document.body.style.overflow = "auto";
-    });
   };
 
   render() {
     const task = this.state.task;
-    console.warn(task);
 
     return (
       <div className="relative">
-        {this.state.showSuccessModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Close Modal"
-                onClick={this.closeSuccessModal}
-                className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
-              >
-                <XIcon size={16} />
-              </Button>
-              <div className="flex justify-center mb-4 items-center mt-2">
-                <GradientText>Sucesso!</GradientText>
-              </div>
-              <p className="text-lg text-black mb-4">
-                Tarefa criada com sucesso!
-              </p>
-            </div>
-          </div>
-        )}
-
         <form
           onSubmit={this.submitForm}
           className="space-y-4 rounded-md bg-white z-10 relative"

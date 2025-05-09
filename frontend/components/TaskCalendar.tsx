@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import moment from "moment";
 import "moment/locale/pt-br";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -18,12 +18,19 @@ export interface TaskEvent {
 
 interface TaskCalendarProps {
   events: TaskEvent[];
+  key?: number;
 }
 
-export function TaskCalendar({ events }: TaskCalendarProps) {
+export function TaskCalendar({ events, key }: TaskCalendarProps) {
+  const [localEvents, setLocalEvents] = useState<TaskEvent[]>(events);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
+
+  useEffect(() => {
+    console.log("Eventos recebidos no calendário:", events);
+    setLocalEvents(events);
+  }, [events, key]);
 
   const monthStart = moment(currentDate).startOf("month");
   const monthEnd = moment(currentDate).endOf("month");
@@ -49,7 +56,7 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
   };
 
   const handleDateClick = (date: Date) => {
-    const hasTasks = events.some((event) =>
+    const hasTasks = localEvents.some((event) =>
       moment(event.end).isSame(date, "day")
     );
 
@@ -60,7 +67,7 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
   };
 
   const getTasksForDate = (date: Date) => {
-    return events.filter((event) => moment(event.end).isSame(date, "day"));
+    return localEvents.filter((event) => moment(event.end).isSame(date, "day"));
   };
 
   const isWeekend = (date: Date) => {
@@ -80,9 +87,72 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
     return status.toLowerCase().replace(/_/g, " ");
   };
 
+  const getDayStyleClasses = (date: Date, tasksForDay: TaskEvent[]) => {
+    const isCurrentMonth = moment(date).isSame(currentDate, "month");
+    const isToday = moment(date).isSame(new Date(), "day");
+    const hasTasks = tasksForDay.length > 0;
+    const weekend = isWeekend(date);
+
+    let baseClasses = `text-center p-2 text-sm rounded-md cursor-pointer relative ${
+      isToday ? "bg-blue-100 text-blue-800" : ""
+    } ${
+      !isCurrentMonth
+        ? "text-gray-400"
+        : weekend
+        ? "text-red-500"
+        : "text-gray-800"
+    } ${hasTasks ? "font-bold" : ""} hover:bg-gray-100 transition-colors duration-150`;
+
+    const hasCriticalTasks = tasksForDay.some(
+      (task) =>
+        isCriticalDeadline(task.end) &&
+        !normalizeStatus(task.status).includes("concluido") &&
+        !normalizeStatus(task.status).includes("fechado")
+    );
+    const hasCompletedTasks = tasksForDay.some((task) =>
+      normalizeStatus(task.status).includes("concluido")
+    );
+    const hasInProgressTasks = tasksForDay.some((task) =>
+      normalizeStatus(task.status).includes("em andamento")
+    );
+    const hasClosedTasks = tasksForDay.some((task) =>
+      normalizeStatus(task.status).includes("fechado")
+    );
+
+    if (hasCriticalTasks) baseClasses += " ring-2 ring-red-500 bg-red-50";
+    else if (hasCompletedTasks) baseClasses += " ring-2 ring-green-500 bg-green-50";
+    else if (hasClosedTasks) baseClasses += " ring-2 ring-purple-500 bg-purple-50";
+    else if (hasInProgressTasks) baseClasses += " ring-2 ring-blue-500 bg-blue-50";
+
+    return baseClasses;
+  };
+
+  const getDotColor = (tasksForDay: TaskEvent[]) => {
+    const hasCompletedTasks = tasksForDay.some((task) =>
+      normalizeStatus(task.status).includes("concluido")
+    );
+    const hasClosedTasks = tasksForDay.some((task) =>
+      normalizeStatus(task.status).includes("fechado")
+    );
+    const hasInProgressTasks = tasksForDay.some((task) =>
+      normalizeStatus(task.status).includes("em andamento")
+    );
+    const hasCriticalTasks = tasksForDay.some(
+      (task) =>
+        isCriticalDeadline(task.end) &&
+        !normalizeStatus(task.status).includes("concluido") &&
+        !normalizeStatus(task.status).includes("fechado")
+    );
+
+    if (hasCriticalTasks) return "bg-red-500";
+    if (hasCompletedTasks) return "bg-green-500";
+    if (hasClosedTasks) return "bg-purple-500";
+    if (hasInProgressTasks) return "bg-blue-500";
+    return "bg-gray-500";
+  };
+
   return (
     <div className="w-full max-w-xs mx-auto bg-white p-4 rounded-lg">
-      {/* Header with navigation */}
       <div className="flex justify-between items-center mb-2">
         <button
           onClick={handlePreviousMonth}
@@ -103,7 +173,6 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
         </button>
       </div>
 
-      {/* Week days */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {weekDays.map((day, index) => (
           <div
@@ -117,51 +186,21 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
         ))}
       </div>
 
-      {/* Calendar days */}
       <div className="grid grid-cols-7 gap-1">
         {days.map((date, index) => {
-          const isCurrentMonth = moment(date).isSame(currentDate, "month");
-          const isToday = moment(date).isSame(new Date(), "day");
           const tasksForDay = getTasksForDate(date);
           const hasTasks = tasksForDay.length > 0;
-          const hasCriticalTasks = tasksForDay.some(
-            (task) =>
-              isCriticalDeadline(task.end) &&
-              !normalizeStatus(task.status).includes("concluido")
-          );
-          const hasCompletedTasks = tasksForDay.some((task) =>
-            normalizeStatus(task.status).includes("concluido")
-          );
-          const weekend = isWeekend(date);
 
           return (
             <div
               key={index}
               onClick={() => handleDateClick(date)}
-              className={`text-center p-2 text-sm rounded-md cursor-pointer relative ${
-                isToday ? "bg-blue-100 text-blue-800" : ""
-              } ${
-                !isCurrentMonth
-                  ? "text-gray-400"
-                  : weekend
-                  ? "text-red-500"
-                  : "text-gray-800"
-              } ${hasTasks ? "font-bold" : ""} ${
-                hasCriticalTasks ? "ring-2 ring-red-500 bg-red-50" : ""
-              } ${
-                hasCompletedTasks ? "ring-2 ring-green-500 bg-green-50" : ""
-              } hover:bg-gray-100 transition-colors duration-150`}
+              className={getDayStyleClasses(date, tasksForDay)}
             >
               {moment(date).date()}
               {hasTasks && (
                 <div
-                  className={`w-1 h-1 mx-auto mt-1 rounded-full ${
-                    hasCompletedTasks
-                      ? "bg-green-500"
-                      : weekend
-                      ? "bg-red-500"
-                      : "bg-blue-500"
-                  }`}
+                  className={`w-1 h-1 mx-auto mt-1 rounded-full ${getDotColor(tasksForDay)}`}
                 ></div>
               )}
             </div>
@@ -169,7 +208,6 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
         })}
       </div>
 
-      {/* Task Modal Atualizado */}
       {showTaskModal && selectedDate && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -195,19 +233,17 @@ export function TaskCalendar({ events }: TaskCalendarProps) {
               {getTasksForDate(selectedDate).length > 0 ? (
                 getTasksForDate(selectedDate).map((task) => {
                   const normalizedStatus = normalizeStatus(task.status);
-                  const isCritical = isCriticalDeadline(task.end) && !normalizedStatus.includes("concluido");
+                  const isCritical = isCriticalDeadline(task.end) && !normalizedStatus.includes("concluido") && !normalizedStatus.includes("fechado");
                   const isCompleted = normalizedStatus.includes("concluido");
                   const isClosed = normalizedStatus.includes("fechado");
                   const isInProgress = normalizedStatus.includes("em andamento");
 
-                  // Determina a cor de fundo baseada no status
                   let bgColorClass = "";
                   if (isCompleted) bgColorClass = "bg-green-100";
                   else if (isClosed) bgColorClass = "bg-purple-100";
                   else if (isCritical) bgColorClass = "bg-red-100";
                   else if (isInProgress) bgColorClass = "bg-blue-100";
 
-                  // Determina a classe do status box
                   let statusBoxClass = "";
                   if (isCompleted) statusBoxClass = "bg-green-500 text-white";
                   else if (isClosed) statusBoxClass = "bg-purple-500 text-white";
