@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { User } from "@shared/User";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,38 @@ const LoginForm: React.FC = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [step, setStep] = useState(1);
+  
+  const [sendButtonDisabled, setSendButtonDisabled] = useState(false);
+  const [canResendCode, setCanResendCode] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(60);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (step === 2 && !canResendCode && resendCountdown > 0) {
+      timer = setTimeout(() => {
+        setResendCountdown(prev => {
+          if (prev <= 1) {
+            setCanResendCode(true);
+            return 60;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [step, canResendCode, resendCountdown]);
+
+  useEffect(() => {
+    if (!isRecoveryOpen) {
+      setSendButtonDisabled(false);
+      setCanResendCode(false);
+      setResendCountdown(60);
+    }
+  }, [isRecoveryOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,6 +90,9 @@ const LoginForm: React.FC = () => {
           toast.error("Por favor, insira um e-mail válido.");
           return;
         }
+        
+        setSendButtonDisabled(true);
+        
         await axios.post("/api/password-recovery/request-code", { email: recoveryEmail });
         setStep(2);
       } else if (step === 2) {
@@ -82,10 +117,31 @@ const LoginForm: React.FC = () => {
         setStep(1);
       }
     } catch (error) {
+      if (step === 1) {
+        setSendButtonDisabled(false);
+      }
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.message || "Erro ao processar a solicitação.");
       } else {
         toast.error("Erro inesperado.");
+      }
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (!canResendCode) return;
+    
+    try {
+      setCanResendCode(false);
+      setResendCountdown(60);
+      
+      await axios.post("/api/password-recovery/request-code", { email: recoveryEmail });
+      toast.success("Novo código enviado!");
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "Erro ao reenviar o código.");
+      } else {
+        toast.error("Erro inesperado ao reenviar o código.");
       }
     }
   };
@@ -185,9 +241,12 @@ const LoginForm: React.FC = () => {
                 />
                 <Button
                   onClick={handleRecoverySubmit}
-                  className="mt-4 w-full bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 rounded-full transition-transform"
+                  disabled={sendButtonDisabled}
+                  className={`mt-4 w-full text-white hover:scale-105 rounded-full transition-transform ${
+                    sendButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1C3373] hover:bg-[#162b5e]'
+                  }`}
                 >
-                  Enviar Código
+                  {sendButtonDisabled ? 'Enviando...' : 'Enviar Código'}
                 </Button>
               </>
             )}
@@ -206,6 +265,22 @@ const LoginForm: React.FC = () => {
                 >
                   Verificar Código
                 </Button>
+                <div className="mt-3 text-center">
+                  <button
+                    type="button"
+                    onClick={handleResendCode}
+                    disabled={!canResendCode}
+                    className={`text-sm ${
+                      canResendCode 
+                      ? 'text-blue-500 hover:underline cursor-pointer' 
+                      : 'text-gray-400 cursor-default'
+                    }`}
+                  >
+                    {canResendCode 
+                      ? 'Não recebeu o código? Clique para reenviar' 
+                      : `Aguarde ${resendCountdown}s para reenviar o código`}
+                  </button>
+                </div>
               </>
             )}
             {step === 3 && (

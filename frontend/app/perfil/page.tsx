@@ -8,6 +8,7 @@ import { ProfilePicture } from "@/created-components/ProfilePicture"; // Reinteg
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type UserProfile = {
     name: string;
@@ -16,6 +17,7 @@ type UserProfile = {
 }
 
 export default function UserProfilePage() {
+    const router = useRouter();
     const [userData, setUserData] = useState({
         name: "",
         email: "",
@@ -93,7 +95,13 @@ export default function UserProfilePage() {
         <div className="min-h-screen flex flex-col bg-transparent">
           <Navbar />
           <div className="flex-1 flex items-center justify-center pt-16 px-4 pb-8">
-            <div className="w-full max-w-4xl">
+            <div className="w-full max-w-4xl relative">
+              <button
+                onClick={() => router.push("/projetos")}
+                className="absolute left-0 md:left-4 text-3xl text-gray-700 hover:text-gray-900 top-[5px] md:top-[15px]"
+              >
+                &#60;
+              </button>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="md:col-span-1 flex flex-col items-center justify-center">
                   <ProfilePicture profilePicture={profilePicture} onPhotoUpload={handlePhotoUpload} name={userData.name} email={userData.email} />
