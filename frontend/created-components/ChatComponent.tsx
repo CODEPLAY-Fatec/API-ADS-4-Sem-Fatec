@@ -7,14 +7,22 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function ChatComponent({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+export default function ChatComponent({
+  visible,
+  onClose,
+}: {
+  visible: boolean;
+  onClose: () => void;
+}) {
+  const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
+    [],
+  );
   const [input, setInput] = useState("");
-  
-  // se der ruim tem q tirar isso 
+
+  // se der ruim tem q tirar isso
   useEffect(() => {
     if (visible) {
-      document.body.style.paddingRight = "20rem"; 
+      document.body.style.paddingRight = "20rem";
       document.body.style.transition = "padding-right 0.3s ease-in-out";
     } else {
       document.body.style.transition = "padding-right 0.3s ease-in-out";
@@ -33,8 +41,15 @@ export default function ChatComponent({ visible, onClose }: { visible: boolean; 
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await axios.post("/api/chat", { message: input });
-      const botMessage = { sender: "bot", text: response.data.message.replace(/<think>[\s\S]*?<\/think>/g, '') };
+      const response = await axios.post(
+        "/api/chat",
+        { message: input },
+        { timeout: 0 },
+      );
+      const botMessage = {
+        sender: "bot",
+        text: response.data.message.replace(/<think>[\s\S]*?<\/think>/g, ""),
+      };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error communicating with chatbot:", error);
@@ -53,7 +68,7 @@ export default function ChatComponent({ visible, onClose }: { visible: boolean; 
       className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-all duration-300 ease-in-out ${
         visible ? "translate-x-0" : "translate-x-full"
       }`}
-      style={{ zIndex: 9999 }} 
+      style={{ zIndex: 9999 }}
     >
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-xl font-semibold text-gray-800">Chatbot</h2>
