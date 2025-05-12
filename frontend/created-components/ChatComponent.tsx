@@ -3,15 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function ChatComponent() {
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
-    [],
-  );
+export default function ChatComponent({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [input, setInput] = useState("");
+  
+  // se der ruim tem q tirar isso 
+  useEffect(() => {
+    if (visible) {
+      document.body.style.paddingRight = "20rem"; 
+      document.body.style.transition = "padding-right 0.3s ease-in-out";
+    } else {
+      document.body.style.transition = "padding-right 0.3s ease-in-out";
+      document.body.style.paddingRight = "0";
+    }
+    return () => {
+      document.body.style.paddingRight = "0";
+      document.body.style.transition = "";
+    };
+  }, [visible]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -21,7 +34,7 @@ export default function ChatComponent() {
 
     try {
       const response = await axios.post("/api/chat", { message: input });
-      const botMessage = { sender: "bot", text: response.data.message.replace(/<think>[\s\S]*?<\/think>/g, '')};
+      const botMessage = { sender: "bot", text: response.data.message.replace(/<think>[\s\S]*?<\/think>/g, '') };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error communicating with chatbot:", error);
@@ -36,9 +49,19 @@ export default function ChatComponent() {
   };
 
   return (
-    <div className="border rounded-xl p-4 max-w-md mx-auto mt-8 bg-white shadow-sm">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Chatbot</h2>
-      <div className="h-64 overflow-y-auto p-2 mb-4 space-y-3 bg-gray-50 rounded-lg">
+    <div
+      className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-all duration-300 ease-in-out ${
+        visible ? "translate-x-0" : "translate-x-full"
+      }`}
+      style={{ zIndex: 9999 }} 
+    >
+      <div className="flex justify-between items-center p-4 border-b">
+        <h2 className="text-xl font-semibold text-gray-800">Chatbot</h2>
+        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          ✕
+        </button>
+      </div>
+      <div className="h-[calc(100%-120px)] overflow-y-auto p-4 space-y-3">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -89,7 +112,7 @@ export default function ChatComponent() {
           </div>
         ))}
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 p-4 border-t">
         <Input
           type="text"
           className="flex-grow rounded-lg bg-white border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"

@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 import { LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import ChatComponent from "./ChatComponent";
 
 export default function Navbar() {
   const router = useRouter();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isChatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,47 +37,54 @@ export default function Navbar() {
         console.error(error);
       });
   }
-  return (
-    <nav className="absolute top-4 left-0 right-0 flex justify-between items-center px-6">
-      {/*Logo*/}
-      <button onClick={() => router.push("/projetos")}>
-        <img src="/logo.png" alt="Logo" className="h-10 drop-shadow-lg" />
-      </button>
 
-      <div className="flex items-center gap-6">
-        {/*IA*/}
-        <button className="text-gray-700 hover:text-gray-900 flex items-center">
-          <img src="/ia-chat.png" alt="Chat IA" className="h-8" />
+  return (
+    <>
+      <nav className="absolute top-4 left-0 right-0 flex justify-between items-center px-6">
+        {/*Logo*/}
+        <button onClick={() => router.push("/projetos")}>
+          <img src="/logo.png" alt="Logo" className="h-10 drop-shadow-lg" />
         </button>
 
-        {/*Perfil*/}
-        <div className="relative dropdown">
+        <div className="flex items-center gap-6">
+          {/*IA*/}
           <button
-            onClick={() => setDropdownOpen(!isDropdownOpen)}
             className="text-gray-700 hover:text-gray-900 flex items-center"
+            onClick={() => setChatOpen(true)}
           >
-            <img src="/profile.png" alt="Perfil" className="h-8" />
+            <img src="/ia-chat.png" alt="Chat IA" className="h-8" />
           </button>
 
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 !z-[9999]">
-              <button 
-                onClick={() => router.push("/perfil")}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-              >
-                Informações
-              </button>
-              <button
-                onClick={handleLogout}
-                className="block w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 flex items-center gap-2"
-              >
-                <LogOut size={16} />
-                Sair
-              </button>
-            </div>
-          )}
+          {/*Perfil*/}
+          <div className="relative dropdown">
+            <button
+              onClick={() => setDropdownOpen(!isDropdownOpen)}
+              className="text-gray-700 hover:text-gray-900 flex items-center"
+            >
+              <img src="/profile.png" alt="Perfil" className="h-8" />
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50 !z-[9999]">
+                <button 
+                  onClick={() => router.push("/perfil")}
+                  className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                >
+                  Informações
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 flex items-center gap-2"
+                >
+                  <LogOut size={16} />
+                  Sair
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <ChatComponent visible={isChatOpen} onClose={() => setChatOpen(false)} />
+    </>
   );
 }

@@ -2,7 +2,6 @@
 
 import Tabela from "@/components/Tabela";
 import { Button } from "@/components/ui/button";
-import ChatComponent from "@/created-components/ChatComponent";
 import GradientText from "@/created-components/GradientText";
 import Navbar from "@/created-components/Navbar";
 import ProjectDetails from "@/created-components/ProjectDetails";
@@ -78,7 +77,6 @@ export default function Projetos() {
           )}
         </div>
       </div>
-      <ChatComponent />
     </div>
   );
 }
