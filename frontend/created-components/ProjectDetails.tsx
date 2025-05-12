@@ -8,8 +8,8 @@ import FetchedProject from "@/types/FetchedProject";
 import Task from "@shared/Task";
 import { User } from "@shared/User";
 import axios from "axios";
-import { XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { XIcon, Settings } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import DescriptionComponent from "./DescriptionComponent";
 import GradientText from "./GradientText";
@@ -17,7 +17,6 @@ import KanbanBoard from "./KanbanBoard";
 import Report from "./Report";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
-import { Settings } from "lucide-react";
 
 type ProjectDetailsProps = {
   projectId: number;
@@ -44,6 +43,9 @@ export default function ProjectDetails({
   const [currentEditingTask, setCurrentEditingTask] = useState<Task | null>(
     null
   );
+  
+  const taskFormRef = useRef<HTMLDivElement>(null);
+  const projectEditorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchProjectDetails() {
@@ -226,6 +228,19 @@ export default function ProjectDetails({
     setShowTaskForm(true);
   };
 
+  const handleTaskFormOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (taskFormRef.current && !taskFormRef.current.contains(e.target as Node)) {
+      setShowTaskForm(false);
+      setCurrentEditingTask(null);
+    }
+  };
+
+  const handleProjectEditorOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (projectEditorRef.current && !projectEditorRef.current.contains(e.target as Node)) {
+      setEditing(false);
+    }
+  };
+
   if (loading) return <div>Carregando...</div>;
 
   if (!currentProject || !currentProjectCreator) {
@@ -235,8 +250,15 @@ export default function ProjectDetails({
   return (
     <div className="flex flex-col relative">
       {showTaskForm && (
-        <div className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative">
+        <div 
+          className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={handleTaskFormOutsideClick}
+        >
+          <div 
+            ref={taskFormRef}
+            className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Button
               variant="ghost"
               size="icon"
@@ -345,21 +367,29 @@ export default function ProjectDetails({
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 bg-transparent backdrop-blur-sm flex items-center justify-center">
-          <ProjectEditor
-            project={currentProject}
-            setCurrentProject={(project) => {
-              setCurrentProject(project);
-            }}
-            onClose={(deleted: boolean) => {
-              setEditing(false);
-              if (deleted) {
-                closeSelectedProjectAction();
-              }
-            }}
-            users={currentProject.projectMember}
-            creator={currentProjectCreator}
-          />
+        <div 
+          className="fixed inset-0 z-50 bg-transparent backdrop-blur-sm flex items-center justify-center"
+          onClick={handleProjectEditorOutsideClick}
+        >
+          <div 
+            ref={projectEditorRef}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ProjectEditor
+              project={currentProject}
+              setCurrentProject={(project) => {
+                setCurrentProject(project);
+              }}
+              onClose={(deleted: boolean) => {
+                setEditing(false);
+                if (deleted) {
+                  closeSelectedProjectAction();
+                }
+              }}
+              users={currentProject.projectMember}
+              creator={currentProjectCreator}
+            />
+          </div>
         </div>
       )}
     </div>

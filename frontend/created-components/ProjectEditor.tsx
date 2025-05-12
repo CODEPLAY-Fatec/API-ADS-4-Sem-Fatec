@@ -114,163 +114,162 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
-      <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg max-h-[90vh] overflow-hidden">
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Close Form"
-          onClick={() => {onClose(false)}}
-          className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
-        >
-          <XIcon size={20} />
-        </Button>
-        <div className="flex justify-center mb-4 items-center">
-          <GradientText>Detalhes do Projeto</GradientText>
-        </div>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <div>
-              <Label htmlFor="name">Nome</Label>
-              <Input
-                id="name"
-                type="text"
-                value={editableProject.name || ""}
-                readOnly={!isEditable}
-                onChange={handleInputChange}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <Label htmlFor="description">Descrição</Label>
-              <Input
-                id="description"
-                type="text"
-                value={editableProject.description || ""}
-                readOnly={!isEditable}
-                onChange={handleInputChange}
-                className="w-full"
-              />
-            </div>
-            <div className="flex space-x-4">
-              <div className="w-1/2">
-                <Label htmlFor="subject">Área de Atuação</Label>
-                <SelectNative
-                  id="subject"
-                  value={editableProject.subject || ""}
-                  onChange={handleInputChange}
-                  className="w-full"
-                >
-                  <option value="" disabled>
-                    Selecione uma área
-                  </option>
-                  {projectSubjects?.map((subject) => (
-                    <option key={subject.name} value={subject.name}>
-                      {subject.name}
-                    </option>
-                  ))}
-                </SelectNative>
-              </div>
-              <div className="w-1/2">
-                <Label htmlFor="institution">Instituição</Label>
-                <SelectNative
-                  id="institution"
-                  value={editableProject.institution || ""}
-                  onChange={handleInputChange}
-                  className="w-full"
-                >
-                  <option value="" disabled>
-                    Selecione uma instituição
-                  </option>
-                  {institutions?.map((institution) => (
-                    <option key={institution.name} value={institution.name}>
-                      {institution.name}
-                    </option>
-                  ))}
-                </SelectNative>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <div className="w-1/2">
-                <Label htmlFor="status">Status</Label>
-                <SelectNative
-                  id="status"
-                  value={editableProject.status || ""}
-                  onChange={handleInputChange}
-                  className="w-full"
-                >
-                  <option value="" disabled>
-                    Selecione um status
-                  </option>
-                  <option value="Fechado">Fechado</option>
-                  <option value="Em_andamento">Em andamento</option>
-                  <option value="Concluido">Concluído</option>
-                </SelectNative>
-              </div>
-              <div className="w-1/2">
-                <Label htmlFor="responsavel">Responsável</Label>
-                <Input
-                  id="responsavel"
-                  type="text"
-                  value={creator.name}
-                  readOnly
-                  className="w-full"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="addMember">Adicionar Membro por Email</Label>
-              <Input
-                id="addMember"
-                type="email"
-                placeholder="Digite o email e pressione Enter"
-                value={newMemberEmail}
-                onChange={(e) => setNewMemberEmail(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && newMemberEmail) {
-                    e.preventDefault();
-                    handleAddMember(newMemberEmail);
-                    setNewMemberEmail("");
-                  }
-                }}
-                className="w-full mb-2"
-              />
-
-              <Label htmlFor="members">Membros Atuais</Label>
-              <ul className="list-group mb-3">
-                {projectMembers.map((member) => (
-                  <li
-                    key={`member-${member.id}`}
-                    className="flex justify-between items-center bg-white border border-gray rounded-lg mb-2"
-                  >
-                    <span className="pl-3">{member.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemoveMember(`${member.id}`)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <TrashIcon size={16} />
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex justify-center space-x-4 mt-6">
-                <Button
-                  className="bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 px-6 py-3 rounded-full"
-                  onClick={handleSaveClick}
-                >
-                  Salvar Edição
-                </Button>
-                <Button
-                  className="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-3 rounded-full"
-                  onClick={handleDeleteClick}
-                >
-                  Excluir Projeto
-                </Button>
-              </div>
-            </div>
-          </form>
+    <div className="relative w-full max-w-2xl p-8 bg-white rounded-md shadow-lg max-h-[90vh] overflow-y-auto">
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label="Close Form"
+        onClick={() => {onClose(false)}}
+        className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
+      >
+        <XIcon size={20} />
+      </Button>
+      <div className="flex justify-center mb-4 items-center">
+        <GradientText>Detalhes do Projeto</GradientText>
       </div>
+      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <div>
+          <Label htmlFor="name">Nome</Label>
+          <Input
+            id="name"
+            type="text"
+            value={editableProject.name || ""}
+            readOnly={!isEditable}
+            onChange={handleInputChange}
+            className="w-full"
+          />
+        </div>
+        <div>
+          <Label htmlFor="description">Descrição</Label>
+          <Input
+            id="description"
+            type="text"
+            value={editableProject.description || ""}
+            readOnly={!isEditable}
+            onChange={handleInputChange}
+            className="w-full"
+          />
+        </div>
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+            <Label htmlFor="subject">Área de Atuação</Label>
+            <SelectNative
+              id="subject"
+              value={editableProject.subject || ""}
+              onChange={handleInputChange}
+              className="w-full"
+            >
+              <option value="" disabled>
+                Selecione uma área
+              </option>
+              {projectSubjects?.map((subject) => (
+                <option key={subject.name} value={subject.name}>
+                  {subject.name}
+                </option>
+              ))}
+            </SelectNative>
+          </div>
+          <div className="w-1/2">
+            <Label htmlFor="institution">Instituição</Label>
+            <SelectNative
+              id="institution"
+              value={editableProject.institution || ""}
+              onChange={handleInputChange}
+              className="w-full"
+            >
+              <option value="" disabled>
+                Selecione uma instituição
+              </option>
+              {institutions?.map((institution) => (
+                <option key={institution.name} value={institution.name}>
+                  {institution.name}
+                </option>
+              ))}
+            </SelectNative>
+          </div>
+        </div>
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+            <Label htmlFor="status">Status</Label>
+            <SelectNative
+              id="status"
+              value={editableProject.status || ""}
+              onChange={handleInputChange}
+              className="w-full"
+            >
+              <option value="" disabled>
+                Selecione um status
+              </option>
+              <option value="Fechado">Fechado</option>
+              <option value="Em_andamento">Em andamento</option>
+              <option value="Concluido">Concluído</option>
+            </SelectNative>
+          </div>
+          <div className="w-1/2">
+            <Label htmlFor="responsavel">Responsável</Label>
+            <Input
+              id="responsavel"
+              type="text"
+              value={creator.name}
+              readOnly
+              className="w-full"
+            />
+          </div>
+        </div>
+        <div>
+          <Label htmlFor="addMember">Adicionar Membro por Email</Label>
+          <Input
+            id="addMember"
+            type="email"
+            placeholder="Digite o email e pressione Enter"
+            value={newMemberEmail}
+            onChange={(e) => setNewMemberEmail(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && newMemberEmail) {
+                e.preventDefault();
+                handleAddMember(newMemberEmail);
+                setNewMemberEmail("");
+              }
+            }}
+            className="w-full mb-2"
+          />
+
+          <Label htmlFor="members">Membros Atuais</Label>
+          <ul className="list-group mb-3">
+            {projectMembers.map((member) => (
+              <li
+                key={`member-${member.id}`}
+                className="flex justify-between items-center bg-white border border-gray rounded-lg mb-2"
+              >
+                <span className="pl-3">{member.name}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleRemoveMember(`${member.id}`)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <TrashIcon size={16} />
+                </Button>
+              </li>
+            ))}
+          </ul>
+          <div className="flex justify-center space-x-4 mt-6">
+            <Button
+              className="bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 px-6 py-3 rounded-full"
+              onClick={handleSaveClick}
+            >
+              Salvar Edição
+            </Button>
+            <Button
+              className="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-3 rounded-full"
+              onClick={handleDeleteClick}
+            >
+              Excluir Projeto
+            </Button>
+          </div>
+        </div>
+      </form>
+      
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">

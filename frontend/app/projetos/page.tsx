@@ -20,8 +20,16 @@ export default function Projetos() {
   const [showForm, setShowForm] = useState(false);
   const [selectedProject, setSelectedProject] = useState<FetchedProject | null>(null);
   const tabelaRef = useRef<{ fetchProjects: () => void } | null>(null);
+  const formContentRef = useRef<HTMLDivElement>(null);
+  
   const toggleForm = () => {
     setShowForm(!showForm);
+  };
+  
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (formContentRef.current && !formContentRef.current.contains(e.target as Node)) {
+      setShowForm(false);
+    }
   };
 
   return (
@@ -49,8 +57,15 @@ export default function Projetos() {
               </div>
               {showForm && (
                 <>
-                  <div className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50">
-                    <div className="relative max-w-md w-full p-8 bg-white rounded-md shadow-lg">
+                  <div 
+                    className="absolute inset-0 bg-transparent backdrop-blur-md flex justify-center items-center z-50"
+                    onClick={handleOutsideClick}
+                  >
+                    <div 
+                      ref={formContentRef} 
+                      className="relative max-w-md w-full p-8 bg-white rounded-md shadow-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Button
                         variant="ghost"
                         size="icon"
