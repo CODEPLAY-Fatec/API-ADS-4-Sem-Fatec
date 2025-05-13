@@ -121,7 +121,7 @@ export function TaskCalendar({ events, key }: TaskCalendarProps) {
 
     if (hasCriticalTasks) baseClasses += " ring-2 ring-red-500 bg-red-50";
     else if (hasCompletedTasks) baseClasses += " ring-2 ring-green-500 bg-green-50";
-    else if (hasClosedTasks) baseClasses += " ring-2 ring-purple-500 bg-purple-50";
+    else if (hasClosedTasks) baseClasses += " ring-2 ring-orange-500 bg-orange-50";
     else if (hasInProgressTasks) baseClasses += " ring-2 ring-blue-500 bg-blue-50";
 
     return baseClasses;
@@ -146,7 +146,7 @@ export function TaskCalendar({ events, key }: TaskCalendarProps) {
 
     if (hasCriticalTasks) return "bg-red-500";
     if (hasCompletedTasks) return "bg-green-500";
-    if (hasClosedTasks) return "bg-purple-500";
+    if (hasClosedTasks) return "bg-orange-500";
     if (hasInProgressTasks) return "bg-blue-500";
     return "bg-gray-500";
   };
@@ -240,13 +240,13 @@ export function TaskCalendar({ events, key }: TaskCalendarProps) {
 
                   let bgColorClass = "";
                   if (isCompleted) bgColorClass = "bg-green-100";
-                  else if (isClosed) bgColorClass = "bg-purple-100";
+                  else if (isClosed) bgColorClass = "bg-orange-100";
                   else if (isCritical) bgColorClass = "bg-red-100";
                   else if (isInProgress) bgColorClass = "bg-blue-100";
 
                   let statusBoxClass = "";
                   if (isCompleted) statusBoxClass = "bg-green-500 text-white";
-                  else if (isClosed) statusBoxClass = "bg-purple-500 text-white";
+                  else if (isClosed) statusBoxClass = "bg-orange-500 text-white";
                   else if (isCritical) statusBoxClass = "bg-red-500 text-white";
                   else if (isInProgress) statusBoxClass = "bg-blue-500 text-white";
                   else statusBoxClass = "bg-gray-500 text-white";
