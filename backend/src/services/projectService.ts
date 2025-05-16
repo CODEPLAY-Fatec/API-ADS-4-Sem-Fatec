@@ -350,7 +350,7 @@ export const getTasksService = async (
   dateFinish?: Date,
 ) => {
   //verificaçao para ver se percente ao projeto
-  const IsMember = inTheProject(projectId, userId);
+  const IsMember = await inTheProject(projectId, userId);
   if (!IsMember) {
     throw new Error(
       "Usuário não tem permissão para criar tarefas neste projeto.",
@@ -361,13 +361,14 @@ export const getTasksService = async (
 
   const tasks = await prisma.tasks.findMany({
     where: {
-      AND: [{ projectId: projectId }],
+      AND: [{ projectId: projectId }, //spread sendo usado para inserir os filtros na array do AND
       ...(searchStatus ? [{ status: searchStatus }] : []), //para buscar por status
       ...(searchPriority ? [{ priority: searchPriority }] : []), //para buscar por prioridade
       ...(searchTitle ? [{ title: { contains: searchTitle } }] : []), //para buscar por titulo
       ...(dateStart ? [{ start: { gt: dateStart } }] : []), //para buscar por data de inicio
       ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []), //para buscar por data de fim
-      ...(searchTaskUser ? [{ taskUser: { in: searchTaskUser } }] : []), //para buscar por usuario
+      ...(searchTaskUser ? [{ taskUser:searchTaskUser}] : []), //para buscar por usuario
+      ],
     },
   });
   return tasks;

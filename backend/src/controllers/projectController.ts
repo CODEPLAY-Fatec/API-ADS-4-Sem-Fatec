@@ -105,8 +105,8 @@ export const getProjectsController = async (req: Request, res: Response) => {
         const result = await getProjectsService(userInfo,searchName,searchCreator,searchInst,searchSubj,dateStart ? new Date(dateStart) : undefined,dateFinish ? new Date(dateFinish) : undefined,searchStatus);
         res.status(200).send({ result }); 
     } catch (error) {
-        console.error("Erro ao buscar projetos:", error);
-        res.status(500).send({ message: "Erro ao buscar projetos." });
+        console.log("Erro ao buscar projetos:", error);
+        res.status(500).send({ message: "Erro ao buscar projetos.", error });
     }
 };
 
