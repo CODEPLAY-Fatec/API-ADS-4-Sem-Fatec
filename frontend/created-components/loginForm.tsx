@@ -93,14 +93,14 @@ const LoginForm: React.FC = () => {
         
         setSendButtonDisabled(true);
         
-        await axios.post("/api/password-recovery/request-code", { email: recoveryEmail });
+        await axios.post("/api/password-recovery/request-code", { email: recoveryEmail }, { withCredentials: true });
         setStep(2);
       } else if (step === 2) {
         if (!recoveryCode) {
           toast.error("Por favor, insira o código de recuperação.");
           return;
         }
-        const response = await axios.post("/api/password-recovery/verify-code", { email: recoveryEmail, code: recoveryCode });
+        const response = await axios.post("/api/password-recovery/verify-code", { email: recoveryEmail, code: recoveryCode, }, { withCredentials: true });
         if (response.status === 200) setStep(3);
       } else if (step === 3) {
         if (!newPassword || newPassword.length < 8) {
@@ -111,7 +111,7 @@ const LoginForm: React.FC = () => {
           toast.error("As senhas não coincidem.");
           return;
         }
-        await axios.post("/api/password-recovery/reset-password", { email: recoveryEmail, newPassword });
+        await axios.post("/api/password-recovery/reset-password", { email: recoveryEmail, newPassword }, { withCredentials: true });
         setRecoveryOpen(false);
         toast.success("Senha alterada com sucesso!");
         setStep(1);
