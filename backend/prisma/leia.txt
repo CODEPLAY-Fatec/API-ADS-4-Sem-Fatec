@@ -2,3 +2,4 @@ npm install
 configura o env
 npx prisma db push
 npx prisma generate
+npx prisma db seed q é pra jogar a foto default no banco de dados

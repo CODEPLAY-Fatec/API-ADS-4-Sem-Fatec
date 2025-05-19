@@ -8,6 +8,9 @@
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only --watch src src/app.ts"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
