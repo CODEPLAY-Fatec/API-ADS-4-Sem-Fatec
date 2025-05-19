@@ -10,21 +10,51 @@ const getUserProjectsSchema = z.object({
   user: z
     .object({
       id: z.number().int().nonnegative(),
-      name: z.string(),
-      email: z.string().email(),
+      name: z.string().nonempty(),
+      email: z.string().email().nonempty(),
     })
     .describe("User to get projects for"),
+  searchName: z.string().optional().describe("Name to filter projects"),
+  searchCreator: z
+    .string()
+    .optional()
+    .describe("Creator name to filter projects"),
+  searchInst: z.string().optional().describe("Institution to filter projects"),
+  searchSubj: z.string().optional().describe("Subject to filter projects"),
+  dateStart: z.date().optional().describe("Start date to filter projects"),
+  dateFinish: z.date().optional().describe("Finish date to filter projects"),
+  searchStatus: z
+    .enum(["Fechado", "Em_andamento", "Concluido"])
+    .optional()
+    .describe("Status to filter projects"),
 });
 
 const getUserProjectsTool = tool(
   async (input: z.infer<typeof getUserProjectsSchema>) => {
-    const { user } = input;
-    return await getProjectsService({ ...user, password: "" });
+    const {
+      user,
+      searchName,
+      searchCreator,
+      searchInst,
+      searchSubj,
+      dateStart,
+      dateFinish,
+      searchStatus,
+    } = input;
+    return await getProjectsService(
+      { ...user, password: "" },
+      searchName,
+      searchCreator,
+      searchInst,
+      searchSubj,
+      dateStart,
+      dateFinish,
+      searchStatus,
+    );
   },
   {
     name: "get_user_projects",
-    description:
-      "Get all projects the user is in.",
+    description: "Get all projects the user is in.",
     schema: getUserProjectsSchema,
   },
 );
@@ -52,7 +82,7 @@ const getProjectByIdTool = tool(
   },
   {
     name: "get_project_by_id",
-    description: "Get a project by it's ID.",
+    description: "Get a project's information and it's members by it's ID.",
     schema: getProjectByIdSchema,
   },
 );

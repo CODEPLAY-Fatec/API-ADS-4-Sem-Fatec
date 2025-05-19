@@ -3,18 +3,23 @@ import { tool } from "@langchain/core/tools";
 import { getUserTasks } from "../services/projectService";
 
 const getUserTasksSchema = z.object({
-  userId: z.number().int().nonnegative().describe("User ID to get tasks for"),
+  user: z
+    .object({
+      id: z.number().int().nonnegative(),
+      name: z.string().nonempty(),
+      email: z.string().email().nonempty(),
+    })
+    .describe("User to get projects for"),
 });
 
 const getUserTasksTool = tool(
-  (input: z.infer<typeof getUserTasksSchema>) => {
-    const { userId } = input;
-    getUserTasks(userId);
+  async (input: z.infer<typeof getUserTasksSchema>) => {
+    const { user } = input;
+    return await getUserTasks(user.id);
   },
   {
     name: "get_user_tasks",
-    description:
-      "Get all tasks assigned to the user.",
+    description: "Get all tasks assigned to the user.",
     schema: getUserTasksSchema,
   },
 );

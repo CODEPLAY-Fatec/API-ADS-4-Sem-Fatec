@@ -9,7 +9,13 @@ const getProjectTasksSchema = z.object({
     .int()
     .nonnegative()
     .describe("Project ID to get tasks for"),
-  userId: z.number().int().nonnegative().describe("User ID to get tasks for"),
+  user: z
+    .object({
+      id: z.number().int().nonnegative(),
+      name: z.string().nonempty(),
+      email: z.string().email().nonempty(),
+    })
+    .describe("User to get projects for"),
   searchStatus: z
     .enum(["Fechado", "Em_andamento", "Concluido"])
     .optional()
@@ -19,15 +25,15 @@ const getProjectTasksSchema = z.object({
     .int()
     .nonnegative()
     .optional()
-    .describe("User ID to filter tasks"),
+    .describe("User ID to filter by task owner"),
 });
 
 const getProjectTasksTool = tool(
   async (input: z.infer<typeof getProjectTasksSchema>) => {
-    const { projectId, userId, searchStatus, searchTaskUser } = input;
+    const { projectId, user, searchStatus, searchTaskUser } = input;
     return await getTasksService(
       projectId,
-      userId,
+      user.id,
       searchStatus,
       searchTaskUser,
     );
