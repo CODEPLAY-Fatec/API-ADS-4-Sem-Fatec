@@ -50,7 +50,7 @@ export default function Navbar() {
           {/*IA*/}
           <button
             className="text-gray-700 hover:text-gray-900 flex items-center"
-            onClick={() => setChatOpen(true)}
+            onClick={() => setChatOpen(!isChatOpen)}
           >
             <img src="/ia-chat.png" alt="Chat IA" className="h-8" />
           </button>

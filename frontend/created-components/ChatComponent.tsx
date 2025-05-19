@@ -14,10 +14,11 @@ export default function ChatComponent({
   visible: boolean;
   onClose: () => void;
 }) {
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
-    [],
-  );
+  const [messages, setMessages] = useState<
+    { sender: string; text: string; loadingId?: number }[]
+  >([]);
   const [input, setInput] = useState("");
+  const [disabled, setDisabled] = useState(false);
 
   // se der ruim tem q tirar isso
   useEffect(() => {
@@ -39,28 +40,68 @@ export default function ChatComponent({
 
     const userMessage = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+
+    // Adiciona mensagem de carregando do bot
+    const loadingId = Date.now();
+    setMessages((prev) => [
+      ...prev,
+      { sender: "bot", text: ".", loadingId },
+    ]);
+
+    let dots = [".", "..", "..."];
+    let dotIndex = 0;
+    let intervalId: NodeJS.Timeout | null = null;
+
+    // Atualiza os pontos enquanto espera resposta
+    intervalId = setInterval(() => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.loadingId === loadingId
+            ? { ...msg, text: dots[dotIndex % dots.length] }
+            : msg
+        )
+      );
+      dotIndex++;
+    }, 500);
 
     try {
+      setDisabled(true);
       const response = await axios.post(
         "http://localhost:3001/api/chat",
         { message: input },
         { timeout: 0, withCredentials: true },
       );
-      const botMessage = {
-        sender: "bot",
-        text: response.data.message.replace(/<think>[\s\S]*?<\/think>/g, ""),
-      };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error("Error communicating with chatbot:", error);
-      const errorMessage = {
-        sender: "bot",
-        text: "**Erro:** Desculpe, ocorreu um problema ao processar sua mensagem.",
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    }
+      setDisabled(false);
 
-    setInput("");
+      if (intervalId) clearInterval(intervalId);
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.loadingId === loadingId
+            ? {
+                sender: "bot",
+                text: response.data.message.replace(/<think>[\s\S]*?<\/think>/g, ""),
+              }
+            : msg
+        )
+      );
+    } catch (error) {
+      if (intervalId) clearInterval(intervalId);
+
+      console.error("Error communicating with chatbot:", error);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.loadingId === loadingId
+            ? {
+                sender: "bot",
+                text: "**Erro:** Desculpe, ocorreu um problema ao processar sua mensagem.",
+              }
+            : msg
+        )
+      );
+      setDisabled(false);
+    }
   };
 
   return (
@@ -135,10 +176,16 @@ export default function ChatComponent({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+          disabled={disabled}
         />
         <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2 shadow-sm transition-colors"
+          className={`rounded-lg px-6 py-2 shadow-sm transition-colors ${
+            disabled
+              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
+          }`}
           onClick={sendMessage}
+          disabled={disabled}
         >
           Enviar
         </Button>
