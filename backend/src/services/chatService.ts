@@ -5,10 +5,16 @@ import {
   ToolMessage,
 } from "@langchain/core/messages";
 import { User } from "@shared/User";
-import tools from "../tools/projectTools";
-
+import projectTools from "../tools/projectTools";
+import taskTools from "../tools/taskTools";
+import userTools from "../tools/userTools";
+const tools = [
+    ...projectTools,
+    ...taskTools,
+    ...userTools,
+]
 const llm = new ChatOllama({
-  model: "qwen3:1.7b",
+  model: "qwen3:4b",
   temperature: 0.0,
 });
 

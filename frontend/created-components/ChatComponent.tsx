@@ -42,9 +42,9 @@ export default function ChatComponent({
 
     try {
       const response = await axios.post(
-        "/api/chat",
+        "http://localhost:3001/api/chat",
         { message: input },
-        { timeout: 0 },
+        { timeout: 0, withCredentials: true },
       );
       const botMessage = {
         sender: "bot",
