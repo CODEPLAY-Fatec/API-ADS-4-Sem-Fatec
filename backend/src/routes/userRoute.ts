@@ -8,7 +8,8 @@ import {
   AttPasswordController,
   updateUserController,
   uploadFotoController,
-  getFotoController
+  getFotoController,
+  getFotoDefaultController
 } from "../controllers/userController";
 import { authenticateToken } from "../middleware/middleware";
 import { uploadSingleImage } from "../controllers/uploadController";
@@ -18,6 +19,7 @@ const router: Router = Router();
 
 router.post("/users", createUserController);
 router.get("/me", meController);
+router.get("/fotoDefault", getFotoDefaultController);//rota para pegar a foto default
 router.post("/logout", logoutController);
 router.post("/login", loginController);
 router.patch("/users/password", authenticateToken, AttPasswordController);

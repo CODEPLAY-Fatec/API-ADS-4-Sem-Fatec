@@ -126,7 +126,7 @@ export const updateUserService = async (user: User, userId: number) => {
 
 export const salvarFotoService = async (buffer: Buffer, userId: number) => {
     await prisma.userPicture.upsert({
-        //criar q se nao tiver e atualiza se exister
+        //criar se nao tiver e atualiza se existir
         where: { userId: userId },
         update: { file: buffer },
         create: {
@@ -142,3 +142,7 @@ export const buscarFotobyId = async (id: number) => {
         where: { userId: id },
     });
 };
+ 
+export const getFotoDefault = async () => {
+    return  await prisma.pictureDefault.findFirst();
+}
