@@ -43,7 +43,7 @@ export default function ProjectDetails({
   const [currentEditingTask, setCurrentEditingTask] = useState<Task | null>(
     null
   );
-  
+
   const taskFormRef = useRef<HTMLDivElement>(null);
   const projectEditorRef = useRef<HTMLDivElement>(null);
 
@@ -96,6 +96,20 @@ export default function ProjectDetails({
   const addTask = async (task: Task) => {
     if (currentProjectTasks.some((t) => t.id === task.id)) {
       try {
+
+        if (task.start && currentProject?.finish && task.finish) {
+          if (new Date(task.start) > new Date(currentProject.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.finish) > new Date(currentProject.finish)) {
+            toast.error("Data de término da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.start) > new Date(task.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término da tarefa.", { duration: 3000 });
+            return;
+          }
+        }
+
         const response = await axios.patch(
           `/api/projects/tasks/${currentProject?.id}`,
           {
@@ -127,12 +141,27 @@ export default function ProjectDetails({
         ]);
         toast.success("Tarefa atualizada com sucesso!");
         setTaskUpdateTrigger((prev) => prev + 1);
+        setShowTaskForm(false);
       } catch (error) {
         console.error("Erro ao atualizar tarefa:", error);
         toast.error("Erro ao atualizar tarefa");
       }
     } else {
       try {
+
+        if (task.start && currentProject?.finish && task.finish) {
+          if (new Date(task.start) > new Date(currentProject.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.finish) > new Date(currentProject.finish)) {
+            toast.error("Data de término da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.start) > new Date(task.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término da tarefa.", { duration: 3000 });
+            return;
+          }
+        }
+
         const response = await axios.post(`api/projects/${projectId}/tasks`, {
           task: task,
         });
@@ -159,6 +188,7 @@ export default function ProjectDetails({
         setCurrentProjectTasks((prevTasks) => [...prevTasks, newTask]);
         toast.success("Tarefa criada com sucesso!");
         setTaskUpdateTrigger((prev) => prev + 1);
+        setShowTaskForm(false);
       } catch (error) {
         console.error("Erro ao adicionar tarefa:", error);
         toast.error("Erro ao adicionar tarefa");
@@ -213,6 +243,7 @@ export default function ProjectDetails({
         prevTasks.filter((t) => t.id !== task.id)
       );
       setTaskUpdateTrigger((prev) => prev + 1);
+      setShowTaskForm(false);
     } catch (error) {
       console.error("Erro ao deletar tarefa:", error);
     }
@@ -250,11 +281,11 @@ export default function ProjectDetails({
   return (
     <div className="flex flex-col relative">
       {showTaskForm && (
-        <div 
+        <div
           className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50"
           onClick={handleTaskFormOutsideClick}
         >
-          <div 
+          <div
             ref={taskFormRef}
             className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative"
             onClick={(e) => e.stopPropagation()}
@@ -281,7 +312,7 @@ export default function ProjectDetails({
               projectCreator={currentProjectCreator}
               task={currentEditingTask}
               toggleForm={() => {
-                setShowTaskForm(false);
+
                 setCurrentEditingTask(null);
               }}
               addTask={addTask}
@@ -367,11 +398,11 @@ export default function ProjectDetails({
       </div>
 
       {editing && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-transparent backdrop-blur-sm flex items-center justify-center"
           onClick={handleProjectEditorOutsideClick}
         >
-          <div 
+          <div
             ref={projectEditorRef}
             onClick={(e) => e.stopPropagation()}
           >
