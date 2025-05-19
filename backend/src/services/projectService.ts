@@ -286,6 +286,28 @@ export const createTaskService = async (
       "Usuário não tem permissão para criar tarefas neste projeto.",
     );
   }
+  const projectFinish =  await prisma.projects.findFirst({  //essa parte gigante é para fazer as verificaçoes de data
+    where: {
+      id: projectId,
+    },
+    select: {
+      finish: true,
+    }
+  });
+  const ProjectFinish = new Date(projectFinish?.finish!);
+  const TaskStart = new Date(task.start!);
+  const TaskFinish = new Date(task.finish!);
+  if (TaskFinish < TaskStart) {
+    throw new Error("Data de início da tarefa não pode ser depois que a data de fim.");
+  }
+  if (TaskFinish > ProjectFinish) {
+    throw new Error("Data de fim da tarefa nao pode ser depois que a data de fim do projeto.");
+  }
+
+  if (ProjectFinish < TaskStart) {
+    throw new Error("Data de início da tarefa não pode ser maior que a data de fim do projeto.");
+  }
+
   const createTask = prisma.tasks.create({
     data: {
       title: task.title,
@@ -389,6 +411,27 @@ export const updateTaskService = async (
   if (!HasAccess) {
     throw new Error("Usuário não tem permissão para editar esta tarefa.");
   }
+  const projectFinish =  await prisma.projects.findFirst({// essa parte gigante é para fazer as verificaçoes de data
+    where: {
+      id: projectId,
+    },
+    select: {
+      finish: true,
+    }
+  });
+  const ProjectFinish = new Date(projectFinish?.finish!);
+  const TaskStart = new Date(task.start!);
+  const TaskFinish = new Date(task.finish!);
+  if (TaskFinish < TaskStart) {
+    throw new Error("Data de início da tarefa não pode ser depois que a data de fim.");
+  }
+  if (TaskFinish > ProjectFinish) {
+    throw new Error("Data de fim da tarefa nao pode ser depois que a data de fim do projeto.");
+  }
+  if (ProjectFinish < TaskStart) {
+    throw new Error("Data de início da tarefa não pode ser maior que a data de fim do projeto.");
+  }
+
   const oldTask = await prisma.tasks.findFirst({
     where: {
       id: task.id,

@@ -60,7 +60,7 @@ export const meController = (req: Request, res: Response): void => {
 
         const decoded = jwt.verify(token, SECRET_KEY) as jwt.JwtPayload;
 
-        res.json({
+        res.status(200).send({  
             id: decoded.id,
             name: decoded.name,
             email: decoded.email,
