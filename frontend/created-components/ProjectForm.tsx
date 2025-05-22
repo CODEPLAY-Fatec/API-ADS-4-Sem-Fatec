@@ -157,7 +157,7 @@ export default class ProjectForm extends React.Component<
 
         <form
           onSubmit={this.submitForm}
-          className="space-y-4 rounded-md bg-white z-10 relative"
+          className="space-y-4 rounded-md bg-white z-10 relative overflow-y-auto"
         >
           <div>
             <Label htmlFor="name">Nome</Label>
