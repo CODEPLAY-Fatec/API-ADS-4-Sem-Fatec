@@ -90,8 +90,13 @@ export default function DescriptionComponent({
                 )}
                 {renderInfoItem(
                   "Data de início",
-                  <p className="text-gray-600">{currentProject.start ? new Date(currentProject.start).toLocaleDateString() : "Data nao definida" }</p>
+                  <p className="text-gray-600">
+                    {currentProject.start
+                      ? new Date(currentProject.start).toLocaleDateString()
+                      : "Data não definida"}
+                  </p>
                 )}
+
               </div>
             </div>
 
@@ -112,7 +117,9 @@ export default function DescriptionComponent({
                 {renderInfoItem(
                   "Data de término",
                   <p className="text-gray-600">
-                    {currentProject.finish ? new Date(currentProject.finish).toLocaleDateString() : "Data de finalização não definida"}
+                    {currentProject.finish
+                      ? new Date(currentProject.finish).toLocaleDateString()
+                      : "Data de finalização não definida"}
                   </p>
                 )}
               </div>

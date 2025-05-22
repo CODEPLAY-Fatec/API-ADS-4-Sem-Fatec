@@ -13,6 +13,8 @@ type TaskFormProps = {
   task: Task | null;
   projectMembers: User[];
   projectCreator: User;
+  projectStart: string;
+  projectFinish: string;
   toggleForm: () => void;
   addTask: (task: Task) => void;
   deleteTask: (task: Task) => void;
@@ -108,6 +110,8 @@ export default class TaskForm extends React.Component<
               name="start"
               type="date"
               value={task.start ? task.start.toISOString().split("T")[0] : ""}
+              min={this.props.projectStart} // Limite mínimo: Data de início do projeto
+              max={this.props.projectFinish} // Limite máximo: Data de término do projeto
               onChange={(e) => {
                 const dateString = e.target.value;
                 const date = new Date(dateString + "T00:00:00");
@@ -129,6 +133,8 @@ export default class TaskForm extends React.Component<
               name="finish"
               type="date"
               value={task.finish ? task.finish.toISOString().split("T")[0] : ""}
+              min={this.props.projectStart} // Limite mínimo: Data de início do projeto
+              max={this.props.projectFinish} // Limite máximo: Data de término do projeto
               onChange={(e) => {
                 const dateString = e.target.value;
                 const date = new Date(dateString + "T00:00:00");

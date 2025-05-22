@@ -37,11 +37,11 @@ export const createProjectService = async (
       name: projectData.name,
       description: projectData.description || null,
       subject: projectData.subject || null,
-      status: projectData.status, //so aceita Em_andamento e Concluido sem acento
+      status: projectData.status, // só aceita "Em_andamento" e "Concluido" sem acento
       institution: projectData.institution || null,
       creator: user.id!,
-      start: projectData.start || new Date(),
-      finish: projectData.finish || new Date(),
+      start: projectData.start ? new Date(projectData.start) : new Date(),
+      finish: projectData.finish ? new Date(projectData.finish) : new Date(),
     },
   });
   return create;
@@ -66,6 +66,8 @@ export const updateProjectService = async (
       subject: projectData.subject,
       status: projectData.status,
       institution: projectData.institution,
+      start: projectData.start ? new Date(projectData.start) : undefined,
+      finish: projectData.finish ? new Date(projectData.finish) : undefined,
     },
   });
 
@@ -100,13 +102,13 @@ export const addUserToProjectService = async (
   });
 
   const userInfo = await prisma.users.findUnique({
-    where:{
+    where: {
       id: userId,
     },
-    select:{
+    select: {
       id: true,
-      name:true,
-      email:true,
+      name: true,
+      email: true,
     }
   })
 
@@ -189,8 +191,8 @@ export const getProjectsService = async (
         ...(searchCreator ? [{ creator: { in: idList } }] : []), //filtrar por criador
         ...(searchInst ? [{ institution: { contains: searchInst } }] : []), //filtrar por instuiçao
         ...(searchSubj ? [{ subject: { contains: searchSubj } }] : []), //filtrar por area de atuaçao
-        ...(dateStart ? [{ start: { gt: dateStart } }] : []), //para buscar registros depois da data
-        ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []), //para buscar registros antes da data
+        ...(dateStart ? [{ start: { gt: dateStart } }] : []), // Para buscar registros depois da data
+        ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []), // Para buscar registros antes da data
         ...(searchStatus ? [{ status: searchStatus }] : []), //para buscar por status
       ],
     },
@@ -286,7 +288,7 @@ export const createTaskService = async (
       "Usuário não tem permissão para criar tarefas neste projeto.",
     );
   }
-  const projectFinish =  await prisma.projects.findFirst({  //essa parte gigante é para fazer as verificaçoes de data
+  const projectFinish = await prisma.projects.findFirst({  //essa parte gigante é para fazer as verificaçoes de data
     where: {
       id: projectId,
     },
@@ -297,13 +299,13 @@ export const createTaskService = async (
   const ProjectFinish = new Date(projectFinish?.finish!);
   const TaskStart = new Date(task.start!);
   const TaskFinish = new Date(task.finish!);
+
   if (TaskFinish < TaskStart) {
     throw new Error("Data de início da tarefa não pode ser depois que a data de fim.");
   }
   if (TaskFinish > ProjectFinish) {
-    throw new Error("Data de fim da tarefa nao pode ser depois que a data de fim do projeto.");
+    throw new Error("Data de fim da tarefa não pode ser depois que a data de fim do projeto.");
   }
-
   if (ProjectFinish < TaskStart) {
     throw new Error("Data de início da tarefa não pode ser maior que a data de fim do projeto.");
   }
@@ -335,7 +337,7 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
 
-  const result =  await prisma.tasks.findUnique({//arrumar
+  const result = await prisma.tasks.findUnique({//arrumar
     where: {
       id: taskId,
     },
@@ -389,7 +391,7 @@ export const getTasksService = async (
       ...(searchTitle ? [{ title: { contains: searchTitle } }] : []), //para buscar por titulo
       ...(dateStart ? [{ start: { gt: dateStart } }] : []), //para buscar por data de inicio
       ...(dateFinish ? [{ finish: { lt: dateFinish } }] : []), //para buscar por data de fim
-      ...(searchTaskUser ? [{ taskUser:searchTaskUser}] : []), //para buscar por usuario
+      ...(searchTaskUser ? [{ taskUser: searchTaskUser }] : []), //para buscar por usuario
       ],
     },
   });
@@ -411,7 +413,7 @@ export const updateTaskService = async (
   if (!HasAccess) {
     throw new Error("Usuário não tem permissão para editar esta tarefa.");
   }
-  const projectFinish =  await prisma.projects.findFirst({// essa parte gigante é para fazer as verificaçoes de data
+  const projectFinish = await prisma.projects.findFirst({// essa parte gigante é para fazer as verificaçoes de data
     where: {
       id: projectId,
     },
@@ -468,7 +470,7 @@ export const deleteTaskService = async (taskId: number, userId: number) => {
     throw new Error("Problema ao encontrar id do projeto relacionado a task.");
   }
 
-  const result =  await prisma.tasks.findUnique({//arrumar
+  const result = await prisma.tasks.findUnique({//arrumar
     where: {
       id: taskId,
     },
@@ -498,7 +500,7 @@ export const getUserTasks = async (userId: number) => {
       taskUser: userId
     },
     select: {
-      id:true,
+      id: true,
       title: true,
       finish: true,
       projects: {

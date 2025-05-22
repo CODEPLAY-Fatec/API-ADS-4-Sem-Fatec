@@ -31,8 +31,20 @@ export default class ProjectForm extends React.Component<
 > {
   constructor(props: ProjectFormProperties) {
     super(props);
+
+    // Obtém a data atual no formato YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0];
+
+    // Calcula a data de término (15 dias após a data atual)
+    const defaultEndDate = new Date();
+    defaultEndDate.setDate(defaultEndDate.getDate() + 15);
+    const fifteenDaysLater = defaultEndDate.toISOString().split("T")[0];
+
     this.state = {
-      currentProject: {},
+      currentProject: {
+        start: today, // Data de início pré-definida como hoje
+        finish: fifteenDaysLater, // Data de término pré-definida como 15 dias depois
+      },
       projectSubjects: [],
       institutions: [],
       showSuccessModal: false,
@@ -52,53 +64,74 @@ export default class ProjectForm extends React.Component<
       });
   }
 
-  submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!this.state.currentProject.name) {
-      toast.error("Por favor, preencha o nome do projeto.", { duration: 1500 });
-      return;
-    }
-    if (!this.state.currentProject.subject) {
-      toast.error("Por favor, selecione uma área de atuação.", {
-        duration: 1500,
-      });
-      return;
-    }
-    if (!this.state.currentProject.institution) {
-      toast.error("Por favor, selecione uma instituição.", { duration: 1500 });
-      return;
-    }
-    if (!this.state.currentProject.status) {
-      toast.error("Por favor, selecione um status.", { duration: 1500 });
-      return;
-    }
-    if (!this.state.currentProject.description) {
-      toast.error("Por favor, preencha a descrição do projeto.", {
-        duration: 1500,
-      });
-      return;
-    }
+submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-    const projectData: Project = {
-      id: 0,
-      name: this.state.currentProject.name,
-      description: this.state.currentProject.description,
-      subject: this.state.currentProject.subject,
-      status: this.state.currentProject.status,
-      institution: this.state.currentProject.institution,
-      creator: 1,
-    };
+  const { start, finish } = this.state.currentProject;
 
-    try {
-      await axios.post("/api/projects", projectData);
-      toast.success("Projeto criado com sucesso!");
-      this.props.toggleForm();
-      this.props.onSubmit();
-    } catch (error) {
-      toast.error("Erro ao criar Projeto", { duration: 1500 });
-      console.warn(error);
-    }
+  // Validação: Data de Início não pode ser maior que a Data de Término
+  if (start && finish && new Date(start) > new Date(finish)) {
+    toast.error("A data de início não pode ser superior à data de término.", {
+      duration: 1500,
+    });
+    return;
+  }
+
+  // Validação: Data de Término não pode ser menor que a Data de Início
+  if (start && finish && new Date(finish) < new Date(start)) {
+    toast.error("A data de término não pode ser inferior à data de início.", {
+      duration: 1500,
+    });
+    return;
+  }
+
+  if (!this.state.currentProject.name) {
+    toast.error("Por favor, preencha o nome do projeto.", { duration: 1500 });
+    return;
+  }
+  if (!this.state.currentProject.subject) {
+    toast.error("Por favor, selecione uma área de atuação.", {
+      duration: 1500,
+    });
+    return;
+  }
+  if (!this.state.currentProject.institution) {
+    toast.error("Por favor, selecione uma instituição.", { duration: 1500 });
+    return;
+  }
+  if (!this.state.currentProject.status) {
+    toast.error("Por favor, selecione um status.", { duration: 1500 });
+    return;
+  }
+  if (!this.state.currentProject.description) {
+    toast.error("Por favor, preencha a descrição do projeto.", {
+      duration: 1500,
+    });
+    return;
+  }
+
+  const projectData: Project = {
+    id: 0,
+    name: this.state.currentProject.name,
+    description: this.state.currentProject.description,
+    subject: this.state.currentProject.subject,
+    status: this.state.currentProject.status,
+    institution: this.state.currentProject.institution,
+    start: this.state.currentProject.start,
+    finish: this.state.currentProject.finish,
+    creator: 1,
   };
+
+  try {
+    await axios.post("/api/projects", projectData);
+    toast.success("Projeto criado com sucesso!");
+    this.props.toggleForm();
+    this.props.onSubmit();
+  } catch (error) {
+    toast.error("Erro ao criar Projeto", { duration: 1500 });
+    console.warn(error);
+  }
+};
 
   closeSuccessModal = () => {
     this.setState({ showSuccessModal: false }, () => {
@@ -208,7 +241,29 @@ export default class ProjectForm extends React.Component<
               ))}
             </SelectNative>
           </div>
+          <div className="flex space-x-4">
+            <div className="w-1/2">
+              <Label htmlFor="start">Data de Início</Label>
+              <Input
+                id="start"
+                type="date"
+                value={this.state.currentProject.start || ""}
+                onChange={(e) => this.updateProjectData("start", e.target.value)}
+                className="w-full"
+              />
+            </div>
 
+            <div className="w-1/2">
+              <Label htmlFor="finish">Data de Término</Label>
+              <Input
+                id="finish"
+                type="date"
+                value={this.state.currentProject.finish || ""}
+                onChange={(e) => this.updateProjectData("finish", e.target.value)}
+                className="w-full"
+              />
+            </div>
+          </div>
           <div>
             <Label htmlFor="status">Status</Label>
             <SelectNative

@@ -52,12 +52,41 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
   const handleSaveClick = async () => {
     try {
-      await axios.patch("/api/projects", editableProject);
-      toast.success("Atualizado com sucesso!", {duration: 1500});
+      const { start, finish } = editableProject;
+
+      // Validação: Data de Início não pode ser maior que a Data de Término
+      if (start && finish && new Date(start) > new Date(finish)) {
+        toast.error("A data de início não pode ser superior à data de término.", {
+          duration: 1500,
+        });
+        return;
+      }
+
+      // Validação: Data de Término não pode ser menor que a Data de Início
+      if (start && finish && new Date(finish) < new Date(start)) {
+        toast.error("A data de término não pode ser inferior à data de início.", {
+          duration: 1500,
+        });
+        return;
+      }
+
+      const formattedProject = {
+        ...editableProject,
+        start: editableProject.start
+          ? new Date(editableProject.start).toISOString()
+          : undefined,
+        finish: editableProject.finish
+          ? new Date(editableProject.finish).toISOString()
+          : undefined,
+      };
+
+      console.log("Dados enviados para o backend:", formattedProject);
+      await axios.patch("/api/projects", formattedProject);
+      toast.success("Atualizado com sucesso!", { duration: 1500 });
       setCurrentProject(editableProject);
       onClose(false);
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao salvar o projeto:", error);
       toast.error("Erro ao atualizar projeto", { duration: 1500 });
     }
   };
@@ -119,7 +148,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
         variant="ghost"
         size="icon"
         aria-label="Close Form"
-        onClick={() => {onClose(false)}}
+        onClick={() => { onClose(false) }}
         className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
       >
         <XIcon size={20} />
@@ -186,6 +215,28 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                 </option>
               ))}
             </SelectNative>
+          </div>
+        </div>
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+            <Label htmlFor="start">Data de Início</Label>
+            <Input
+              id="start"
+              type="date"
+              value={editableProject.start || ""}
+              onChange={handleInputChange}
+              className="w-full"
+            />
+          </div>
+          <div className="w-1/2">
+            <Label htmlFor="finish">Data de Término</Label>
+            <Input
+              id="finish"
+              type="date"
+              value={editableProject.finish || ""}
+              onChange={handleInputChange}
+              className="w-full"
+            />
           </div>
         </div>
         <div className="flex space-x-4">
@@ -269,7 +320,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
           </div>
         </div>
       </form>
-      
+
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">

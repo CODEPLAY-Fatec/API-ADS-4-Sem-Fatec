@@ -129,12 +129,16 @@ export default forwardRef(function Tabela(props: TabelaProps, ref) {
                                         {row.name}
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Badge className={cn(
-                                            row.status === "Em_andamento" ? "bg-blue-500 text-white"
-                                                : row.status === "Concluido" ? "bg-green-500 text-white"
-                                                    : "bg-red-500 text-white"
-                                        )}>
-                                            {row.status.replace("_", " ")}
+                                        <Badge
+                                            className={cn(
+                                                row.status === "Em_andamento"
+                                                    ? "bg-blue-500 text-white"
+                                                    : row.status === "Concluido"
+                                                        ? "bg-green-500 text-white"
+                                                        : "bg-red-500 text-white"
+                                            )}
+                                        >
+                                            {row.status ? row.status.replace("_", " ") : "Desconhecido"}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-center">
