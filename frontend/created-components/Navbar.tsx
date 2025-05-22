@@ -14,6 +14,7 @@ export default function Navbar() {
   const [isChatOpen, setChatOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
   const [userName, setUserName] = useState<string>("");
+  const [avatarRefreshKey, setAvatarRefreshKey] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,6 +28,20 @@ export default function Navbar() {
     };
     
     fetchUserData();
+
+    const handleStorageChange = () => {
+      const refreshValue = localStorage.getItem('avatarRefreshKey');
+      if (refreshValue) {
+        setAvatarRefreshKey(parseInt(refreshValue));
+      }
+    };
+    handleStorageChange();
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -84,6 +99,7 @@ export default function Navbar() {
                   name={userName}
                   size="md" 
                   className="cursor-pointer"
+                  refreshKey={avatarRefreshKey}
                 />
               ) : (
                 <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>

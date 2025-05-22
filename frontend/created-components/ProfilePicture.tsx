@@ -8,6 +8,7 @@ interface ProfilePictureProps {
   email: string; // Email do usuário
   userId: number; // ID do usuário pro useravatar
   onPhotoUpload: (file: File) => void; // Callback para enviar o arquivo ao backend
+  refreshKey?: number;
 }
 
 export const ProfilePicture: React.FC<ProfilePictureProps> = ({
@@ -16,6 +17,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
   email,
   userId,
   onPhotoUpload,
+  refreshKey = 0,
 }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -43,7 +45,8 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
             userId={userId}
             name={name}
             size="lg"
-            className="!w-28 !h-28 !text-2xl" 
+            className="!w-28 !h-28 !text-2xl"
+            refreshKey={refreshKey} 
           />
         </div>
       </div>

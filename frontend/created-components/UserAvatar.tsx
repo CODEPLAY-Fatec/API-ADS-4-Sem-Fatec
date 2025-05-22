@@ -7,6 +7,7 @@ interface UserAvatarProps {
   size?: 'sm' | 'md' | 'lg';
   showName?: boolean;
   className?: string;
+  refreshKey?: number; 
 }
 
 export const UserAvatar: React.FC<UserAvatarProps> = ({
@@ -15,6 +16,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   size = 'md',
   showName = false,
   className = "",
+  refreshKey = 0, 
 }) => {
   const [avatarSrc, setAvatarSrc] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -64,7 +66,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
       setIsLoading(true);
       try {
         // Tentativa de buscar a foto do usuário pelo ID
-        const response = await axios.get(`/api/userAvatar/${userId}`);
+        const response = await axios.get(`/api/userAvatar/${userId}?timestamp=${Date.now()}`); 
         setAvatarSrc(`data:image/png;base64,${response.data.base64}`);
         setHasImage(true);
       } catch (error) {
@@ -78,7 +80,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     if (userId) {
       fetchUserAvatar();
     }
-  }, [userId]);
+  }, [userId, refreshKey]); 
 
   return (
     <div className={`flex items-center ${className}`}>

@@ -143,12 +143,3 @@ export const buscarFotobyId = async (id: number) => {
     });
 };
  
-// mudando a logica para pegar a foto padrão
-export const getFotoDefault = async () => {
-    try {
-        return await prisma.pictureDefault.findFirst();
-    } catch (error) {
-        console.error("Erro ao buscar foto padrão:", error);
-        return null;
-    }
-}

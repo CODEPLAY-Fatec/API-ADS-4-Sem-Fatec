@@ -26,6 +26,7 @@ export default function UserProfilePage() {
     phone: "",
   });
   const [profilePicture, setProfilePicture] = useState("");
+  const [avatarRefreshKey, setAvatarRefreshKey] = useState(0); 
 
   const [isSaving] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -90,6 +91,13 @@ export default function UserProfilePage() {
         const imagemResponse = await fetch("/api/foto");
         const imagemData = await imagemResponse.json();
         setProfilePicture(`data:image/png;base64,${imagemData.base64}`);
+        
+        const newRefreshKey = avatarRefreshKey + 1;
+        setAvatarRefreshKey(newRefreshKey);
+        
+        localStorage.setItem('avatarRefreshKey', newRefreshKey.toString());
+        window.dispatchEvent(new Event('storage'));
+        
       } catch (error) {
         console.error("Erro ao atualizar a foto após upload:", error);
       }
@@ -118,6 +126,7 @@ export default function UserProfilePage() {
                 name={userData.name} 
                 email={userData.email}
                 userId={userData.id}
+                refreshKey={avatarRefreshKey} 
               />
             </div>
             <div className="md:col-span-2">
