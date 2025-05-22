@@ -1,10 +1,12 @@
 import React from "react";
 import toast from "react-hot-toast";
+import UserAvatar from "./UserAvatar"; // Import UserAvatar component
 
 interface ProfilePictureProps {
-  profilePicture: string; // URL da foto de perfil
+  profilePicture: string; // URL da foto de perfil 
   name: string; // Nome do usuário
   email: string; // Email do usuário
+  userId: number; // ID do usuário pro useravatar
   onPhotoUpload: (file: File) => void; // Callback para enviar o arquivo ao backend
 }
 
@@ -12,6 +14,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
   profilePicture,
   name,
   email,
+  userId,
   onPhotoUpload,
 }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,15 +36,21 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center text-center gap-2">
-      <img
-        src={profilePicture || "/default-profile.png"} // Exibe a imagem ou uma padrão
-        alt="Foto de perfil"
-        className="w-24 h-24 rounded-full object-cover border shadow"
-      />
+    <div className="flex flex-col items-center text-center gap-2 py-2">
+      <div className="flex justify-center mb-2">
+        <div className="w-28 h-28"> 
+          <UserAvatar
+            userId={userId}
+            name={name}
+            size="lg"
+            className="!w-28 !h-28 !text-2xl" 
+          />
+        </div>
+      </div>
+      
       <label
         htmlFor="photo-upload"
-        className="text-sm text-blue-500 cursor-pointer hover:underline"
+        className="text-blue-500 cursor-pointer hover:underline text-sm" /* Smaller text */
       >
         Alterar foto
       </label>
@@ -50,10 +59,13 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={handleFileChange} // Chama a função ao selecionar um arquivo
+        onChange={handleFileChange}
       />
-      <p className="font-semibold text-base">{name || "Usuário"}</p>
-      <p className="text-sm text-gray-500">{email || "email@exemplo.com"}</p>
+      
+      <div className="text-center mt-0"> 
+        <p className="font-semibold text-lg">{name || "Usuário"}</p> 
+        <p className="text-gray-500 text-sm mt-0">{email || "email@exemplo.com"}</p> 
+      </div>
     </div>
   );
 };

@@ -4,7 +4,8 @@ import { Activities } from "@/created-components/Activities";
 import { ChangePassword } from "@/created-components/ChangePassword";
 import Navbar from "@/created-components/Navbar";
 import { ProfileForm } from "@/created-components/ProfileForm";
-import { ProfilePicture } from "@/created-components/ProfilePicture"; // Reintegrado
+import { ProfilePicture } from "@/created-components/ProfilePicture";
+import UserAvatar from "@/created-components/UserAvatar"; 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -19,6 +20,7 @@ type UserProfile = {
 export default function UserProfilePage() {
   const router = useRouter();
   const [userData, setUserData] = useState({
+    id: 0,
     name: "",
     email: "",
     phone: "",
@@ -26,27 +28,25 @@ export default function UserProfilePage() {
   const [profilePicture, setProfilePicture] = useState("");
 
   const [isSaving] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false); // Estado para alternar entre os componentes
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userInfo = await axios.get("/api/me", { withCredentials: true });
         setUserData({
+          id: userInfo.data.id,
           name: userInfo.data.name,
           email: userInfo.data.email,
           phone: userInfo.data.phone,
-
         });
+        
         try {
           const fotoData = await axios.get("/api/foto", { withCredentials: true });
           setProfilePicture(`data:image/png;base64,${fotoData.data.base64}`);
-
-        } catch {
-          const fotoDefaultData = await axios.get("/api/fotoDefault", { withCredentials: true });
-          setProfilePicture(`data:image/png;base64,${fotoDefaultData.data.base64}`);
+        } catch (error) {
+          console.log("No profile picture found, UserAvatar will display initials");
         }
-
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
       }
@@ -85,11 +85,14 @@ export default function UserProfilePage() {
 
       toast.success("Foto enviada com sucesso!", { duration: 2000 });
 
-      const imagemResponse = await fetch("/api/foto");
-      const imagemData = await imagemResponse.json();
-      console.log(imagemData);
-
-      setProfilePicture(`data:image/png;base64,${imagemData.base64}`);
+      // Refresh profile picture
+      try {
+        const imagemResponse = await fetch("/api/foto");
+        const imagemData = await imagemResponse.json();
+        setProfilePicture(`data:image/png;base64,${imagemData.base64}`);
+      } catch (error) {
+        console.error("Erro ao atualizar a foto após upload:", error);
+      }
     } catch (error) {
       console.error("Erro ao enviar a foto:", error);
       toast.error("Erro ao enviar a foto", { duration: 2000 });
@@ -109,7 +112,13 @@ export default function UserProfilePage() {
           </button>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="md:col-span-1 flex flex-col items-center justify-center">
-              <ProfilePicture profilePicture={profilePicture} onPhotoUpload={handlePhotoUpload} name={userData.name} email={userData.email} />
+              <ProfilePicture 
+                profilePicture={profilePicture}
+                onPhotoUpload={handlePhotoUpload} 
+                name={userData.name} 
+                email={userData.email}
+                userId={userData.id}
+              />
             </div>
             <div className="md:col-span-2">
               {isChangingPassword ? (

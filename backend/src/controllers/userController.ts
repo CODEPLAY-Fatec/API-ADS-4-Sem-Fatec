@@ -178,6 +178,7 @@ export const getFotoController = async (req: Request, res: Response) => {
 
         const imagem = await buscarFotobyId(user.id);
         if (!imagem) {
+            // If no image exists, just return 404 - frontend will handle this
             res.status(404).send("Foto não encontrada");
             return;
         }
@@ -191,6 +192,7 @@ export const getFotoController = async (req: Request, res: Response) => {
 };
 
 export const getFotoDefaultController = async (req: Request, res: Response) => {
+    // This can be deprecated or simplified since we're using initials
     try {
         const imagem = await getFotoDefault();
         if (!imagem) {
@@ -206,4 +208,27 @@ export const getFotoDefaultController = async (req: Request, res: Response) => {
         console.error(err);
         res.status(500).send("Erro ao buscar imagem");
     }
-}
+};
+
+export const getUserAvatarController = async (req: Request, res: Response) => {
+    try {
+        const userId = parseInt(req.params.id);
+        
+        if (isNaN(userId)) {
+            res.status(400).send("ID de usuário inválido");
+            return;
+        }
+
+        const imagem = await buscarFotobyId(userId);
+        if (!imagem) {
+            res.status(404).send("Imagem não encontrada");
+            return;
+        }
+
+        const base64Image = Buffer.from(imagem.file).toString("base64");
+        res.json({ base64: base64Image });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erro ao buscar imagem do usuário");
+    }
+};

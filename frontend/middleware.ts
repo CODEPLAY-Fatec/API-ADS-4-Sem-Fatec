@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = ["/projetos"];//rotas que precisam de autenticação
+const protectedRoutes = ["/projetos", "/perfil"];//rotas que precisam de autenticação
 const authCheckRoutes = ["/", "/cadastro", "/login"];//rotas que não precisam de autenticação
+const publicApiRoutes = ["/api/userAvatar"]; // APIs públicas que não exigem autenticação
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  
+  // Verificar se a rota é uma API pública
+  if (publicApiRoutes.some(route => pathname.startsWith(route))) {
+    return NextResponse.next();
+  }
 
   try {
+    // For API routes that require authentication like /api/me
     await new Promise((resolve) => setTimeout(resolve, 250));
 
     const res = await fetch(`${request.nextUrl.origin}/api/me`, {
@@ -44,5 +51,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/projetos/:path*", "/login", "/cadastro"], // rotas em q o arquivo esta aplicado
+  matcher: ["/", "/projetos/:path*", "/login", "/cadastro", "/perfil", "/api/userAvatar/:path*"],
 };

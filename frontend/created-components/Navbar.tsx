@@ -6,11 +6,28 @@ import { LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import ChatComponent from "./ChatComponent";
+import UserAvatar from "./UserAvatar";
 
 export default function Navbar() {
   const router = useRouter();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isChatOpen, setChatOpen] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get("/api/me", { withCredentials: true });
+        setUserId(response.data.id);
+        setUserName(response.data.name);
+      } catch (error) {
+        console.error("Erro ao buscar informações do usuário:", error);
+      }
+    };
+    
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +78,16 @@ export default function Navbar() {
               onClick={() => setDropdownOpen(!isDropdownOpen)}
               className="text-gray-700 hover:text-gray-900 flex items-center"
             >
-              <img src="/profile.png" alt="Perfil" className="h-8" />
+              {userId ? (
+                <UserAvatar 
+                  userId={userId} 
+                  name={userName}
+                  size="md" 
+                  className="cursor-pointer"
+                />
+              ) : (
+                <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
+              )}
             </button>
 
             {isDropdownOpen && (

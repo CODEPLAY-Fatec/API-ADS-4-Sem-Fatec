@@ -13,6 +13,7 @@ import ProjectSubject from "@shared/ProjectSubject";
 import Institution from "@shared/Institution";
 import FetchedProject from "@/types/FetchedProject";
 import { UserRoundX } from "lucide-react";
+import UserAvatar from "./UserAvatar"; 
 
 type ProjectEditorProps = {
   project: FetchedProject;
@@ -288,7 +289,14 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
                 key={`member-${member.id}`}
                 className="flex justify-between items-center bg-white border border-gray rounded-lg mb-2"
               >
-                <span className="pl-3">{member.name}</span>
+                <div className="pl-3">
+                  <UserAvatar
+                    userId={member.id}
+                    name={member.name}
+                    showName={true}
+                    size="sm"
+                  />
+                </div>
                 <Button
                   variant="ghost"
                   size="icon"
