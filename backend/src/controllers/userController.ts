@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import sharp from "sharp";
-import { AttPasswordService, buscarFotobyId, createUser, getAllUsers, getUserInfo, salvarFotoService, updateUserService, getFotoDefault } from "../services/userService";
+import { AttPasswordService, buscarFotobyId, createUser, getAllUsers, getUserInfo, salvarFotoService, updateUserService} from "../services/userService";
 import { assignToken } from "../services/authService";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
@@ -178,6 +178,7 @@ export const getFotoController = async (req: Request, res: Response) => {
 
         const imagem = await buscarFotobyId(user.id);
         if (!imagem) {
+            // If no image exists, just return 404 - frontend will handle this
             res.status(404).send("Foto não encontrada");
             return;
         }
@@ -191,19 +192,30 @@ export const getFotoController = async (req: Request, res: Response) => {
 };
 
 export const getFotoDefaultController = async (req: Request, res: Response) => {
+  
+    res.status(404).send("Foto padrão não disponível");
+};
+
+
+export const getUserAvatarController = async (req: Request, res: Response) => {
     try {
-        const imagem = await getFotoDefault();
-        if (!imagem) {
-            res.status(404).send("Foto não encontrada");
+        const userId = parseInt(req.params.id);
+        
+        if (isNaN(userId)) {
+            res.status(400).send("ID de usuário inválido");
             return;
         }
 
-        console.log("Imagem default usada");
+        const imagem = await buscarFotobyId(userId);
+        if (!imagem) {
+            res.status(404).send("Imagem não encontrada");
+            return;
+        }
 
         const base64Image = Buffer.from(imagem.file).toString("base64");
         res.json({ base64: base64Image });
     } catch (err) {
         console.error(err);
-        res.status(500).send("Erro ao buscar imagem");
+        res.status(500).send("Erro ao buscar imagem do usuário");
     }
-}
+};

@@ -1,5 +1,6 @@
 import FetchedProject from "@/types/FetchedProject";
 import { User } from "@shared/User";
+import UserAvatar from "./UserAvatar";
 
 interface DescriptionComponentProps {
   currentProject: FetchedProject;
@@ -72,21 +73,33 @@ export default function DescriptionComponent({
               <div className="bg-gray-50 p-3 rounded-lg">
                 {renderInfoItem(
                   "Responsável",
-                  <ul className="list-disc ml-4 text-gray-600">
-                    <li>{currentProjectCreator.name}</li>
-                  </ul>
+                  <div className="flex items-center gap-2">
+                    <UserAvatar 
+                      userId={currentProjectCreator.id} 
+                      name={currentProjectCreator.name} 
+                      showName={true}
+                      size="md"
+                    />
+                  </div>
                 )}
                 {renderInfoItem(
                   "Colaboradores",
-                  <ul className="list-disc ml-4 text-gray-600">
+                  <div className="space-y-2">
                     {currentProject.projectMember && currentProject.projectMember.length > 0 ? (
                       currentProject.projectMember.map((user) => (
-                        <li key={user.id}>{user.name}</li>
+                        <div key={user.id} className="flex items-center gap-2">
+                          <UserAvatar 
+                            userId={user.id} 
+                            name={user.name} 
+                            showName={true}
+                            size="md"
+                          />
+                        </div>
                       ))
                     ) : (
-                      <li className="text-gray-400">Ainda não há mais colaboradores</li>
+                      <p className="text-gray-400">Ainda não há mais colaboradores</p>
                     )}
-                  </ul>
+                  </div>
                 )}
                 {renderInfoItem(
                   "Data de início",

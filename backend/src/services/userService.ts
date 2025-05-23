@@ -143,6 +143,3 @@ export const buscarFotobyId = async (id: number) => {
     });
 };
  
-export const getFotoDefault = async () => {
-    return  await prisma.pictureDefault.findFirst();
-}
