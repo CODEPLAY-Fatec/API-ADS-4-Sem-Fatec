@@ -293,45 +293,6 @@ submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
               <option value="Concluido">Concluído</option>
             </SelectNative>
           </div>
-
-          <div>
-            <Label htmlFor="start">Data de início</Label>
-            <Input
-              id="start"
-              type="date"
-              value={
-                this.state.currentProject.start
-                  ? typeof this.state.currentProject.start === "string"
-                    ? this.state.currentProject.start
-                    : this.state.currentProject.start.toISOString().split("T")[0]
-                  : ""
-              }
-              onChange={(e) => this.updateProjectData("start", e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="finish">Data de término</Label>
-            <Input
-              id="finish"
-              type="date"
-              value={
-                this.state.currentProject.finish
-                  ? typeof this.state.currentProject.finish === "string"
-                    ? this.state.currentProject.finish
-                    : this.state.currentProject.finish
-                        .toISOString()
-                        .split("T")[0]
-                  : ""
-              }
-              onChange={(e) =>
-                this.updateProjectData("finish", e.target.value)
-              }
-              className="w-full"
-            />
-          </div>
-
           <div className="flex justify-center mt-6">
             <Button
               type="submit"
