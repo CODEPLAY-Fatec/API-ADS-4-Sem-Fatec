@@ -228,7 +228,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
             <Input
               id="start"
               type="date"
-              value={editableProject.start || ""}
+              value={new Date(editableProject.start!).toISOString().split("T")[0] || ""  }
               onChange={handleInputChange}
               className="w-full"
             />
@@ -238,7 +238,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
             <Input
               id="finish"
               type="date"
-              value={editableProject.finish || ""}
+              value={new Date(editableProject.finish!).toISOString().split("T")[0] || "" }
               onChange={handleInputChange}
               className="w-full"
             />

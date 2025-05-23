@@ -74,9 +74,9 @@ export default function DescriptionComponent({
                 {renderInfoItem(
                   "Responsável",
                   <div className="flex items-center gap-2">
-                    <UserAvatar 
-                      userId={currentProjectCreator.id} 
-                      name={currentProjectCreator.name} 
+                    <UserAvatar
+                      userId={currentProjectCreator.id}
+                      name={currentProjectCreator.name}
                       showName={true}
                       size="md"
                     />
@@ -88,9 +88,9 @@ export default function DescriptionComponent({
                     {currentProject.projectMember && currentProject.projectMember.length > 0 ? (
                       currentProject.projectMember.map((user) => (
                         <div key={user.id} className="flex items-center gap-2">
-                          <UserAvatar 
-                            userId={user.id} 
-                            name={user.name} 
+                          <UserAvatar
+                            userId={user.id}
+                            name={user.name}
                             showName={true}
                             size="md"
                           />
@@ -105,9 +105,10 @@ export default function DescriptionComponent({
                   "Data de início",
                   <p className="text-gray-600">
                     {currentProject.start
-                      ? new Date(currentProject.start).toLocaleDateString()
+                      ? currentProject.start.split("T")[0].split("-").reverse().join("/")
                       : "Data não definida"}
                   </p>
+
                 )}
 
               </div>
@@ -131,7 +132,7 @@ export default function DescriptionComponent({
                   "Data de término",
                   <p className="text-gray-600">
                     {currentProject.finish
-                      ? new Date(currentProject.finish).toLocaleDateString()
+                      ? currentProject.finish.split("T")[0].split("-").reverse().join("/")
                       : "Data de finalização não definida"}
                   </p>
                 )}
