@@ -152,7 +152,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
         size="icon"
         aria-label="Close Form"
         onClick={() => { onClose(false) }}
-        onClick={() => { onClose(false) }}
         className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
       >
         <XIcon size={20} />
@@ -179,39 +178,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
             id="description"
             type="text"
             value={editableProject.description || ""}
-            readOnly={!isEditable}
-            onChange={handleInputChange}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="start">Data de Início</Label>
-          <Input
-            id="start"
-            type="date"
-            value={
-              editableProject.start
-                ? new Date(editableProject.start).toLocaleDateString('en-CA') 
-                : ""
-            }
-            readOnly={!isEditable}
-            onChange={handleInputChange}
-            className="w-full"
-          />
-        </div>
-
-
-        <div>
-          <Label htmlFor="finish">Data Final</Label>
-          <Input
-            id="finish"
-            type="date"
-            value={
-              editableProject.finish
-                ? new Date(editableProject.finish).toLocaleDateString('en-CA') 
-                : ""
-            }
             readOnly={!isEditable}
             onChange={handleInputChange}
             className="w-full"
