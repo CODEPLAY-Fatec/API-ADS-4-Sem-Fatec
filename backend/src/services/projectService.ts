@@ -2,6 +2,7 @@ import Project from "@shared/Project";
 import { User } from "@shared/User";
 import { PrismaClient } from "@prisma/client";
 import Task from "@shared/Task";
+import { sendAttributionEmail, sendProjectEmail, sendTaskUpdatedEmail } from "./mailService";
 
 const prisma = new PrismaClient();
 
@@ -112,6 +113,8 @@ export const addUserToProjectService = async (
     }
   })
 
+  sendProjectEmail({ ...userInfo!, password: ""}, true, await getProjectByIdService(projectId, user) as Project, user);
+
   return userInfo;
 };
 
@@ -143,6 +146,19 @@ export const removeUserFromProjectService = async (
       },
     },
   });
+
+  const userInfo = await prisma.users.findUnique({
+    where:{
+      id: userId,
+    },
+    select:{
+      id: true,
+      name:true,
+      email:true,
+    }
+  })
+  sendProjectEmail({ ...userInfo!, password: ""}, false, await getProjectByIdService(projectId, user) as Project, user);
+
   return removeMember;
 };
 
@@ -360,6 +376,29 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
       taskUser: userId || null,
     },
   });
+
+  const userInfo = await prisma.users.findUnique({
+    where:{
+      id: userId,
+    },
+    select:{
+      id: true,
+      name:true,
+      email:true,
+    }
+  })
+
+  const project = await prisma.projects.findUnique({
+    where:{
+      id: result!.projectId,
+    },
+    select:{
+      name:true,
+    }
+  })
+
+  sendAttributionEmail({ ...userInfo!, password: ""}, project as Project, addUserTask as Task);
+
   return addUserTask;
 };
 
@@ -456,6 +495,31 @@ export const updateTaskService = async (
       finishedAt: concluding ? new Date() : unconcluding ? null : oldTask?.finishedAt,
     },
   });
+
+  if (updatedTask.taskUser && oldTask?.taskUser == updatedTask.taskUser) { // notificar dono da tarefa (sem notificar na atribuição)
+    const userInfo = await prisma.users.findUnique({
+      where:{
+        id: updatedTask.taskUser,
+      },
+      select:{
+        id: true,
+        name:true,
+        email:true,
+      }
+    })
+
+    const project = await prisma.projects.findUnique({
+      where:{
+        id: projectId,
+      },
+      select:{
+        name:true,
+      }
+    })
+
+    sendTaskUpdatedEmail({ ...userInfo!, password: ""}, project as Project, updatedTask as Task);
+  }
+
   return updatedTask;
 };
 

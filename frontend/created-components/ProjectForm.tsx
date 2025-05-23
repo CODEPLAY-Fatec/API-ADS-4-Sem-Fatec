@@ -109,6 +109,19 @@ submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     });
     return;
   }
+    if (!this.state.currentProject.start) {
+      toast.error("Por favor, preencha a data de início.", { duration: 1500 });
+      return;
+    }
+    if (!this.state.currentProject.finish) {
+      toast.error("Por favor, preencha a data final do projeto.",{duration:1500})
+      return;
+    }
+    if(new Date(this.state.currentProject.finish!)< new Date(this.state.currentProject.start)){
+      toast.error("A data de finalizaçao do projeto não pode ser antes da data de inicio.", {duration:1500})
+      return;
+
+    }
 
   const projectData: Project = {
     id: 0,
@@ -175,7 +188,7 @@ submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
 
         <form
           onSubmit={this.submitForm}
-          className="space-y-4 rounded-md bg-white z-10 relative"
+          className="space-y-4 rounded-md bg-white z-10 relative overflow-y-auto"
         >
           <div>
             <Label htmlFor="name">Nome</Label>
@@ -279,6 +292,44 @@ submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
               <option value="Em_andamento">Em andamento</option>
               <option value="Concluido">Concluído</option>
             </SelectNative>
+          </div>
+
+          <div>
+            <Label htmlFor="start">Data de início</Label>
+            <Input
+              id="start"
+              type="date"
+              value={
+                this.state.currentProject.start
+                  ? typeof this.state.currentProject.start === "string"
+                    ? this.state.currentProject.start
+                    : this.state.currentProject.start.toISOString().split("T")[0]
+                  : ""
+              }
+              onChange={(e) => this.updateProjectData("start", e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="finish">Data de término</Label>
+            <Input
+              id="finish"
+              type="date"
+              value={
+                this.state.currentProject.finish
+                  ? typeof this.state.currentProject.finish === "string"
+                    ? this.state.currentProject.finish
+                    : this.state.currentProject.finish
+                        .toISOString()
+                        .split("T")[0]
+                  : ""
+              }
+              onChange={(e) =>
+                this.updateProjectData("finish", e.target.value)
+              }
+              className="w-full"
+            />
           </div>
 
           <div className="flex justify-center mt-6">

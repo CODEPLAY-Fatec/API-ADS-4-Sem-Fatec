@@ -118,6 +118,8 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
       });
   };
 
+
+
   async function handleRemoveMember(memberId: string) {
     axios
       .delete(`/api/projects/${editableProject.id}/user/${memberId}`)
@@ -149,6 +151,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
         size="icon"
         aria-label="Close Form"
         onClick={() => { onClose(false) }}
+        onClick={() => { onClose(false) }}
         className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
       >
         <XIcon size={20} />
@@ -168,6 +171,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
             className="w-full"
           />
         </div>
+
         <div>
           <Label htmlFor="description">Descrição</Label>
           <Input
@@ -179,6 +183,40 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
             className="w-full"
           />
         </div>
+
+        <div>
+          <Label htmlFor="start">Data de Início</Label>
+          <Input
+            id="start"
+            type="date"
+            value={
+              editableProject.start
+                ? new Date(editableProject.start).toLocaleDateString('en-CA') 
+                : ""
+            }
+            readOnly={!isEditable}
+            onChange={handleInputChange}
+            className="w-full"
+          />
+        </div>
+
+
+        <div>
+          <Label htmlFor="finish">Data Final</Label>
+          <Input
+            id="finish"
+            type="date"
+            value={
+              editableProject.finish
+                ? new Date(editableProject.finish).toLocaleDateString('en-CA') 
+                : ""
+            }
+            readOnly={!isEditable}
+            onChange={handleInputChange}
+            className="w-full"
+          />
+        </div>
+
         <div className="flex space-x-4">
           <div className="w-1/2">
             <Label htmlFor="subject">Área de Atuação</Label>
@@ -256,6 +294,9 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
               <option value="Concluido">Concluído</option>
             </SelectNative>
           </div>
+
+
+
           <div className="w-1/2">
             <Label htmlFor="responsavel">Responsável</Label>
             <Input
@@ -266,6 +307,9 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
               className="w-full"
             />
           </div>
+
+
+
         </div>
         <div>
           <Label htmlFor="addMember">Adicionar Membro por Email</Label>
@@ -320,6 +364,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({
           </div>
         </div>
       </form>
+
 
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
