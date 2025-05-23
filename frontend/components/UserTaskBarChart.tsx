@@ -26,12 +26,23 @@ const getColorByStatus = (status: string) => {
 };
 
 const UserTaskBarChart = ({ tasks, users, projectCreator }: UserTaskBarChartProps) => {
-    // Combine users and projectCreator into a single array
-    const allUsers = [...users, projectCreator];
+    // Junta membros, criador e adiciona "Não atribuído" se necessário
+    const unassignedTasks = tasks.filter((task) => !task.taskUser || task.taskUser === 0);
+    const showUnassigned = unassignedTasks.length > 0;
+    const unassignedUser: User = { id: 0, name: "Não atribuído", email: "", password: "" };
+
+    // Evita duplicidade do criador
+    const allUsers = [...users.filter((u) => u.id !== projectCreator.id), projectCreator, ...(showUnassigned ? [unassignedUser] : [])];
 
     const labels = allUsers.map((user) => user.name);
 
-    const getStatusCount = (userId: number, status: Task["status"]) => tasks.filter((task) => task.taskUser === userId && task.status === status).length;
+    // Ajusta a contagem para "Não atribuído"
+    const getStatusCount = (userId: number, status: Task["status"]) => {
+        if (userId === 0) {
+            return tasks.filter((task) => (!task.taskUser || task.taskUser === 0) && task.status === status).length;
+        }
+        return tasks.filter((task) => task.taskUser === userId && task.status === status).length;
+    };
 
     const data = {
         labels,
