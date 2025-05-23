@@ -305,6 +305,7 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                                 currentProject={currentProject}
                                 currentProjectCreator={currentProjectCreator}
                                 projectMembers={projectMembers} // <-- novo prop
+                                tasks={currentProjectTasks} 
                             />
                         )}
                         {currentTab === "Kanban" && (

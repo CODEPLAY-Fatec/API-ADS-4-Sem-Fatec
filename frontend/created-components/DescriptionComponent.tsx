@@ -1,17 +1,20 @@
 import FetchedProject from "@/types/FetchedProject";
 import { User } from "@shared/User";
 import UserAvatar from "./UserAvatar";
+import Task from "@shared/Task";
 
 interface DescriptionComponentProps {
     currentProject: FetchedProject;
     currentProjectCreator: User;
-    projectMembers: User[]; // <-- nova prop
+    projectMembers: User[]; 
+    tasks?: Task[]; 
 }
 
 export default function DescriptionComponent({
     currentProject,
     currentProjectCreator,
-    projectMembers, // <-- nova prop
+    projectMembers,
+    tasks = [], 
 }: DescriptionComponentProps) {
     const getStatusColor = (status: FetchedProject["status"]) => {
         switch (status) {
@@ -46,6 +49,25 @@ export default function DescriptionComponent({
         </div>
     );
 
+    const calculateProgress = () => {
+        if (tasks.length === 0) return 0;
+        
+        const completedTasks = tasks.filter(task => task.status === "Concluido").length;
+        const inProgressTasks = tasks.filter(task => task.status === "Em_andamento").length;
+        
+        // concluída vale 100, em andamento vale 50, fechada vale 0
+        const totalProgress = completedTasks * 100 + inProgressTasks * 50;
+        const maxProgress = tasks.length * 100;
+        return Math.round((totalProgress / maxProgress) * 100);
+    };
+
+    const progressPercent = calculateProgress();
+    const getProgressColorClass = () => {
+        if (progressPercent < 30) return "bg-red-500";
+        if (progressPercent < 70) return "bg-blue-500";
+        return "bg-green-500";
+    };
+
     return (
         <div className="border rounded-lg shadow-sm overflow-hidden h-[55vh] flex flex-col">
             <div className="p-4 overflow-y-auto flex-1">
@@ -59,6 +81,28 @@ export default function DescriptionComponent({
                                 {renderInfoItem(
                                     "Descrição",
                                     <p className="break-words text-gray-600">{currentProject.description || "Sem descrição disponível."}</p>
+                                )}
+                                {/* Novo card com a barra de progresso */}
+                                {renderInfoItem(
+                                    "Progresso",
+                                    <div className="w-full">
+                                        <div className="flex justify-between mb-1">
+                                            <span className="text-sm font-medium text-gray-700">
+                                                {progressPercent}% Completo
+                                            </span>
+                                        </div>
+                                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div 
+                                                className={`h-2.5 rounded-full ${getProgressColorClass()}`} 
+                                                style={{ width: `${progressPercent}%` }}
+                                            ></div>
+                                        </div>
+                                        <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                            <span>Concluídas: {tasks.filter(task => task.status === "Concluido").length}</span>
+                                            <span>Em andamento: {tasks.filter(task => task.status === "Em_andamento").length}</span>
+                                            <span>Fechadas: {tasks.filter(task => task.status === "Fechado").length}</span>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>
