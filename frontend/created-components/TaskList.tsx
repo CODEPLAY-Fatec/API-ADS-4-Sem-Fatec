@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import TaskForm from "./TaskForm";
 import GradientText from "./GradientText";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
@@ -17,21 +16,26 @@ type TaskListProps = {
   currentTasks: Task[];
   addTask: (task: Task) => void;
   deleteTask: (task: Task) => void;
-  onEditTask?: (task: Task) => void; 
-  onNewTask?: () => void; 
-  tasks?: Task[]; 
-  setTasks?: (tasks: Task[]) => void; 
+  onEditTask?: (task: Task) => void;
+  onNewTask?: () => void;
+  tasks?: Task[];
+  setTasks?: (tasks: Task[]) => void;
 };
 
-export default function TaskList({ 
-  currentTasks, 
-  addTask, 
-  deleteTask, 
-  onEditTask, 
-  onNewTask 
+export default function TaskList({
+  currentTasks,
+  onEditTask,
+  onNewTask
 }: TaskListProps) {
-  const [showTaskForm, setShowTaskForm] = useState<true | false>(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
   const [currentEditingTask, setCurrentEditingTask] = useState<Task | null>(null);
+
+  const [filters, setFilters] = useState({
+    name: "",
+    status: "",
+    start: "",
+    finish: "",
+  });
 
   const editTask = (task: Task) => {
     if (onEditTask) {
@@ -51,6 +55,20 @@ export default function TaskList({
     }
   };
 
+  const filteredTasks = currentTasks.filter((task) => {
+    const matchName = task.title
+      .toLowerCase()
+      .includes(filters.name.toLowerCase());
+
+    const matchStatus = filters.status ? task.status === filters.status : true;
+
+
+
+    return matchName && matchStatus
+  });
+
+
+
   return (
     <>
       {!onEditTask && showTaskForm && (
@@ -61,7 +79,7 @@ export default function TaskList({
               size="icon"
               aria-label="Close Form"
               onClick={() => {
-                setShowTaskForm(!showTaskForm);
+                setShowTaskForm(false);
                 setCurrentEditingTask(null);
               }}
               className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
@@ -71,19 +89,17 @@ export default function TaskList({
             <div className="flex justify-center mb-4 items-center">
               <GradientText>{currentEditingTask ? "Editar Tarefa" : "Nova Tarefa"}</GradientText>
             </div>
-            { 
-            /*
+            {/* 
             <TaskForm
               task={currentEditingTask}
               toggleForm={() => {
-                setShowTaskForm(!showTaskForm);
+                setShowTaskForm(false);
                 setCurrentEditingTask(null);
               }}
               addTask={addTask}
               deleteTask={deleteTask}
             />
-            */
-            } 
+            */}
           </div>
         </div>
       )}
@@ -99,7 +115,38 @@ export default function TaskList({
               Nova tarefa
             </button>
           </div>
-          
+
+          {/* Filtros */}
+          <div className="flex gap-4 mb-4 items-end">
+            <input
+              type="text"
+              placeholder="Filtrar por nome"
+              className="flex-grow border p-2 rounded"
+              value={filters.name}
+              onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+            />
+
+            <select
+              className="border p-2 rounded"
+              value={filters.status}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            >
+              <option value="">Todos os status</option>
+              <option value="Fechado">Fechado</option>
+              <option value="Em_andamento">Em andamento</option>
+              <option value="Concluido">Concluído</option>
+            </select>
+
+            <button
+              className="bg-gray-300 hover:bg-gray-400 text-black font-medium py-2 px-4 rounded"
+              onClick={() => setFilters({ name: "", status: "", start: "", finish: "" })}
+            >
+              Limpar filtros
+            </button>
+          </div>
+
+
+
           <div className="overflow-hidden flex-1">
             <div className="h-full overflow-y-auto border rounded">
               <Table className="table-fixed">
@@ -112,29 +159,27 @@ export default function TaskList({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {currentTasks.map((task) => (
+                  {filteredTasks.map((task) => (
                     <TableRow
                       key={task.id}
-                      onClick={() => {
-                        editTask(task);
-                      }}
+                      onClick={() => editTask(task)}
                       className="hover:bg-gray-100 cursor-pointer"
                     >
-                      <TableCell className="text-center cursor-pointer text-blue-500">
+                      <TableCell className="text-center text-blue-500">
                         {task.title}
                       </TableCell>
                       <TableCell className="text-center">
-                        {task.status === "Em_andamento" 
-                          ? "Em andamento" 
-                          : task.status === "Concluido" 
-                            ? "Concluído" 
+                        {task.status === "Em_andamento"
+                          ? "Em andamento"
+                          : task.status === "Concluido"
+                            ? "Concluído"
                             : task.status}
                       </TableCell>
                       <TableCell className="text-center">
-                        {task.start?.toLocaleDateString('pt-BR', {timeZone: "UTC"})}
+                        {task.start?.toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                       </TableCell>
                       <TableCell className="text-center">
-                        {task.finish?.toLocaleDateString('pt-BR', {timeZone: "UTC"})}
+                        {task.finish?.toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                       </TableCell>
                     </TableRow>
                   ))}
