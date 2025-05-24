@@ -25,7 +25,21 @@ export const inTheProject = async (projectId: number, userId: number) => {
 export const hasAccess = async (projectId: number, userId: number) => {
   return prisma.projects.findFirst({
     select: { id: true },
-    where: { id: projectId, creator: userId },
+    where: {
+      id: projectId,
+      OR: [
+        {
+          projectMember: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+        {
+          creator: userId,
+        },
+      ],
+    },
   });
 };
 
@@ -256,6 +270,7 @@ export const getProjectsService = async (
 
 export const getProjectByIdService = async (projectId: number, user: User) => {
   if (!(await hasAccess(projectId, user.id))) {
+    console.log("Usuário não tem permissão para acessar este projeto.");
     throw new Error("Usuário não tem permissão para acessar este projeto.");
   }
   const project = await prisma.projects.findUnique({
