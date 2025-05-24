@@ -22,6 +22,16 @@ export const inTheProject = async (projectId: number, userId: number) => {
   return { inProject, IsCreator };
 };
 
+const isCreator = async (projectId: number, userId: number) => {
+  const creator = await prisma.projects.findFirst({
+    where: {
+      id: projectId,
+      creator: userId,
+    },
+  });
+  return creator ? true : false;
+};
+
 export const hasAccess = async (projectId: number, userId: number) => {
   return prisma.projects.findFirst({
     select: { id: true },
@@ -159,7 +169,7 @@ export const removeUserFromProjectService = async (
   userId: number,
   user: User,
 ) => {
-  const HasAcess = await hasAccess(projectId, user.id!);
+  const HasAcess = await isCreator(projectId, user.id!);
   if (!HasAcess) {
     throw new Error(
       "Usuário não tem permissão para remover usuários deste projeto.",
@@ -319,7 +329,7 @@ export const getInstitutionsService = async () => {
 };
 
 export const deleteProjectService = async (projectId: number, user: User) => {
-  const HasAcess = await hasAccess(projectId, user.id!);
+  const HasAcess = await isCreator(projectId, user.id!);
   if (!HasAcess) {
     throw new Error("Usuário não tem permissão para deletar este projeto.");
   }
