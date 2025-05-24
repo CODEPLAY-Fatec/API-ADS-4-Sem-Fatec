@@ -56,6 +56,28 @@ export const updateProjectService = async (
   if (!HasAcess) {
     throw new Error("Usuário não tem permissão para editar este projeto.");
   }
+  const tasksDatas = await prisma.tasks.aggregate({
+    _max: { finish: true },
+    _min: { start: true },
+    where: { projectId: projectData.id },
+  });
+
+  const projectStart = new Date(projectData.start!);
+  const projectFinish = new Date(projectData.finish!);
+  const taskStart = new Date(tasksDatas._min.start!);
+  const taskFinish = new Date(tasksDatas._max.finish!);
+
+  if (projectStart > taskStart) {
+    throw new Error(`Data de início do projeto não pode ser depois da primeira tarefa (${taskStart.toLocaleDateString()}).`);
+  } else if (projectFinish < taskFinish) {
+    throw new Error(`Data de fim do projeto não pode ser antes da última tarefa (${taskFinish.toLocaleDateString()}).`);
+  } else if (projectFinish < taskStart) {
+    throw new Error(`Data de fim do projeto não pode ser antes da primeira tarefa (${taskStart.toLocaleDateString()}).`);
+  } else if (projectStart > taskFinish) {
+    throw new Error(`Data de início do projeto não pode ser depois da última tarefa (${taskFinish.toLocaleDateString()}).`);
+  }
+
+
 
   const updatedProject = await prisma.projects.update({
     where: {
@@ -113,7 +135,7 @@ export const addUserToProjectService = async (
     }
   })
 
-  sendProjectEmail({ ...userInfo!, password: ""}, true, await getProjectByIdService(projectId, user) as Project, user);
+  sendProjectEmail({ ...userInfo!, password: "" }, true, await getProjectByIdService(projectId, user) as Project, user);
 
   return userInfo;
 };
@@ -148,16 +170,16 @@ export const removeUserFromProjectService = async (
   });
 
   const userInfo = await prisma.users.findUnique({
-    where:{
+    where: {
       id: userId,
     },
-    select:{
+    select: {
       id: true,
-      name:true,
-      email:true,
+      name: true,
+      email: true,
     }
   })
-  sendProjectEmail({ ...userInfo!, password: ""}, false, await getProjectByIdService(projectId, user) as Project, user);
+  sendProjectEmail({ ...userInfo!, password: "" }, false, await getProjectByIdService(projectId, user) as Project, user);
 
   return removeMember;
 };
@@ -312,10 +334,25 @@ export const createTaskService = async (
       finish: true,
     }
   });
+
+  const projectStart = await prisma.projects.findFirst({
+    where: {
+      id: projectId,
+    },
+    select: {
+      start: true,
+    }
+  });
+
   const ProjectFinish = new Date(projectFinish?.finish!);
   const TaskStart = new Date(task.start!);
   const TaskFinish = new Date(task.finish!);
+  const ProjectStart = new Date(projectStart?.start!);
 
+
+  if (TaskStart < ProjectStart) {
+    throw new Error("Data de início da tarefa não pode ser antes da data de início do projeto.");
+  }
   if (TaskFinish < TaskStart) {
     throw new Error("Data de início da tarefa não pode ser depois que a data de fim.");
   }
@@ -378,26 +415,26 @@ export const addUserToTaskService = async (taskId: number, userId: number) => {
   });
 
   const userInfo = await prisma.users.findUnique({
-    where:{
+    where: {
       id: userId,
     },
-    select:{
+    select: {
       id: true,
-      name:true,
-      email:true,
+      name: true,
+      email: true,
     }
   })
 
   const project = await prisma.projects.findUnique({
-    where:{
+    where: {
       id: result!.projectId,
     },
-    select:{
-      name:true,
+    select: {
+      name: true,
     }
   })
 
-  sendAttributionEmail({ ...userInfo!, password: ""}, project as Project, addUserTask as Task);
+  sendAttributionEmail({ ...userInfo!, password: "" }, project as Project, addUserTask as Task);
 
   return addUserTask;
 };
@@ -498,26 +535,26 @@ export const updateTaskService = async (
 
   if (updatedTask.taskUser && oldTask?.taskUser == updatedTask.taskUser) { // notificar dono da tarefa (sem notificar na atribuição)
     const userInfo = await prisma.users.findUnique({
-      where:{
+      where: {
         id: updatedTask.taskUser,
       },
-      select:{
+      select: {
         id: true,
-        name:true,
-        email:true,
+        name: true,
+        email: true,
       }
     })
 
     const project = await prisma.projects.findUnique({
-      where:{
+      where: {
         id: projectId,
       },
-      select:{
-        name:true,
+      select: {
+        name: true,
       }
     })
 
-    sendTaskUpdatedEmail({ ...userInfo!, password: ""}, project as Project, updatedTask as Task);
+    sendTaskUpdatedEmail({ ...userInfo!, password: "" }, project as Project, updatedTask as Task);
   }
 
   return updatedTask;

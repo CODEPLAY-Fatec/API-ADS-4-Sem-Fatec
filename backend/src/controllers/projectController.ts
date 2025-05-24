@@ -42,10 +42,14 @@ export const updateProjectController = async (req: Request, res: Response) => {
 
     try {
         await updateProjectService(ProjectData, await getUserInfo(req.cookies.token));
-        res.status(201).send({ message: "Projeto atualizado com sucesso!" });
+        res.status(200).send({ message: "Projeto atualizado com sucesso!" });
     } catch (error) {
-        res.status(500).send({ message: "Erro ao atualizar projeto." });
         console.warn(error);
+        if (error instanceof Error) {
+            res.status(400).send({ message: error.message });
+        } else {
+            res.status(400).send({ message: "Erro desconhecido ao atualizar projeto." });
+        }
     }
 };
 
@@ -60,7 +64,7 @@ export const addUserToProjectController = async (req: Request, res: Response) =>
 
     try {
         const usuarioAdd = await addUserToProjectService(projectId, user.id, await getUserInfo(req.cookies.token));
-        res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!", user : usuarioAdd });
+        res.status(201).send({ message: "Usuário adicionado ao projeto com sucesso!", user: usuarioAdd });
     } catch (error) {
         res.status(500).send({ message: "Erro ao adicionar usuário ao projeto.", user: user });
         console.warn(error);
@@ -70,7 +74,7 @@ export const addUserToProjectController = async (req: Request, res: Response) =>
 export const removeUserFromProjectController = async (req: Request, res: Response) => {
     const projectId = parseInt(req.params.id, 10);
     const userId = parseInt(req.params.user, 10);
-    
+
     if (isNaN(projectId) || isNaN(userId)) {
         res.status(400).send({ message: "ID do projeto ou usuário inválido." });
         return;
@@ -79,14 +83,14 @@ export const removeUserFromProjectController = async (req: Request, res: Respons
     try {
         await removeUserFromProjectService(projectId, userId, await getUserInfo(req.cookies.token));
         res.status(201).send({ message: "Usuário removido do projeto com sucesso!" });
-    } catch(error) {
+    } catch (error) {
         res.status(500).send({ message: "Erro ao remover usuário do projeto." });
         console.warn(error);
     }
 }
 
 export const getProjectsController = async (req: Request, res: Response) => {
-    const  searchStatus  = req.query.searchStatus as Project['status'];
+    const searchStatus = req.query.searchStatus as Project['status'];
     const searchName = req.query.searchName as string;
     const searchCreator = req.query.searchCreator as string;
     const searchInst = req.query.searchInst as string;
@@ -101,9 +105,9 @@ export const getProjectsController = async (req: Request, res: Response) => {
             return;
         }
 
-        
-        const result = await getProjectsService(userInfo,searchName,searchCreator,searchInst,searchSubj,dateStart ? new Date(dateStart) : undefined,dateFinish ? new Date(dateFinish) : undefined,searchStatus);
-        res.status(200).send({ result }); 
+
+        const result = await getProjectsService(userInfo, searchName, searchCreator, searchInst, searchSubj, dateStart ? new Date(dateStart) : undefined, dateFinish ? new Date(dateFinish) : undefined, searchStatus);
+        res.status(200).send({ result });
     } catch (error) {
         console.log("Erro ao buscar projetos:", error);
         res.status(500).send({ message: "Erro ao buscar projetos.", error });
@@ -162,7 +166,7 @@ export const deleteProjectController = async (req: Request, res: Response) => {
 
 export const createTaskController = async (req: Request, res: Response) => {// id do projeto no params e task no body
     const projectId = parseInt(req.params.id);
-    const { task} = req.body;
+    const { task } = req.body;
     const user = await getUserInfo(req.cookies.token);
 
     if (!task || !projectId) {
@@ -171,11 +175,14 @@ export const createTaskController = async (req: Request, res: Response) => {// i
     }
 
     try {
-        const createdTask = await createTaskService(task, projectId,user.id);
-        res.status(201).send({ message: "Tarefa criada com sucesso!", id: createdTask.id, task: createdTask});
+        const createdTask = await createTaskService(task, projectId, user.id);
+        res.status(201).send({ message: "Tarefa criada com sucesso!", id: createdTask.id, task: createdTask });
     } catch (error) {
-        res.status(500).send({ message: error });
-        console.warn(error);
+        if (error instanceof Error) {
+            res.status(400).send({ message: error.message });
+        } else {
+            res.status(400).send({ message: "Erro desconhecido ao atualizar projeto." });
+        }
     }
 }
 
@@ -186,18 +193,18 @@ export const addUserTaskController = async (req: Request, res: Response) => {//s
         res.status(400).send({ message: "Dados da tarefa invalidos" });
         return;
     }
-    try{
+    try {
         await addUserToTaskService(taskId, taskUser);
         res.status(201).send({ message: "Usuario adicionado a tarefa." });
-    }catch(error){
+    } catch (error) {
         res.status(500).send({ message: "Erro ao adicionar usuario na tarefa." });
         console.warn(error);
     }
 }
 
-export const getTasksController= async (req: Request, res: Response) => {//apenas o id do projeto no params
+export const getTasksController = async (req: Request, res: Response) => {//apenas o id do projeto no params
     const projectId = parseInt(req.params.id);
-    
+
     const searchStatus = req.query.searchStatus as Task['status'];
     const searchTaskUser = parseInt(req.query.searchTaskUser as string);
     const searchPriority = req.query.searchPriority as Task['priority'];
@@ -212,10 +219,10 @@ export const getTasksController= async (req: Request, res: Response) => {//apena
         res.status(400).send({ message: "ID do projeto inválido." });
         return;
     }
-    try {  
-        const tasks = await getTasksService(projectId,User.id,searchStatus,searchTaskUser,searchPriority,searchTitle,dateStart ? new Date(dateStart):undefined,dateFinish ? new Date(dateFinish):undefined);  
+    try {
+        const tasks = await getTasksService(projectId, User.id, searchStatus, searchTaskUser, searchPriority, searchTitle, dateStart ? new Date(dateStart) : undefined, dateFinish ? new Date(dateFinish) : undefined);
         res.status(200).send(tasks);
-    }catch (error) {
+    } catch (error) {
         res.status(500).send({ message: "Erro ao buscar tarefas." });
         console.warn(error);
     }
@@ -225,38 +232,42 @@ export const updateTaskController = async (req: Request, res: Response) => {//id
     const task = req.body.task;
     const projectId = parseInt(req.params.projectId);
     try {
-        const updatedTask = await updateTaskService(task, await getUserInfo(req.cookies.token),projectId);
-        res.status(201).send({ message: "Tarefa atualizada com sucesso!", task: updatedTask});
+        const updatedTask = await updateTaskService(task, await getUserInfo(req.cookies.token), projectId);
+        res.status(201).send({ message: "Tarefa atualizada com sucesso!", task: updatedTask });
     }
     catch (error) {
-        res.status(500).send({ message: "Erro ao atualizar tarefa." });
         console.warn(error);
+        if (error instanceof Error) {
+            res.status(400).send({ message: error.message });
+        } else {
+            res.status(400).send({ message: "Erro desconhecido ao atualizar projeto." });
+        }
     }
 }
 
-export const deleteTaskController   = async (req: Request, res: Response) => {
+export const deleteTaskController = async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id);
     const user = await getUserInfo(req.cookies.token);
-    if(!taskId){
+    if (!taskId) {
         res.status(400).send({ message: "Dados da tarefa invalidos" });
         return;
     }
 
     try {
         await deleteTaskService(taskId, user.id);
-        res.status(200).send({ message : "Tarefa deletada com sucesso!"});
-    }catch (error){
+        res.status(200).send({ message: "Tarefa deletada com sucesso!" });
+    } catch (error) {
         res.status(500).send({ message: "Erro ao deletar tarefa." });
         console.warn(error);
     }
 }
 
-export const getUserTaskController = async(req:Request, res:Response) => {
+export const getUserTaskController = async (req: Request, res: Response) => {
     const user = await getUserInfo(req.cookies.token);
     try {
         const tasks = await getUserTasks(user.id);
-        res.status(200).send({tasks});
-    }catch(error){
+        res.status(200).send({ tasks });
+    } catch (error) {
         res.status(500).send({ message: "Erro ao buscar tarefas do usuario." });
         console.warn(error);
     }

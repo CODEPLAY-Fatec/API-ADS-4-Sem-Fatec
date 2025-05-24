@@ -75,32 +75,33 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
         fetchProjectDetails();
     }, [projectId, taskUpdateTrigger]);
 
-    useEffect(() => {
-        const updatedEvents = currentProjectTasks.map((task) => ({
-            id: task.id || Date.now(), // Garante que sempre terá um valor
-            title: task.title,
-            start: task.start ? new Date(task.start) : new Date(),
-            end: task.finish ? new Date(task.finish) : new Date(),
-            status: task.status?.toLowerCase() as TaskEvent["status"],
-        }));
-        setCalendarEvents(updatedEvents);
-    }, [currentProjectTasks]);
+  useEffect(() => {
+    const updatedEvents = currentProjectTasks.map((task) => ({
+      id: task.id || Date.now(), // Garante que sempre terá um valor
+      title: task.title,
+      start: task.start ? new Date(task.start) : new Date(),
+      end: task.finish ? new Date(task.finish) : new Date(),
+      status: task.status?.toLowerCase() as TaskEvent["status"],
+    }));
+    setCalendarEvents(updatedEvents);
+  }, [currentProjectTasks]);
 
-    const addTask = async (task: Task) => {
-        if (currentProjectTasks.some((t) => t.id === task.id)) {
-            try {
-                if (task.start && currentProject?.finish && task.finish) {
-                    if (new Date(task.start) > new Date(currentProject.finish)) {
-                        toast.error("Data de início da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
-                        return;
-                    } else if (new Date(task.finish) > new Date(currentProject.finish)) {
-                        toast.error("Data de término da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
-                        return;
-                    } else if (new Date(task.start) > new Date(task.finish)) {
-                        toast.error("Data de início da tarefa não pode ser depois da data de término da tarefa.", { duration: 3000 });
-                        return;
-                    }
-                }
+  const addTask = async (task: Task) => {
+    if (currentProjectTasks.some((t) => t.id === task.id)) {
+      try {
+
+        if (task.start && currentProject?.finish && task.finish) {
+          if (new Date(task.start) > new Date(currentProject.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.finish) > new Date(currentProject.finish)) {
+            toast.error("Data de término da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.start) > new Date(task.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término da tarefa.", { duration: 3000 });
+            return;
+          }
+        }
 
                 const response = await axios.patch(`/api/projects/tasks/${currentProject?.id}`, {
                     task: task,
@@ -116,54 +117,66 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
                     finished: response.data.task.finishedd ? new Date(response.data.task.finishedd) : new Date(),
                 };
 
-                setCurrentProjectTasks((prevTasks) => [...prevTasks.filter((t) => t.id !== task.id), updatedTask]);
-                toast.success("Tarefa atualizada com sucesso!");
-                setTaskUpdateTrigger((prev) => prev + 1);
-                setShowTaskForm(false);
-            } catch (error) {
-                console.error("Erro ao atualizar tarefa:", error);
-                toast.error("Erro ao atualizar tarefa");
-            }
-        } else {
-            try {
-                if (task.start && currentProject?.finish && task.finish) {
-                    if (new Date(task.start) > new Date(currentProject.finish)) {
-                        toast.error("Data de início da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
-                        return;
-                    } else if (new Date(task.finish) > new Date(currentProject.finish)) {
-                        toast.error("Data de término da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
-                        return;
-                    } else if (new Date(task.start) > new Date(task.finish)) {
-                        toast.error("Data de início da tarefa não pode ser depois da data de término da tarefa.", { duration: 3000 });
-                        return;
-                    }
-                }
+        setCurrentProjectTasks((prevTasks) => [
+          ...prevTasks.filter((t) => t.id !== task.id),
+          updatedTask,
+        ]);
+        toast.success("Tarefa atualizada com sucesso!");
+        setTaskUpdateTrigger((prev) => prev + 1);
+        setShowTaskForm(false);
+      } catch (error) {
+        console.error("Erro ao atualizar tarefa:", error);
+        toast.error("Erro ao atualizar tarefa");
+      }
+    } else {
+      try {
+
+        if (task.start && currentProject?.finish && task.finish) {
+          if (new Date(task.start) > new Date(currentProject.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.finish) > new Date(currentProject.finish)) {
+            toast.error("Data de término da tarefa não pode ser depois da data de término do projeto.", { duration: 3000 });
+            return;
+          } else if (new Date(task.start) > new Date(task.finish)) {
+            toast.error("Data de início da tarefa não pode ser depois da data de término da tarefa.", { duration: 3000 });
+            return;
+          }
+        }
 
                 const response = await axios.post(`api/projects/${projectId}/tasks`, {
                     task: task,
                 });
 
-                if (response.status !== 201) {
-                    throw new Error("Erro ao adicionar tarefa");
-                }
-                const newTask = {
-                    ...response.data.task,
-                    start: response.data.task.start ? new Date(response.data.task.start) : new Date(),
-                    finish: response.data.task.finish ? new Date(response.data.task.finish) : new Date(),
-                    lastUpdated: response.data.task.lastUpdated ? new Date(response.data.task.lastUpdated) : new Date(),
-                    finished: response.data.task.finishedd ? new Date(response.data.task.finishedd) : new Date(),
-                };
-
-                setCurrentProjectTasks((prevTasks) => [...prevTasks, newTask]);
-                toast.success("Tarefa criada com sucesso!");
-                setTaskUpdateTrigger((prev) => prev + 1);
-                setShowTaskForm(false);
-            } catch (error) {
-                console.error("Erro ao adicionar tarefa:", error);
-                toast.error("Erro ao adicionar tarefa");
-            }
+        if (response.status !== 201) {
+          throw new Error("Erro ao adicionar tarefa");
         }
-    };
+        const newTask = {
+          ...response.data.task,
+          start: response.data.task.start
+            ? new Date(response.data.task.start)
+            : new Date(),
+          finish: response.data.task.finish
+            ? new Date(response.data.task.finish)
+            : new Date(),
+          lastUpdated: response.data.task.lastUpdated
+            ? new Date(response.data.task.lastUpdated)
+            : new Date(),
+          finished: response.data.task.finishedd
+            ? new Date(response.data.task.finishedd)
+            : new Date(),
+        };
+
+        setCurrentProjectTasks((prevTasks) => [...prevTasks, newTask]);
+        toast.success("Tarefa criada com sucesso!");
+        setTaskUpdateTrigger((prev) => prev + 1);
+        setShowTaskForm(false);
+      } catch (error) {
+        console.error("Erro ao adicionar tarefa:", error);
+        toast.error("Erro ao adicionar tarefa");
+      }
+    }
+  };
 
     const setTaskUser = async (task: Task, userId: number) => {
         try {
@@ -245,40 +258,52 @@ export default function ProjectDetails({ projectId, closeSelectedProjectAction }
         return <div>Falha ao carregar detalhes do projeto.</div>;
     }
 
-    return (
-        <div className="flex flex-col relative">
-            {showTaskForm && (
-                <div className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50" onClick={handleTaskFormOutsideClick}>
-                    <div ref={taskFormRef} className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Close Form"
-                            onClick={() => {
-                                setShowTaskForm(false);
-                                setCurrentEditingTask(null);
-                            }}
-                            className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
-                        >
-                            <XIcon size={20} />
-                        </Button>
-                        <div className="flex justify-center mb-4 items-center">
-                            <GradientText>{currentEditingTask ? "Editar Tarefa" : "Nova Tarefa"}</GradientText>
-                        </div>
-                        <TaskForm
-                            projectMembers={currentProject.projectMember}
-                            projectCreator={currentProjectCreator}
-                            task={currentEditingTask}
-                            toggleForm={() => {
-                                setCurrentEditingTask(null);
-                            }}
-                            addTask={addTask}
-                            deleteTask={deleteTask}
-                            setTaskUser={setTaskUser}
-                        />
-                    </div>
-                </div>
-            )}
+  return (
+    <div className="flex flex-col relative">
+      {showTaskForm && (
+        <div
+          className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={handleTaskFormOutsideClick}
+        >
+          <div
+            ref={taskFormRef}
+            className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close Form"
+              onClick={() => {
+                setShowTaskForm(false);
+                setCurrentEditingTask(null);
+              }}
+              className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
+            >
+              <XIcon size={20} />
+            </Button>
+            <div className="flex justify-center mb-4 items-center">
+              <GradientText>
+                {currentEditingTask ? "Editar Tarefa" : "Nova Tarefa"}
+              </GradientText>
+            </div>
+            <TaskForm
+              projectFinish={currentProject.finish ? new Date(currentProject.finish).toISOString() : ""}
+              projectStart={currentProject.start ? new Date(currentProject.start).toISOString() : ""}
+              projectMembers={currentProject.projectMember}
+              projectCreator={currentProjectCreator}
+              task={currentEditingTask}
+              toggleForm={() => {
+
+                setCurrentEditingTask(null);
+              }}
+              addTask={addTask}
+              deleteTask={deleteTask}
+              setTaskUser={setTaskUser}
+            />
+          </div>
+        </div>
+      )}
 
             <div className="flex flex-col px-4 py-2">
                 <div className="w-full max-w-7xl mx-auto">

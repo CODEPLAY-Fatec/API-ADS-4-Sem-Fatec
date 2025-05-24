@@ -44,41 +44,49 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
     }, []);
 
     const handleSaveClick = async () => {
-        try {
-            const { start, finish } = editableProject;
+    try {
+        const { start, finish } = editableProject;
 
-            // Validação: Data de Início não pode ser maior que a Data de Término
-            if (start && finish && new Date(start) > new Date(finish)) {
-                toast.error("A data de início não pode ser superior à data de término.", {
-                    duration: 1500,
-                });
-                return;
-            }
-
-            // Validação: Data de Término não pode ser menor que a Data de Início
-            if (start && finish && new Date(finish) < new Date(start)) {
-                toast.error("A data de término não pode ser inferior à data de início.", {
-                    duration: 1500,
-                });
-                return;
-            }
-
-            const formattedProject = {
-                ...editableProject,
-                start: editableProject.start ? new Date(editableProject.start).toISOString() : undefined,
-                finish: editableProject.finish ? new Date(editableProject.finish).toISOString() : undefined,
-            };
-
-            console.log("Dados enviados para o backend:", formattedProject);
-            await axios.patch("/api/projects", formattedProject);
-            toast.success("Atualizado com sucesso!", { duration: 1500 });
-            setCurrentProject(editableProject);
-            onClose(false);
-        } catch (error) {
-            console.error("Erro ao salvar o projeto:", error);
-            toast.error("Erro ao atualizar projeto", { duration: 1500 });
+        if (start && finish && new Date(start) > new Date(finish)) {
+            toast.error("A data de início não pode ser superior à data de término.", {
+                duration: 1500,
+            });
+            return;
         }
-    };
+
+        if (start && finish && new Date(finish) < new Date(start)) {
+            toast.error("A data de término não pode ser inferior à data de início.", {
+                duration: 1500,
+            });
+            return;
+        }
+
+        const formattedProject = {
+            ...editableProject,
+            start: editableProject.start ? new Date(editableProject.start).toISOString() : undefined,
+            finish: editableProject.finish ? new Date(editableProject.finish).toISOString() : undefined,
+        };
+
+        console.log("Dados enviados para o backend:", formattedProject);
+        const resposta = await axios.patch("/api/projects", formattedProject);
+
+        if (resposta.status != 201) {
+            toast.error(resposta.data.message, { duration: 1500 });
+            return;
+        }
+
+        toast.success("Atualizado com sucesso!", { duration: 1500 });
+        setCurrentProject(editableProject);
+        onClose(false);
+    } catch (error) {
+        console.log("Erro ao adicionar tarefa:", error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error.response?.data.message || "Erro ao adicionar tarefa");
+        } else {
+            toast.error("Erro ao adicionar tarefa");
+        }
+    }
+};
 
     const handleDeleteClick = async () => {
         try {
