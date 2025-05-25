@@ -18,13 +18,13 @@
 
 ## 📊 Burndown
 
-![Burndown Sprint 3](colocar burndown)
+<!-- ![Burndown Sprint 3](colocar burndown) -->
 
 ---
 
-## 🎥 Apresentação
+## 🎥 Apresentação Sprint 3
 
-![Apresentação Sprint 3](colocar apresentaçao)
+ <!-- ![Apresentação Sprint 3](colocar apresentaçao) -->
 
 ---
 

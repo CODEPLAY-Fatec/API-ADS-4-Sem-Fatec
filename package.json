@@ -1,5 +1,8 @@
 {
     "scripts": {
+        "install:all": "npm install --prefix backend && npm install --prefix frontend",
+        "prisma:push": "cd backend && npx prisma db push",
+        "prisma:generate": "cd backend && npx prisma generate",
         "start:dev": "npx concurrently \"cd backend && npm install && npm run dev\" \"cd frontend && npm install && npm run dev\"",
         "start:prod": "npx concurrently \"cd backend && npm install && npm run build && npm start\" \"cd frontend && npm install && npm run build && npm start\""
     },

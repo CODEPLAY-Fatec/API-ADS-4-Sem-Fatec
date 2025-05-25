@@ -181,7 +181,12 @@ As seguintes ferramentas, linguagens, bibliotecas e tecnologias foram usadas na 
 
 Para rodar o projeto, você pode usar os seguintes comandos:
 
+-   `npm run install:all`: Instala todas as dependencias que o projeto precisa para funcionar.
+-    Configure o arquivo `.env` na pasta `backend` com as informações do banco de dados que você está utilizando.
+-   `npm run prisma:push`: Sincroniza seu banco de dados com o seu arquivo de schema Prisma (schema.prisma).
+-   `npm run prisma:generate`: Gera o cliente Prisma (Prisma Client) a partir do seu schema.
 -   `npm run start:dev`: Inicia o projeto em modo de desenvolvimento.
 -   `npm run start:prod`: Inicia o projeto em modo de produção.
+
 
 → [Voltar ao topo](#topo)

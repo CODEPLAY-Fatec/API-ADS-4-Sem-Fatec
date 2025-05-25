@@ -22,7 +22,7 @@
 
 ---
 
-## 🎥 Apresentação
+## 🎥 Apresentação Sprint 2
 
 ![Apresentação Sprint 2](../assets/gifs/sprint-2-demo.gif)
 
