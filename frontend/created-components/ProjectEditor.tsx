@@ -32,6 +32,8 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
     const [projectSubjects, setProjectSubjects] = useState<ProjectSubject[] | undefined>();
     const [institutions, setInstitutions] = useState<Institution[] | undefined>();
     const [newMemberEmail, setNewMemberEmail] = useState<string>("");
+    const [loggedUser, setLoggedUser] = useState<User | null>(null);
+
     // TODO: reimpmlementar a função de adicionar/remover membro
     // reimplementar instituições e áreas de atuação
     useEffect(() => {
@@ -40,6 +42,9 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
         });
         axios.get("/api/projects/institutions").then((response) => {
             setInstitutions(response.data);
+        });
+        axios.get("/api/me").then((response) => {
+            setLoggedUser(response.data);
         });
     }, []);
 
@@ -258,10 +263,11 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
                     <Label htmlFor="members">Membros Atuais</Label>
                     <ul className="list-group mb-3">
                         {projectMembers.map((member) => (
-                            <li key={`member-${member.id}`} className="flex justify-between items-center bg-white border border-gray rounded-lg mb-2">
+                            <li key={`member-${member.id}`} className="flex justify-between items-center bg-white border border-gray rounded-lg mb-1 py-1">
                                 <div className="pl-3">
                                     <UserAvatar userId={member.id} name={member.name} showName={true} size="sm" />
                                 </div>
+                                { loggedUser?.id === creator.id && (
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -270,6 +276,8 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
                                 >
                                     <TrashIcon size={16} />
                                 </Button>
+                                )}
+                                
                             </li>
                         ))}
                     </ul>
@@ -277,9 +285,12 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
                         <Button className="bg-[#1C3373] text-white hover:bg-[#162b5e] hover:scale-105 px-6 py-3 rounded-full" onClick={handleSaveClick}>
                             Salvar Edição
                         </Button>
+                        
+                        {loggedUser?.id === creator.id && (
                         <Button className="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-3 rounded-full" onClick={handleDeleteClick}>
                             Excluir Projeto
                         </Button>
+                    )}
                     </div>
                 </div>
             </form>
