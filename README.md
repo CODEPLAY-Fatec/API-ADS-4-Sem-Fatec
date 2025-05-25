@@ -58,33 +58,13 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 
 <p align="center">
 
-## 📉 Burndown Chart
+## 📉 Relatórios Das Sprints
 
-### 1️⃣ Sprint 1
+[Relatório sprint 1](./relatorios/sprint1.md)
 
-![Burndown Chart Sprint 1](./assets/images/sprint-1-burndown.jpg)
+[Relatório Sprint 2](./relatorios/sprint2.md)
 
-### 2️⃣ Sprint 2
-
-![Burndown Chart Sprint 2](./assets/images/sprint-2-burndown.jpg)
-
-<span id="gif">
-
-## 📹 GIF
-
-### Apresentação Figma
-
-![Apresentação Figma](./assets/gifs/figma-demo.gif)
-
-### 1️⃣ Apresentação Sprint 1
-
-![Funcionalidades Web](./assets/gifs/sprint-1-demo.gif)
-
-### 2️⃣ Apresentação Sprint 2
-
-![Funcionalidades Web](./assets/gifs/sprint-2-demo.gif)
-
-→ [Voltar ao topo](#topo)
+[Relatório Sprint 3](./relatorios/sprint3.md)
 
 <span id="requisitosfuncionais">
 
