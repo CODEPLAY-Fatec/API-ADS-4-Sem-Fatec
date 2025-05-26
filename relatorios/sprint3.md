@@ -18,7 +18,7 @@
 
 ## 📊 Burndown
 
-<!-- ![Burndown Sprint 3](colocar burndown) -->
+![Burndown Sprint 3](../assets/images/sprint-3-burndown.jpg)
 
 ---
 
