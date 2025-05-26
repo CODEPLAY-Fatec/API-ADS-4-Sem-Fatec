@@ -73,14 +73,9 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
         };
 
         console.log("Dados enviados para o backend:", formattedProject);
-        const resposta = await axios.patch("/api/projects", formattedProject);
+        await axios.patch("/api/projects", formattedProject);
 
-        if (resposta.status != 201) {
-            toast.error(resposta.data.message, { duration: 1500 });
-            return;
-        }
-
-        toast.success("Atualizado com sucesso!", { duration: 1500 });
+        toast.success("Projeto atualizado com sucesso!", { duration: 1500 });
         setCurrentProject(editableProject);
         onClose(false);
     } catch (error) {
@@ -294,48 +289,6 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, setCurrentProjec
                     </div>
                 </div>
             </form>
-
-            {showSuccessModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Close Modal"
-                            onClick={() => setShowSuccessModal(false)}
-                            className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
-                        >
-                            <XIcon size={16} />
-                        </Button>
-                        <div className="flex justify-center mb-4 items-center mt-2">
-                            <GradientText>Sucesso!</GradientText>
-                        </div>
-                        <p className="text-lg text-black mb-4">Projeto atualizado com sucesso!</p>
-                    </div>
-                </div>
-            )}
-            {showDeleteSuccessModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80 z-50 relative">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Close Modal"
-                            onClick={() => {
-                                setShowDeleteSuccessModal(false);
-                                onClose(true);
-                            }}
-                            className="absolute top-2 right-2 p-0 text-gray-600 hover:text-gray-800"
-                        >
-                            <XIcon size={16} />
-                        </Button>
-                        <div className="flex justify-center mb-4 items-center mt-2">
-                            <GradientText>Sucesso!</GradientText>
-                        </div>
-                        <p className="text-lg text-black mb-4">Projeto deletado com sucesso!</p>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

@@ -5,7 +5,6 @@ import { ChangePassword } from "@/created-components/ChangePassword";
 import Navbar from "@/created-components/Navbar";
 import { ProfileForm } from "@/created-components/ProfileForm";
 import { ProfilePicture } from "@/created-components/ProfilePicture";
-import UserAvatar from "@/created-components/UserAvatar"; 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -45,7 +44,7 @@ export default function UserProfilePage() {
         try {
           const fotoData = await axios.get("/api/foto", { withCredentials: true });
           setProfilePicture(`data:image/png;base64,${fotoData.data.base64}`);
-        } catch (error) {
+        } catch {
           console.log("No profile picture found, UserAvatar will display initials");
         }
       } catch (error) {
