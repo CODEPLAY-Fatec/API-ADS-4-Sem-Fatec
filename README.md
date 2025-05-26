@@ -62,7 +62,7 @@ As entregas de valor de cada sprint. Os stakeholders podem acompanhar de perto o
 
 [📝 Sprint 1 – Configuração Inicial](./relatorios/sprint1.md)  
 [📊 Sprint 2 – Gestão de Projetos](./relatorios/sprint2.md)  
-[🤖 Sprint 3 – IA e Recuperação de Dados](./relatorios/sprint3.md)
+[🤖 Sprint 3 – IA](./relatorios/sprint3.md)
 
 
 <span id="requisitosfuncionais">
