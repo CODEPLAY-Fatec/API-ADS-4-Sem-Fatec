@@ -1,7 +1,7 @@
 # Sprint 3 – Implementação Técnica e Inteligência Artificial
 
 🗓 Previsão de Entrega: **25/05/2025**  
-📌 Status: ❌ Não Concluído  
+📌 Status: ✅ Concluído  
 🎯 Objetivo: Interface conversacional baseada em IA
 
 ---
